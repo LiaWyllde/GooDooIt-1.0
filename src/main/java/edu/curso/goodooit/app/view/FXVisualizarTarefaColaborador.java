@@ -1,6 +1,4 @@
-package edu.curso.goodooit.ui.view;
-
-//package edu.curso.goodooit.ui.view;
+package edu.curso.goodooit.app.view;
 
 import javafx.animation.FadeTransition;
 import javafx.animation.TranslateTransition;

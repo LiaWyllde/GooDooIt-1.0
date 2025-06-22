@@ -1,4 +1,4 @@
-package edu.curso.goodooit.ui.view;
+package edu.curso.goodooit.app.view;
 
 import edu.curso.goodooit.app.controller.LoginController;
 import javafx.application.Application;

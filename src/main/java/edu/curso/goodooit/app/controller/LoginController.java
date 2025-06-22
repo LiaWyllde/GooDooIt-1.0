@@ -1,7 +1,12 @@
 package edu.curso.goodooit.app.controller;
 
-public class LoginController {
+import javafx.beans.property.StringProperty;
 
-    //implements
+public class LoginController {
+    public boolean efetuarLogin(StringProperty stringProperty, StringProperty stringProperty1) {
+        return true;
+    }
+
+    //SOmente teste
 
 }
