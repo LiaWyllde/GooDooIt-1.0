@@ -1,0 +1,1 @@
+rootProject.name = "GooDooIt-1.0"
