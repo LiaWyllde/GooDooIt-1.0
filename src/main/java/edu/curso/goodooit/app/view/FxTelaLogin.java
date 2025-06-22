@@ -65,7 +65,7 @@ public class FxTelaLogin extends Application {
                 System.out.println("É UM TESTE, ME APAGA!!!");
             } else {
                 try {
-                    if (!loginController.efetuarLogin(usernameField.textProperty(), passwordField.textProperty())) {
+                    if (!loginController.efetuarLogin(usernameField.getText(), passwordField.getText())) {
                         mensagemErro.setVisible(true);
                     }
                 } catch (SQLException e) {
