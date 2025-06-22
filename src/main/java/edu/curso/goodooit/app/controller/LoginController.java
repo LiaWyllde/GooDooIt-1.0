@@ -1,12 +1,24 @@
 package edu.curso.goodooit.app.controller;
 
-import javafx.beans.property.StringProperty;
+import edu.curso.goodooit.app.model.Usuario;
+import edu.curso.goodooit.app.persistence.implementations.UsuarioDAO;
+
+import java.sql.SQLException;
+
+//A controller de login pega as informações na ui.vew e requisita na service (use case)
 
 public class LoginController {
-    public boolean efetuarLogin(StringProperty stringProperty, StringProperty stringProperty1) {
-        return true;
+    private UsuarioDAO usuarioDAO;
+
+    public LoginController(UsuarioDAO usuarioDAO) {
+        this.usuarioDAO = usuarioDAO;
     }
 
-    //SOmente teste
-
+    public Usuario efetuarLogin(String login, String senha) throws SQLException{
+        Integer id = usuarioDAO.validarSenha(login,senha);
+        if(id != null){
+            return usuarioDAO.buscarUsuarioID(id);
+        }
+        return null;
+    }
 }

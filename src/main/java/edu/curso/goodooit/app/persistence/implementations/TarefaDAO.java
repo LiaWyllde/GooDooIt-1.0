@@ -1,7 +1,7 @@
 package edu.curso.goodooit.app.persistence.implementations;
 
-import edu.curso.goodooit.domain.model.Tarefa;
-import edu.curso.goodooit.domain.repository.ITarefaDAO;
+import edu.curso.goodooit.app.model.Tarefa;
+import edu.curso.goodooit.app.persistence.interfaces.ITarefaDAO;
 
 import java.sql.*;
 import java.util.ArrayList;

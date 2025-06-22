@@ -1,7 +1,7 @@
 package edu.curso.goodooit.app.persistence.implementations;
 
-import edu.curso.goodooit.domain.model.Status;
-import edu.curso.goodooit.domain.repository.IStatusDAO;
+import edu.curso.goodooit.app.model.Status;
+import edu.curso.goodooit.app.persistence.interfaces.IStatusDAO;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

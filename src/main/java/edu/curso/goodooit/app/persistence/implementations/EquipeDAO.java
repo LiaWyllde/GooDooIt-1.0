@@ -1,8 +1,8 @@
 package edu.curso.goodooit.app.persistence.implementations;
 
-import edu.curso.goodooit.domain.model.Equipe;
-import edu.curso.goodooit.domain.model.Usuario;
-import edu.curso.goodooit.domain.repository.IEquipeDAO;
+import edu.curso.goodooit.app.model.Equipe;
+import edu.curso.goodooit.app.model.Usuario;
+import edu.curso.goodooit.app.persistence.interfaces.IEquipeDAO;
 
 import java.sql.*;
 import java.util.ArrayList;

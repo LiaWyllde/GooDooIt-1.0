@@ -1,7 +1,7 @@
 package edu.curso.goodooit.app.persistence.implementations;
 
-import edu.curso.goodooit.domain.model.Projeto;
-import edu.curso.goodooit.domain.repository.IProjetoDAO;
+import edu.curso.goodooit.app.model.Projeto;
+import edu.curso.goodooit.app.persistence.interfaces.IProjetoDAO;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -77,7 +77,7 @@ public class ProjetoDAO implements IProjetoDAO {
         String sql = """
                     SELECT p.*
                       FROM Projeto p
-                      INNER JOIN Usuario_Projeto up --former equipe
+                      INNER JOIN Usuario_Projeto up 
                         ON p.ID = up.projetoID
                      WHERE up.usuarioID = ?
                 """;
@@ -118,8 +118,8 @@ public class ProjetoDAO implements IProjetoDAO {
                         data_inicio,
                         data_fim,
                         data_criacao,
-                        Status_ProjetoID,
-                        LiderID
+                        LiderID,
+                        StatusID
                     ) VALUES (?, ?, ?, ?, ?, ?, ?)
                 """;
         try (Connection conn = dbConn.getConnection();
@@ -149,12 +149,12 @@ public class ProjetoDAO implements IProjetoDAO {
     public void atualizarProjeto(Projeto projeto) throws SQLException {
         String sql = """
                     UPDATE Projeto
-                       SET nome               = ?,
-                           descricao          = ?,
-                           data_inicio        = ?,
-                           data_fim           = ?,
-                           data_criacao        = ?,
-                           Status_ProjetoID   = ?
+                       SET nome,
+                        descricao,
+                        data_inicio,
+                        data_fim,
+                        data_criacao,
+                        StatusID
                      WHERE ID = ?
                 """;
         try (Connection conn = dbConn.getConnection();

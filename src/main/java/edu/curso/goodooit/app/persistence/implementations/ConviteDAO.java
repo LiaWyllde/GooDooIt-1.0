@@ -1,7 +1,7 @@
 package edu.curso.goodooit.app.persistence.implementations;
 
-import edu.curso.goodooit.domain.model.Convite;
-import edu.curso.goodooit.domain.repository.IConviteDAO;
+import edu.curso.goodooit.app.model.Convite;
+import edu.curso.goodooit.app.persistence.interfaces.IConviteDAO;
 
 import java.sql.*;
 import java.util.ArrayList;
