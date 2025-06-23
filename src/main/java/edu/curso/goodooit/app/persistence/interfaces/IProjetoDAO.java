@@ -21,4 +21,5 @@ public interface IProjetoDAO {
     public void excluirProjeto(Projeto projeto) throws SQLException;
 
     public void atualizarProjeto(Projeto projeto) throws SQLException;
+
 }

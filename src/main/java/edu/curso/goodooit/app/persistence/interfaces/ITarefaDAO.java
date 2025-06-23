@@ -31,4 +31,7 @@ public interface ITarefaDAO {
     public void excluirTarefa(Tarefa tarefa) throws SQLException;
 
     public void atualizarTarefa(Tarefa tarefa) throws SQLException;
+
+    public Integer contarTarefaProjetoId(Integer idProjeto) throws SQLException;
+
 }

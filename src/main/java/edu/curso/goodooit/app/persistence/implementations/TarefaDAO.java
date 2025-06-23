@@ -280,4 +280,25 @@ public class TarefaDAO implements ITarefaDAO {
         }
         return lista;
     }
+
+    @Override
+    public Integer contarTarefaProjetoId(Integer idProjeto) throws SQLException {
+        String sql = """
+                SELECT COUNT(t.ID)
+                FROM Tarefa t
+                WHERE t.ProjetoID = ?;
+                """;
+        try (Connection conn = dbConn.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, idProjeto);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+        return null;
+    }
+
+
 }
