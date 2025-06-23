@@ -5,26 +5,24 @@ import edu.curso.goodooit.app.persistence.implementations.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
 
 public class VisualizarProjetoController {
 
-    private final AutenticacaoController autenticacaoController;
     private final TarefaDAO tarefaDAO;
     private final StatusDAO statusDAO;
     private final EquipeDAO equipeDAO;
 
-    public VisualizarProjetoController(AutenticacaoController autenticacaoController, TarefaDAO tarefaDAO, StatusDAO statusDAO, EquipeDAO equipeDAO) {
-        this.autenticacaoController = autenticacaoController;
+    public VisualizarProjetoController(TarefaDAO tarefaDAO, StatusDAO statusDAO, EquipeDAO equipeDAO) {
         this.tarefaDAO = tarefaDAO;
         this.statusDAO = statusDAO;
         this.equipeDAO = equipeDAO;
     }
 
-    private Usuario autenticado = AutenticacaoController.getAutenticado();
-
     public boolean VerificarDonoDoProjeto(Projeto projeto) {
+        Usuario autenticado = AutenticacaoController.getAutenticado();
         if (!Objects.equals(projeto.getLiderID(), autenticado.getID())) {
             System.out.println("O usuario autenticado não é dono do projeto.");
             return false;
@@ -48,6 +46,19 @@ public class VisualizarProjetoController {
 
         return observableTarefas;
 
+    }
+
+    public ObservableList<Status> getAllStatus(){
+        ObservableList<Status> observableStatuses = FXCollections.observableArrayList();
+        List<Status> statuses;
+
+        try{
+            statuses = statusDAO.buscarTodosStatus();
+            observableStatuses.addAll(statuses);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return observableStatuses;
     }
 
     public Status buscarStatus (Projeto projeto) {

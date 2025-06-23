@@ -2,7 +2,6 @@ package edu.curso.goodooit.app.view;
 
 import edu.curso.goodooit.app.controller.AllControllerRegistry;
 import edu.curso.goodooit.app.controller.AutenticacaoController;
-import edu.curso.goodooit.app.controller.ConviteController;
 import edu.curso.goodooit.app.controller.MeusProjetosController;
 import edu.curso.goodooit.app.model.Projeto;
 import edu.curso.goodooit.app.model.Usuario;
@@ -171,7 +170,7 @@ public class FXProjetosColaborando extends Application {
         });
 
         visualizar.setOnMouseClicked(e -> {
-            telaVisualizarProjeto(primaryStage);
+            telaVisualizarProjeto(primaryStage, p);
         });
 
         HBox botoes = new HBox(10, btnDeixarProjeto, visualizar);
@@ -293,9 +292,10 @@ public class FXProjetosColaborando extends Application {
     }
 
 
-    private void telaVisualizarProjeto(Stage primaryStage) {
+    private void telaVisualizarProjeto(Stage primaryStage, Projeto p) {
         FXVisualizarProjeto visualizarProjeto = new FXVisualizarProjeto();
-        //ToDo: Setar a injeção quando montar a tela
+        visualizarProjeto.setProjeto(p);
+        FXVisualizarProjeto.setVisualizarProjetoController(AllControllerRegistry.getInstance().getVisualizarProjetoController());
         visualizarProjeto.start(primaryStage);
     }
 }

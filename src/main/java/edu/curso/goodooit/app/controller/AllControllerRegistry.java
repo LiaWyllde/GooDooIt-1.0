@@ -43,7 +43,7 @@ public class AllControllerRegistry {
         this.alterarDadosUsuarioController = new AlterarDadosUsuarioController(usuarioDAO);
         this.conviteController = new ConviteController(conviteDAO, usuarioDAO, projetoDAO, equipeDAO);
         this.tarefaController = new TarefaController(autenticacaoController, tarefaDAO, statusDAO);
-        this.visualizarProjetoController = new VisualizarProjetoController(autenticacaoController, tarefaDAO, statusDAO, equipeDAO);
+        this.visualizarProjetoController = new VisualizarProjetoController(tarefaDAO, statusDAO, equipeDAO);
         this.cadastroController = new CadastroController(usuarioDAO);
     }
 

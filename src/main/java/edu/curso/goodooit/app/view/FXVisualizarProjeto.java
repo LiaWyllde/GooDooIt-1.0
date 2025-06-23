@@ -1,256 +1,170 @@
 package edu.curso.goodooit.app.view;
 
-import javafx.animation.FadeTransition;
-import javafx.animation.TranslateTransition;
+import edu.curso.goodooit.app.controller.VisualizarProjetoController;
+import edu.curso.goodooit.app.model.Projeto;
+import edu.curso.goodooit.app.model.Status;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.stage.Screen;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 public class FXVisualizarProjeto extends Application {
+    //ToDo: botar pra funcionar de verdade
 
-    private boolean menuVisivel = false;
-    private Button botaoMenu;
-    private Rectangle fundoEscurecido;
-    private VBox menuLateralRef;
+    private static VisualizarProjetoController visualizarProjetoController;
+    private Projeto projeto;
 
-    private boolean usuarioEhDono = true; // ← controle de permissão
+    public void setProjeto(Projeto projeto) {
+        this.projeto = projeto;
+    }
+
+    public static void setVisualizarProjetoController(VisualizarProjetoController visualizarProjetoController) {
+        FXVisualizarProjeto.visualizarProjetoController = visualizarProjetoController;
+    }
 
     @Override
     public void start(Stage stage) {
-        double larguraTela = Screen.getPrimary().getBounds().getWidth();
-        double alturaTela = Screen.getPrimary().getBounds().getHeight();
+        boolean isDono = visualizarProjetoController.VerificarDonoDoProjeto(projeto);
 
-        StackPane root = new StackPane();
-
-        VBox conteudo = criarConteudoPrincipal();
-        ScrollPane scrollPane = new ScrollPane(conteudo);
-        scrollPane.setFitToWidth(true);
-        scrollPane.setStyle("-fx-background: transparent; -fx-background-color: transparent;");
-        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-
-        menuLateralRef = criarMenuLateral();
-        menuLateralRef.setPrefWidth(250);
-        menuLateralRef.setTranslateX(-260);
-        StackPane.setAlignment(menuLateralRef, Pos.TOP_LEFT);
-
-        fundoEscurecido = new Rectangle(larguraTela, alturaTela);
-        fundoEscurecido.setFill(new Color(0, 0, 0, 0.5));
-        fundoEscurecido.setVisible(false);
-        fundoEscurecido.setOnMouseClicked(e -> alternarMenu(menuLateralRef));
-        StackPane.setAlignment(fundoEscurecido, Pos.CENTER);
-
-        VBox layoutPrincipal = new VBox(scrollPane);
-        VBox.setVgrow(scrollPane, Priority.ALWAYS);
-
-        root.getChildren().addAll(layoutPrincipal, fundoEscurecido, menuLateralRef);
-
-        Scene scene = new Scene(root, larguraTela, alturaTela * 0.9);
-        stage.setScene(scene);
-        stage.setTitle("Visualizar Tarefas do Projeto");
-        stage.show();
-    }
-
-    private VBox criarConteudoPrincipal() {
-        VBox mainContent = new VBox(20);
-        mainContent.setPadding(new Insets(20));
-        mainContent.setStyle("-fx-background-color: #b39ddb; -fx-font-family: monospace;");
-
-        HBox header = new HBox(10);
+        // Header com logo e status
+        HBox header = new HBox(20);
+        header.setPadding(new Insets(20, 20, 0, 20));
         header.setAlignment(Pos.CENTER_LEFT);
 
-        botaoMenu = new Button("≡");
-        botaoMenu.setStyle("-fx-font-size: 18px; -fx-background-color: transparent;");
-        botaoMenu.setOnAction(e -> alternarMenu(menuLateralRef));
+        Label nomeProjeto = new Label("Projeto galo eletrônico");
+        nomeProjeto.setFont(Font.font("Courier New", 20));
 
-        Label title = new Label("Projeto galo eletrônico");
-        title.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: white;");
+        ComboBox<Status> statusComboBox = new ComboBox<>();
+        statusComboBox.getItems().addAll(visualizarProjetoController.getAllStatus());
+        statusComboBox.setValue(statusComboBox.getItems().get(projeto.getStatusProjetoID()-1));
+        statusComboBox.setStyle("-fx-font-family: 'Courier New'; -fx-background-radius: 10px;");
+        statusComboBox.setVisible(isDono);
+
+        Label statusTexto = new Label(projeto.getStatus().toString());
+        statusTexto.setFont(Font.font("Courier New", 16));
+        statusTexto.setVisible(!isDono);
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        Label status = new Label("Em andamento");
-        status.setStyle("-fx-background-color: #dadada; -fx-padding: 5 10 5 10; -fx-background-radius: 8; -fx-font-size: 12px;");
+        header.getChildren().addAll(nomeProjeto, spacer, isDono ? statusComboBox : statusTexto);
 
-        header.getChildren().addAll(botaoMenu, title, spacer, status);
+        // Descrição
+        TextField descricao = new TextField("Projeto inicial para confecção dos modelos do Galotron3000");
+        descricao.setMaxWidth(700);
+        descricao.setFont(Font.font("Courier New", 16));
+        descricao.setEditable(false);
+        descricao.setStyle("-fx-background-radius: 10px; -fx-background-color: white;");
 
-        TextField busca = new TextField();
-        busca.setPromptText("Buscar tarefa...");
-        busca.setStyle("-fx-background-radius: 10; -fx-background-color: white;");
+        // Datas
+        HBox datas = new HBox(40);
+        datas.setAlignment(Pos.CENTER);
+        datas.setPadding(new Insets(10));
 
-        VBox painelTarefas = new VBox();
-        painelTarefas.setAlignment(Pos.CENTER);
-        painelTarefas.setStyle("-fx-background-color: white; -fx-background-radius: 10;");
-        painelTarefas.setPadding(new Insets(15));
+        Label inicio = new Label("Início  20/04/2025");
+        Label fim = new Label("Fim  22/10/2027");
+        for (Label l : new Label[]{inicio, fim}) {
+            l.setFont(Font.font("Courier New", 16));
+            l.setStyle("-fx-background-color: white; -fx-background-radius: 10px; -fx-padding: 5 15;");
+        }
+        datas.getChildren().addAll(inicio, fim);
 
-        Label titulo = new Label("Total de tarefas no projeto");
-        titulo.setStyle("-fx-text-fill: black; -fx-font-size: 13px;");
+        // Informações do projeto
+        VBox infoBox = new VBox(10);
+        infoBox.setPadding(new Insets(15));
+        infoBox.setAlignment(Pos.CENTER);
+        infoBox.setStyle("-fx-background-color: white; -fx-background-radius: 15px;");
+        infoBox.setMaxWidth(500);
 
-        Label quantidade = new Label("7");
-        quantidade.setStyle("-fx-text-fill: black; -fx-font-size: 26px; -fx-font-weight: bold;");
+        Label tituloInfo = new Label("Informações do projeto");
+        tituloInfo.setFont(Font.font("Courier New", 18));
 
-        Label rodape = new Label("Tarefas");
-        rodape.setStyle("-fx-text-fill: black; -fx-font-size: 13px;");
+        VBox infoMembros = new VBox(5);
+        infoMembros.setAlignment(Pos.CENTER);
 
-        painelTarefas.getChildren().addAll(titulo, quantidade, rodape);
+        VBox infoTarefas = new VBox(5);
+        infoTarefas.setAlignment(Pos.CENTER);
 
-        Button criarTarefa = new Button("Criar nova tarefa");
-        criarTarefa.setMaxWidth(Double.MAX_VALUE);
-        criarTarefa.setStyle("-fx-background-color: white; -fx-background-radius: 10; -fx-font-weight: bold; -fx-font-size: 13px;");
+        HBox infos = new HBox(40);
+        infos.setAlignment(Pos.CENTER);
 
-        VBox blocoTarefas = new VBox(10);
-        blocoTarefas.setStyle("-fx-background-color: white; -fx-background-radius: 10;");
-        blocoTarefas.setPadding(new Insets(15));
-
-        Label subtitulo = new Label("Exibindo todas as tarefas");
-        subtitulo.setStyle("-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: black;");
-        blocoTarefas.getChildren().add(subtitulo);
-
-        for (int i = 0; i < 7; i++) {
-            blocoTarefas.getChildren().add(criarTarefaItem(
-                "Documentar criação de dispositivos",
-                "Alta",
-                "24/06/2025",
-                "Lista de tarefas: Lista de engenharia",
-                usuarioEhDono
-            ));
+        Label numMembros = new Label("10");
+        Label membros = new Label("Membros do projeto");
+        Label numConcluidas = new Label("5");
+        Label concluidas = new Label("Tarefas concluídas");
+        for (Label l : new Label[]{membros, concluidas, numMembros, numConcluidas}) {
+            l.setFont(Font.font("Courier New", 16));
+            l.setAlignment(Pos.CENTER);
         }
 
-        Button voltar = new Button("Voltar");
-        voltar.setMaxWidth(Double.MAX_VALUE);
-        estiloBotaoRoxo(voltar);
+        infoMembros.getChildren().addAll(numMembros, membros);
+        infoTarefas.getChildren().addAll(numConcluidas, concluidas);
+        infos.getChildren().addAll(infoMembros, infoTarefas);
+        infoBox.getChildren().addAll(tituloInfo, infos);
 
-        mainContent.getChildren().addAll(header, busca, painelTarefas, criarTarefa, blocoTarefas, voltar);
-        return mainContent;
-    }
+        // Botão "Criar nova tarefa"
+        Button btnNovaTarefa = new Button("Criar nova tarefa");
+        btnNovaTarefa.setStyle("-fx-background-color: #d8d8d8; -fx-font-family: 'Courier New'; -fx-background-radius: 10px;");
+        btnNovaTarefa.setMaxWidth(300);
 
-    private VBox criarTarefaItem(String nome, String prioridade, String prazo, String origem, boolean ehDono) {
-        VBox tarefaBox = new VBox(5);
-        tarefaBox.setStyle("-fx-background-color: #e0e0e0; -fx-background-radius: 10;");
-        tarefaBox.setPadding(new Insets(10));
+        // Área de tarefas
+        VBox tarefasContainer = new VBox(10);
+        tarefasContainer.setPadding(new Insets(20));
+        tarefasContainer.setStyle("-fx-background-color: white; -fx-background-radius: 15px;");
+        tarefasContainer.setMaxWidth(700);
+        tarefasContainer.setMinHeight(400);
+        tarefasContainer.setAlignment(Pos.TOP_CENTER);
 
-        Label nomeTarefa = new Label(nome);
-        nomeTarefa.setStyle("-fx-font-size: 13px; -fx-text-fill: black;");
+        Label tituloTarefas = new Label("Tarefas");
+        tituloTarefas.setFont(Font.font("Courier New", 18));
+        tarefasContainer.getChildren().add(tituloTarefas);
 
-        Label status = new Label("Status: aguardando dispositivo");
-        status.setStyle("-fx-font-size: 12px; -fx-text-fill: black;");
+        // Botões de edição/exclusão
+        HBox botoesAcoes = new HBox(40);
+        botoesAcoes.setAlignment(Pos.CENTER);
+        botoesAcoes.setPadding(new Insets(10));
 
-        Label prioridadeLbl = new Label("Prioridade: " + prioridade);
-        prioridadeLbl.setStyle("-fx-font-size: 12px; -fx-text-fill: black;");
+        Button btnEditar = new Button("Editar projeto");
+        Button btnExcluir = new Button("Excluir projeto");
+        Button btnVoltar = new  Button("Voltar");
+        estilizarBotaoRoxo(btnVoltar);
+        estilizarBotaoRoxo(btnEditar);
+        estilizarBotaoRoxo(btnExcluir);
+        btnEditar.setVisible(isDono);
+        btnExcluir.setVisible(isDono);
 
-        Label prazoLbl = new Label("Prazo de conclusão: " + prazo);
-        prazoLbl.setStyle("-fx-font-size: 12px; -fx-text-fill: black;");
+        botoesAcoes.getChildren().addAll(btnVoltar, btnEditar, btnExcluir);
 
-        Label origemLbl = new Label(origem);
-        origemLbl.setStyle("-fx-font-size: 12px; -fx-text-fill: black;");
-
-        HBox acoes = new HBox(15);
-        acoes.setAlignment(Pos.CENTER_RIGHT);
-
-        
-        Label visualizar = new Label("Ver");
-        visualizar.setStyle("-fx-font-size: 14px;-fx-text-fill: black");
-
-        if (ehDono) {
-            Button editar = new Button("Editar");
-            
-            Button excluir = new Button("Remover");
-            
-            editar.setStyle("-fx-font-size: 14px;");
-            excluir.setStyle("-fx-font-size: 14px;");
-
-            editar.setOnAction(e -> System.out.println("Editar: " + nome));
-            excluir.setOnAction(e -> System.out.println("Excluir: " + nome));
-
-            acoes.getChildren().addAll(visualizar, editar, excluir);
-        } else {
-        	acoes.getChildren().addAll(visualizar);
-        }
-
-        tarefaBox.getChildren().addAll(nomeTarefa, status, prioridadeLbl, prazoLbl, origemLbl, acoes);
-        return tarefaBox;
-    }
-
-    private VBox criarMenuLateral() {
-        VBox menu = new VBox(10);
-        menu.setPadding(new Insets(15));
-        menu.setStyle("-fx-background-color: white; -fx-border-color: lightgray; -fx-min-width: 250px; -fx-max-width: 250px;");
-        menu.setAlignment(Pos.TOP_CENTER);
-
-        ImageView avatar = new ImageView(new Image("/images/Goo.png"));
-        avatar.setFitHeight(80);
-        avatar.setFitWidth(80);
-
-        Label nome = new Label("Julia Fernandes");
-        nome.setStyle("-fx-font-family: monospace; -fx-font-size: 16px;");
-
-        Button fecharMenu = new Button("Fechar menu");
-        fecharMenu.setMaxWidth(Double.MAX_VALUE);
-        fecharMenu.setStyle("-fx-background-color: #ffaaaa; -fx-font-family: monospace;");
-        fecharMenu.setOnAction(e -> alternarMenu(menu));
-
-        menu.getChildren().addAll(avatar, nome,
-                botaoMenuLateral("Projetos", "#d763f7"),
-                botaoMenuLateral("Tarefas", "#c7c7c7"),
-                botaoMenuLateral("Sair", "#d763f7"),
-                fecharMenu
+        // Container principal
+        VBox root = new VBox(20,
+                header, descricao, datas, infoBox, btnNovaTarefa, tarefasContainer, botoesAcoes
         );
-        return menu;
+        root.setPadding(new Insets(20));
+        root.setStyle("-fx-background-color: #c8afd6;");
+        root.setAlignment(Pos.TOP_CENTER);
+
+        Scene scene = new Scene(root, 1600, 900);
+        stage.setTitle("Visualizar Projeto");
+        stage.setScene(scene);
+        stage.show();
     }
 
-    private Button botaoMenuLateral(String texto, String cor) {
-        Button btn = new Button(texto);
-        btn.setMaxWidth(Double.MAX_VALUE);
-        btn.setStyle("-fx-background-color: " + cor + "; -fx-font-family: monospace; -fx-font-size: 14px; -fx-background-radius: 10px;");
-        return btn;
+    private void estilizarBotaoRoxo(Button btn) {
+        btn.setFont(Font.font("Courier New", 16));
+        btn.setStyle(
+                "-fx-background-color: #7e39d6;" +
+                        "-fx-text-fill: white;" +
+                        "-fx-background-radius: 15px;" +
+                        "-fx-cursor: hand;" +
+                        "-fx-padding: 8 20;"
+        );
     }
 
-    private void alternarMenu(VBox menuLateral) {
-        TranslateTransition slide = new TranslateTransition(Duration.millis(300), menuLateral);
-        FadeTransition fade = new FadeTransition(Duration.millis(300), fundoEscurecido);
-
-        if (!menuVisivel) {
-            slide.setToX(0);
-            fade.setFromValue(0);
-            fade.setToValue(1);
-            fundoEscurecido.setVisible(true);
-            botaoMenu.setText("X");
-        } else {
-            slide.setToX(-260);
-            fade.setFromValue(1);
-            fade.setToValue(0);
-            fade.setOnFinished(e -> fundoEscurecido.setVisible(false));
-            botaoMenu.setText("≡");
-        }
-
-        slide.play();
-        fade.play();
-        menuVisivel = !menuVisivel;
-    }
-
-    private void estiloBotaoRoxo(Button btn) {
-        btn.setStyle("-fx-background-color: #8744c2; -fx-text-fill: white; -fx-background-radius: 10px; -fx-font-family: monospace;");
-    }
-
-    public ImageView formatarIcone(String path) {
-        ImageView iconeEdit = new ImageView(new Image(getClass().getResourceAsStream(path)));
-        iconeEdit.setFitWidth(18);
-        iconeEdit.setFitHeight(18);
-        StackPane.setAlignment(iconeEdit, Pos.CENTER_RIGHT);
-        StackPane.setMargin(iconeEdit, new Insets(0, 10, 0, 0));
-        return iconeEdit;
-    }
-    
     public static void main(String[] args) {
-        launch(args);
+        launch();
     }
 }
