@@ -71,7 +71,6 @@ public class FxTelaLogin extends Application {
                     if (u == null) {
                         mensagemErro.setVisible(true);
                     } else {
-                        System.out.println(AutenticacaoController.getAutenticado().toString());
                         proximaTela(stage);
                     }
                 } catch (SQLException e) {
