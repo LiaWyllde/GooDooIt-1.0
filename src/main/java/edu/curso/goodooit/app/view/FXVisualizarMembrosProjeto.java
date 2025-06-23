@@ -23,7 +23,7 @@ public class FXVisualizarMembrosProjeto extends Application {
     private Rectangle fundoEscurecido;
     private VBox menuLateralRef;
 
-    private boolean usuarioEhDono = false; // ← controle de permissão
+    private boolean usuarioEhDono = true; // ← controle de permissão
 
     @Override
     public void start(Stage stage) {
@@ -164,7 +164,8 @@ public class FXVisualizarMembrosProjeto extends Application {
         acoes.setAlignment(Pos.CENTER_RIGHT);
 
         if (usuarioEhDono) {
-            Button remover = new Button("🗑");
+            Button remover = new Button();
+            remover.setGraphic(formatarIcone("/delete.jpg"));
             remover.setStyle("-fx-font-size: 12px;");
             remover.setOnAction(e -> System.out.println("Remover: " + username));
             acoes.getChildren().add(remover);
@@ -235,6 +236,15 @@ public class FXVisualizarMembrosProjeto extends Application {
         btn.setStyle("-fx-background-color: #8744c2; -fx-text-fill: white; -fx-background-radius: 10px; -fx-font-family: monospace;");
     }
 
+    public ImageView formatarIcone(String path) {
+        ImageView iconeEdit = new ImageView(new Image(getClass().getResourceAsStream(path)));
+        iconeEdit.setFitWidth(18);
+        iconeEdit.setFitHeight(18);
+        StackPane.setAlignment(iconeEdit, Pos.CENTER_RIGHT);
+        StackPane.setMargin(iconeEdit, new Insets(0, 10, 0, 0));
+        return iconeEdit;
+    }
+    
     public static void main(String[] args) {
         launch(args);
     }

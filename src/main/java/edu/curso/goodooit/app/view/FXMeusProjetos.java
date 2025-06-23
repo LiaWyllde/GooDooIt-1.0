@@ -6,7 +6,6 @@ import edu.curso.goodooit.app.controller.MeusProjetosController;
 import edu.curso.goodooit.app.model.Projeto;
 import edu.curso.goodooit.app.model.Usuario;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -74,7 +73,7 @@ public class FXMeusProjetos extends Application {
         email.setOnMouseClicked(e -> modalConvites.setVisible(true));
 
         email.setStyle("-fx-font-size: 16px;");
-        notificacoes.getChildren().addAll(email);
+        notificacoes.getChildren().addAll(iconeConvite,email);
 
         sidebar.getChildren().addAll(avatarView, nome, notificacoes);
 

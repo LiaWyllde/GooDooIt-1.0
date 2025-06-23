@@ -121,7 +121,7 @@ public class FXVisualizarTarefasProjeto extends Application {
                 "Alta",
                 "24/06/2025",
                 "Lista de tarefas: Lista de engenharia",
-                !usuarioEhDono
+                usuarioEhDono
             ));
         }
 
@@ -153,23 +153,27 @@ public class FXVisualizarTarefasProjeto extends Application {
         Label origemLbl = new Label(origem);
         origemLbl.setStyle("-fx-font-size: 12px; -fx-text-fill: black;");
 
-        HBox acoes = new HBox(10);
+        HBox acoes = new HBox(15);
         acoes.setAlignment(Pos.CENTER_RIGHT);
 
-        Label visualizar = new Label("👁");
+        
+        ImageView visualizar = formatarIcone("/images/view.jpg");
         visualizar.setStyle("-fx-font-size: 14px;");
-        acoes.getChildren().add(visualizar);
 
         if (ehDono) {
-            Button editar = new Button("✏");
-            Button excluir = new Button("🗑");
-            editar.setStyle("-fx-font-size: 12px;");
-            excluir.setStyle("-fx-font-size: 12px;");
+            Button editar = new Button();
+            editar.setGraphic(formatarIcone("/images/edit.jpg"));
+            
+            Button excluir = new Button();
+            excluir.setGraphic(formatarIcone("/images/delete.jpg"));
+            
+            editar.setStyle("-fx-font-size: 14px;");
+            excluir.setStyle("-fx-font-size: 14px;");
 
             editar.setOnAction(e -> System.out.println("Editar: " + nome));
             excluir.setOnAction(e -> System.out.println("Excluir: " + nome));
 
-            acoes.getChildren().addAll(editar, excluir);
+            acoes.getChildren().addAll(visualizar, editar, excluir);
         }
 
         tarefaBox.getChildren().addAll(nomeTarefa, status, prioridadeLbl, prazoLbl, origemLbl, acoes);
@@ -237,6 +241,15 @@ public class FXVisualizarTarefasProjeto extends Application {
         btn.setStyle("-fx-background-color: #8744c2; -fx-text-fill: white; -fx-background-radius: 10px; -fx-font-family: monospace;");
     }
 
+    public ImageView formatarIcone(String path) {
+        ImageView iconeEdit = new ImageView(new Image(getClass().getResourceAsStream(path)));
+        iconeEdit.setFitWidth(18);
+        iconeEdit.setFitHeight(18);
+        StackPane.setAlignment(iconeEdit, Pos.CENTER_RIGHT);
+        StackPane.setMargin(iconeEdit, new Insets(0, 10, 0, 0));
+        return iconeEdit;
+    }
+    
     public static void main(String[] args) {
         launch(args);
     }

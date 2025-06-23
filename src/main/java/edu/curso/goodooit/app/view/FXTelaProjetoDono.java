@@ -1,6 +1,7 @@
 package edu.curso.goodooit.app.view;
 
-
+import javafx.animation.FadeTransition;
+import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -9,12 +10,18 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 public class FXTelaProjetoDono extends Application {
 
-    private VBox areaPrincipal;
+    private boolean menuVisivel = false;
+    private Button botaoMenu;
+    private Rectangle fundoEscurecido;
+    private VBox menuLateralRef;
     private StackPane modalProjeto;
     private TextField tfNome;
     private TextArea taDescricao;
@@ -38,7 +45,7 @@ public class FXTelaProjetoDono extends Application {
         Label titulo = new Label("Projeto galo eletrônico");
         titulo.setStyle("-fx-font-size: 20px; -fx-font-family: monospace;");
 
-        Label iconeEdicao = new Label(usuarioEhDono ? " ✎" : " 👁");
+        ImageView iconeEdicao = usuarioEhDono ? formatarIcone("/edit.jpg") : formatarIcone("/view.jpg");
         iconeEdicao.setStyle("-fx-font-size: 16px; -fx-text-fill: gray;");
         if (usuarioEhDono) {
             iconeEdicao.setOnMouseClicked(e -> abrirModalProjeto("Projeto galo eletrônico", "Projeto inicial para confecção dos modelos do Galotron3000", "28/04/2025", "22/10/2027"));
@@ -52,7 +59,11 @@ public class FXTelaProjetoDono extends Application {
         status.setValue("Em andamento");
         status.setDisable(!usuarioEhDono);
 
-        header.getChildren().addAll(titulo, iconeEdicao, spacer, status);
+        botaoMenu = new Button("≡");
+        botaoMenu.setStyle("-fx-font-size: 18px; -fx-background-color: transparent;");
+        botaoMenu.setOnAction(e -> alternarMenu(menuLateralRef));
+
+        header.getChildren().addAll(botaoMenu, titulo, iconeEdicao, spacer, status);
 
         TextArea descricao = new TextArea("Projeto inicial para confecção dos modelos do Galotron3000");
         descricao.setWrapText(true);
@@ -110,16 +121,22 @@ public class FXTelaProjetoDono extends Application {
         Button moverTarefa = new Button("Mover tarefa entre quadros");
         estiloCinza(moverTarefa);
 
+        
         GridPane config = new GridPane();
         config.setHgap(20);
         config.setVgap(10);
         config.setAlignment(Pos.CENTER);
         config.setStyle("-fx-background-color: white; -fx-background-radius: 12px; -fx-padding: 20;");
         config.setVisible(usuarioEhDono);
-        config.add(new Label("✎ Gerenciar membros"), 0, 0);
-        config.add(new Label("✎ Gerenciar listas"), 1, 0);
-        config.add(new Label("✎ Gerenciar status"), 2, 0);
-        config.add(new Label("✎ Gerenciar tarefas"), 3, 0);
+        
+        config.add(formatarIcone("/edit.jpg"), 0, 0);
+        config.add(new Label("Gerenciar membros"), 1, 0);
+        config.add(formatarIcone("/edit.jpg"), 2, 0);
+        config.add(new Label("Gerenciar listas"), 3, 0);
+        config.add(formatarIcone("/edit.jpg"), 4, 0);
+        config.add(new Label("Gerenciar status"), 5, 0);
+        config.add(formatarIcone("/edit.jpg"), 6, 0);
+        config.add(new Label("Gerenciar tarefas"), 7, 0);
 
         Label criado = new Label("Criado em 11/03/2025");
         criado.setStyle("-fx-font-size: 11px; -fx-font-family: monospace;");
@@ -134,7 +151,19 @@ public class FXTelaProjetoDono extends Application {
         modalProjeto = criarModalProjeto(() -> System.out.println("Salvo."));
         modalProjeto.setVisible(false);
 
-        Scene cena = new Scene(new StackPane(principal, modalProjeto), larguraTela, alturaTela * 0.90);
+        menuLateralRef = criarMenuLateral();
+        menuLateralRef.setPrefWidth(250);
+        menuLateralRef.setTranslateX(-260);
+        StackPane.setAlignment(menuLateralRef, Pos.TOP_LEFT);
+
+        fundoEscurecido = new Rectangle(larguraTela, alturaTela);
+        fundoEscurecido.setFill(new Color(0, 0, 0, 0.5));
+        fundoEscurecido.setVisible(false);
+        fundoEscurecido.setOnMouseClicked(e -> alternarMenu(menuLateralRef));
+        StackPane.setAlignment(fundoEscurecido, Pos.CENTER);
+
+        
+        Scene cena = new Scene(new StackPane(principal, modalProjeto, fundoEscurecido, menuLateralRef), larguraTela, alturaTela * 0.90);
         primaryStage.setScene(cena);
         primaryStage.show();
     }
@@ -156,6 +185,64 @@ public class FXTelaProjetoDono extends Application {
         btn.setStyle("-fx-background-color: #c7c7c7; -fx-text-fill: black; -fx-background-radius: 10; -fx-font-family: monospace;");
     }
 
+    private VBox criarMenuLateral() {
+        VBox menu = new VBox(10);
+        menu.setPadding(new Insets(15));
+        menu.setStyle("-fx-background-color: white; -fx-border-color: lightgray; -fx-min-width: 250px; -fx-max-width: 250px;");
+        menu.setAlignment(Pos.TOP_CENTER);
+
+        ImageView avatar = new ImageView(new Image("/Goo.png"));
+        avatar.setFitHeight(80);
+        avatar.setFitWidth(80);
+
+        Label nome = new Label("Julia Fernandes");
+        nome.setStyle("-fx-font-family: monospace; -fx-font-size: 16px;");
+
+        Button fecharMenu = new Button("Fechar menu");
+        fecharMenu.setMaxWidth(Double.MAX_VALUE);
+        fecharMenu.setStyle("-fx-background-color: #ffaaaa; -fx-font-family: monospace;");
+        fecharMenu.setOnAction(e -> alternarMenu(menu));
+
+        menu.getChildren().addAll(avatar, nome,
+                botaoMenuLateral("Projetos", "#d763f7"),
+                botaoMenuLateral("Tarefas", "#c7c7c7"),
+                botaoMenuLateral("Sair", "#d763f7"),
+                fecharMenu
+        );
+        return menu;
+    }
+    
+    private Button botaoMenuLateral(String texto, String cor) {
+        Button btn = new Button(texto);
+        btn.setMaxWidth(Double.MAX_VALUE);
+        btn.setStyle("-fx-background-color: " + cor + "; -fx-font-family: monospace; -fx-font-size: 14px; -fx-background-radius: 10px;");
+        return btn;
+    }
+    
+    private void alternarMenu(VBox menuLateral) {
+        TranslateTransition slide = new TranslateTransition(Duration.millis(300), menuLateral);
+        FadeTransition fade = new FadeTransition(Duration.millis(300), fundoEscurecido);
+
+        if (!menuVisivel) {
+            slide.setToX(0);
+            fade.setFromValue(0);
+            fade.setToValue(1);
+            fundoEscurecido.setVisible(true);
+            botaoMenu.setText("X");
+        } else {
+            slide.setToX(-260);
+            fade.setFromValue(1);
+            fade.setToValue(0);
+            fade.setOnFinished(e -> fundoEscurecido.setVisible(false));
+            botaoMenu.setText("≡");
+        }
+
+        slide.play();
+        fade.play();
+        menuVisivel = !menuVisivel;
+    }
+    
+    
     private void abrirModalProjeto(String nome, String descricao, String inicio, String fim) {
         tfNome.setText(nome);
         taDescricao.setText(descricao);
@@ -214,7 +301,15 @@ public class FXTelaProjetoDono extends Application {
         quadro.getChildren().add(tarefa);
     }
 
-
+    public ImageView formatarIcone(String path) {
+        ImageView iconeEdit = new ImageView(new Image(getClass().getResourceAsStream(path)));
+        iconeEdit.setFitWidth(18);
+        iconeEdit.setFitHeight(18);
+        StackPane.setAlignment(iconeEdit, Pos.CENTER_RIGHT);
+        StackPane.setMargin(iconeEdit, new Insets(0, 10, 0, 0));
+        return iconeEdit;
+    }
+    
     public static void main(String[] args) {
         launch();
     }

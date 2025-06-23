@@ -38,11 +38,16 @@ public class FXEditarPerfil extends Application {
 
         HBox notificacoes = new HBox(20);
         notificacoes.setAlignment(Pos.CENTER);
-        Label sino = new Label("🔔 5"); // Property notificação
-        Label email = new Label("✉️ 1"); // Property email
+        
+        ImageView iconeNotificacao = formatarIcone("/images/notification.png");
+        Label sino = new Label("5"); // Property notificação
+        
+        ImageView iconeConvite = formatarIcone("/images/envelope.jpg");
+        Label email = new Label("1"); // Property email
+        
         sino.setStyle("-fx-font-size: 16px;");
         email.setStyle("-fx-font-size: 16px;");
-        notificacoes.getChildren().addAll(sino, email);
+        notificacoes.getChildren().addAll(iconeNotificacao, sino, iconeConvite, email);
 
         sidebar.getChildren().addAll(avatarView, nome, notificacoes,
                 botaoMenu("Meus projetos", true),
@@ -141,7 +146,7 @@ public class FXEditarPerfil extends Application {
         areaPrincipal.getChildren().addAll(titulo, form, botoes);
     }
 
-    private VBox criarCampoComIcone(String labelTexto, TextField campo, String icone) {
+    private VBox criarCampoComIcone(String labelTexto, TextField campo, String iconeTexto) {
         Label label = new Label(labelTexto);
         label.setStyle("-fx-font-size: 14px; -fx-font-family: monospace; -fx-text-fill: black;");
 
@@ -153,19 +158,28 @@ public class FXEditarPerfil extends Application {
             campo.setStyle("-fx-background-radius: 10; -fx-font-size: 14px; -fx-opacity: 1.0; -fx-background-color: white; -fx-text-fill: black;");
         }
 
-        Label iconeLabel = new Label(icone);
-        iconeLabel.setStyle("-fx-font-size: 16px;");
-        StackPane.setAlignment(iconeLabel, Pos.CENTER_RIGHT);
-        StackPane.setMargin(iconeLabel, new Insets(0, 10, 0, 0));
+        Region espaco = new Region();
+        HBox.setHgrow(espaco, Priority.ALWAYS);
 
-        if (labelTexto.equalsIgnoreCase("Senha")) {
-            campo.setEditable(false);
-            iconeLabel.setOnMouseClicked(e -> modalSenhaGlobal.setVisible(true));
+        StackPane campoComIcone;
+
+        if (iconeTexto.equals("✏️")) {
+            ImageView iconeEdit = formatarIcone("/images/edit.jpg");
+
+            if (labelTexto.equalsIgnoreCase("Senha")) {
+                campo.setEditable(false);
+                iconeEdit.setOnMouseClicked(e -> modalSenhaGlobal.setVisible(true));
+            }
+
+            campoComIcone = new StackPane(campo, iconeEdit);
+
+        } else {
+            campoComIcone = new StackPane(campo, formatarIcone("/blocked.jpg"));
         }
 
-        StackPane campoComIcone = new StackPane(campo, iconeLabel);
         return new VBox(5, label, campoComIcone);
     }
+
 
     // Modal de alterar senha
     public StackPane modalAlterarSenha(Runnable acaoSalvarSenha) {
@@ -179,7 +193,8 @@ public class FXEditarPerfil extends Application {
         conteudo.setMaxHeight(altura * 0.4);
         conteudo.setStyle("-fx-background-color: #E6E6E6; -fx-background-radius: 20;");
 
-        Label titulo = new Label("🔐 Alterar Senha");
+        ImageView iconSenha = formatarIcone("/imagespassword.png");
+        Label titulo = new Label("Alterar Senha");
         titulo.setStyle("-fx-font-size: 24px; -fx-text-fill: #6A0DAD; -fx-font-weight: bold;");
 
         PasswordField campoAtual = new PasswordField();
@@ -221,7 +236,7 @@ public class FXEditarPerfil extends Application {
         HBox botoes = new HBox(15, btnCancelar, btnSalvar);
         botoes.setAlignment(Pos.CENTER);
 
-        conteudo.getChildren().addAll(titulo, campoAtual, campoNova, campoConfirmar, botoes, btnEsqueci);
+        conteudo.getChildren().addAll(iconSenha, titulo, campoAtual, campoNova, campoConfirmar, botoes, btnEsqueci);
 
         StackPane fundo = new StackPane(conteudo);
         fundo.setStyle("-fx-background-color: rgba(0, 0, 0, 0.4);");
@@ -272,6 +287,14 @@ public class FXEditarPerfil extends Application {
         return fundo;
     }
 
+    public ImageView formatarIcone(String path) {
+        ImageView iconeEdit = new ImageView(new Image(getClass().getResourceAsStream(path)));
+        iconeEdit.setFitWidth(18);
+        iconeEdit.setFitHeight(18);
+        StackPane.setAlignment(iconeEdit, Pos.CENTER_RIGHT);
+        StackPane.setMargin(iconeEdit, new Insets(0, 10, 0, 0));
+        return iconeEdit;
+    }
 
     public static void main(String[] args) {
         launch(args);
