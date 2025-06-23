@@ -49,9 +49,6 @@ public class FXVisualizarTarefaDono extends Application {
         fundoEscurecido.setOnMouseClicked(e -> alternarMenu(menuLateral));
         StackPane.setAlignment(fundoEscurecido, Pos.CENTER);
 
-
-
-
         VBox layoutPrincipal = new VBox(scrollPane);
         VBox.setVgrow(scrollPane, Priority.ALWAYS);
 

@@ -1,0 +1,79 @@
+GooDooIt
+Navegação da versão 1.0
+
+---------
+
+Menu lateral
+
+Convites
+    > Visualizar convites
+    (criar uma igual a lsta de projetos com 2 botões aceitar recusar)
+
+---------
+
+Meus projetos
+    > FXMeusProjetos
+        > FXVisualizarTarefaProjeto (ver detalhes projeto)
+        TODO: Incluir visualização de membros
+              Incluir todas os campos de projeto
+              Incluir exclusão de tarefa
+            > Modal criação de tarefa
+            > FXVisualizarTarefa
+            > Excluir tarefa (tem a DAO)
+        (unificar tarefa dono e colaborador)
+    > Modal de criar projeto
+    > Modal editar projeto
+    > Excluir projeto
+    (Estamos pensando na soulução, amo colocou botão)
+
+---------
+
+Colaborando
+    > FXMeusProjetos (editar para visulização)
+    > Opção de deixar projeto (Implementar, vai ser botão)
+        > FXVisualizarTarefaProjeto
+        (sem opções de edição)
+            > Modal criação de tarefa
+            > FXVisualizarTarefa
+
+---------
+
+Equipes
+    REMOVER DO MENU LATERAL
+    VISUALIZAÇÃO DISPONÍVEL APENAS NO PROJETO
+
+---------
+
+Tarefas
+
+    >FXMinhasTarefas
+        > FXVisualizarTarefa
+            > Modal de reatribuir tarefa
+            > Editar tarefa
+            > Excluir tarefa (se dono do projeto)
+
+---------
+
+Editar Perfil
+
+    > FXEditarPerfil
+        > A edição dos campos free ocorre no botão de salvar
+        > Modal de alterar senha
+
+
+---------
+
+Sair
+
+    > Modal de sair do sistema
+
+---------
+
+Telas a fazer ou editar: III
+Feitas: IIII
+Modais feitas: IIIIII
+Total telas :
+7 telas no sistema
+6 Modais
+
+
