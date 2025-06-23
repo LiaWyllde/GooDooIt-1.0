@@ -174,7 +174,7 @@ public class FXEditarPerfil extends Application {
             campoComIcone = new StackPane(campo, iconeEdit);
 
         } else {
-            campoComIcone = new StackPane(campo, formatarIcone("/blocked.jpg"));
+            campoComIcone = new StackPane(campo, formatarIcone("/images/blocked.jpg"));
         }
 
         return new VBox(5, label, campoComIcone);
@@ -193,7 +193,7 @@ public class FXEditarPerfil extends Application {
         conteudo.setMaxHeight(altura * 0.4);
         conteudo.setStyle("-fx-background-color: #E6E6E6; -fx-background-radius: 20;");
 
-        ImageView iconSenha = formatarIcone("/imagespassword.png");
+        ImageView iconSenha = formatarIcone("/images/password.png");
         Label titulo = new Label("Alterar Senha");
         titulo.setStyle("-fx-font-size: 24px; -fx-text-fill: #6A0DAD; -fx-font-weight: bold;");
 

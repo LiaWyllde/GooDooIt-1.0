@@ -1,14 +1,9 @@
 package edu.curso.goodooit.app.view;
 
-import edu.curso.goodooit.app.controller.AutenticacaoController;
-import edu.curso.goodooit.app.controller.ControllerRegistry;
+import edu.curso.goodooit.app.controller.AllControllerRegistry;
 import edu.curso.goodooit.app.controller.LoginController;
-import edu.curso.goodooit.app.controller.MeusProjetosController;
 import edu.curso.goodooit.app.model.Usuario;
-import edu.curso.goodooit.app.persistence.implementations.DataBaseConnection;
-import edu.curso.goodooit.app.persistence.implementations.UsuarioDAO;
 import javafx.application.Application;
-import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -23,7 +18,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-import java.awt.desktop.AppForegroundListener;
 import java.sql.SQLException;
 
 public class FxTelaLogin extends Application {
@@ -118,7 +112,7 @@ public class FxTelaLogin extends Application {
 
     private void proximaTela(Stage primaryStage) {
         FXMeusProjetos projetos = new FXMeusProjetos();
-        FXMeusProjetos.setMeusProjetosController(ControllerRegistry.getInstance().getMeusProjetosController());
+        FXMeusProjetos.setMeusProjetosController(AllControllerRegistry.getInstance().getMeusProjetosController());
         projetos.start(primaryStage);
     }
 

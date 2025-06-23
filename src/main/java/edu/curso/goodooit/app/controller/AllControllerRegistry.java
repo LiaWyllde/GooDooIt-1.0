@@ -2,11 +2,11 @@ package edu.curso.goodooit.app.controller;
 
 import edu.curso.goodooit.app.persistence.implementations.*;
 
-public class ControllerRegistry {
+public class AllControllerRegistry {
     private final DataBaseConnection dbConn;
 
     //Instancia estatica para ser usada em outros lugares
-    private static ControllerRegistry instance;
+    private static AllControllerRegistry instance;
     //DAOs
     private final UsuarioDAO usuarioDAO;
     private final ConviteDAO conviteDAO;
@@ -23,7 +23,7 @@ public class ControllerRegistry {
     private final AlterarDadosUsuarioController alterarDadosUsuarioController;
 
 
-    public ControllerRegistry(DataBaseConnection dbConn) {
+    public AllControllerRegistry(DataBaseConnection dbConn) {
         this.dbConn = dbConn;
         this.usuarioDAO = new UsuarioDAO(dbConn);
         this.conviteDAO = new ConviteDAO(dbConn);
@@ -39,11 +39,11 @@ public class ControllerRegistry {
 
     public static void initialize(DataBaseConnection dbConn) {
         if (instance == null) {
-            instance = new ControllerRegistry(dbConn);
+            instance = new AllControllerRegistry(dbConn);
         }
     }
 
-    public static ControllerRegistry getInstance() {
+    public static AllControllerRegistry getInstance() {
         return instance;
     }
 

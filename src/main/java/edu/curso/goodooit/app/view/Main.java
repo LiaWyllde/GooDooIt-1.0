@@ -1,6 +1,6 @@
 package edu.curso.goodooit.app.view;
 
-import edu.curso.goodooit.app.controller.ControllerRegistry;
+import edu.curso.goodooit.app.controller.AllControllerRegistry;
 import edu.curso.goodooit.app.controller.LoginController;
 import edu.curso.goodooit.app.persistence.implementations.DataBaseConnection;
 import edu.curso.goodooit.app.persistence.implementations.UsuarioDAO;
@@ -13,7 +13,7 @@ public class Main {
         UsuarioDAO uDAO = new UsuarioDAO(dbConn);
 
         try{
-            ControllerRegistry.initialize(dbConn);
+            AllControllerRegistry.initialize(dbConn);
             LoginController lc = new LoginController(uDAO);
             FxTelaLogin telaLogin = new FxTelaLogin();
             FxTelaLogin.setLoginController(lc);

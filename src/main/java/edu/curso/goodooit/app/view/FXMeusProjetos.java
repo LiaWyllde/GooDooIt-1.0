@@ -1,7 +1,6 @@
 package edu.curso.goodooit.app.view;
 
 import edu.curso.goodooit.app.controller.AutenticacaoController;
-import edu.curso.goodooit.app.controller.ControllerRegistry;
 import edu.curso.goodooit.app.controller.MeusProjetosController;
 import edu.curso.goodooit.app.model.Projeto;
 import edu.curso.goodooit.app.model.Usuario;

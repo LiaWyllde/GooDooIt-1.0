@@ -45,7 +45,7 @@ public class FXTelaProjetoDono extends Application {
         Label titulo = new Label("Projeto galo eletrônico");
         titulo.setStyle("-fx-font-size: 20px; -fx-font-family: monospace;");
 
-        ImageView iconeEdicao = usuarioEhDono ? formatarIcone("/edit.jpg") : formatarIcone("/view.jpg");
+        ImageView iconeEdicao = usuarioEhDono ? formatarIcone("/images/edit.jpg") : formatarIcone(" /images/view.jpg");
         iconeEdicao.setStyle("-fx-font-size: 16px; -fx-text-fill: gray;");
         if (usuarioEhDono) {
             iconeEdicao.setOnMouseClicked(e -> abrirModalProjeto("Projeto galo eletrônico", "Projeto inicial para confecção dos modelos do Galotron3000", "28/04/2025", "22/10/2027"));
@@ -129,13 +129,13 @@ public class FXTelaProjetoDono extends Application {
         config.setStyle("-fx-background-color: white; -fx-background-radius: 12px; -fx-padding: 20;");
         config.setVisible(usuarioEhDono);
         
-        config.add(formatarIcone("/edit.jpg"), 0, 0);
+        config.add(formatarIcone("/images/edit.jpg"), 0, 0);
         config.add(new Label("Gerenciar membros"), 1, 0);
-        config.add(formatarIcone("/edit.jpg"), 2, 0);
+        config.add(formatarIcone("/images/edit.jpg"), 2, 0);
         config.add(new Label("Gerenciar listas"), 3, 0);
-        config.add(formatarIcone("/edit.jpg"), 4, 0);
+        config.add(formatarIcone("/images/edit.jpg"), 4, 0);
         config.add(new Label("Gerenciar status"), 5, 0);
-        config.add(formatarIcone("/edit.jpg"), 6, 0);
+        config.add(formatarIcone("/images/edit.jpg"), 6, 0);
         config.add(new Label("Gerenciar tarefas"), 7, 0);
 
         Label criado = new Label("Criado em 11/03/2025");
@@ -191,7 +191,7 @@ public class FXTelaProjetoDono extends Application {
         menu.setStyle("-fx-background-color: white; -fx-border-color: lightgray; -fx-min-width: 250px; -fx-max-width: 250px;");
         menu.setAlignment(Pos.TOP_CENTER);
 
-        ImageView avatar = new ImageView(new Image("/Goo.png"));
+        ImageView avatar = new ImageView(new Image("/images/Goo.png"));
         avatar.setFitHeight(80);
         avatar.setFitWidth(80);
 
