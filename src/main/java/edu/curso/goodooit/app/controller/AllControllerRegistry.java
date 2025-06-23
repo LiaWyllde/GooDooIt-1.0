@@ -84,4 +84,8 @@ public class AllControllerRegistry {
     public VisualizarProjetoController getVisualizarProjetoController() {
         return visualizarProjetoController;
     }
+
+    public CadastroController getCadastroController() {
+        return cadastroController;
+    }
 }

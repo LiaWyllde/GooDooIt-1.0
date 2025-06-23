@@ -183,20 +183,9 @@ public class FXMeusProjetos extends Application {
             meusProjetosController.excluirProjeto(p);
         });
 
-        Rectangle hitArea = new Rectangle();
-        hitArea.widthProperty().bind(bloco.widthProperty());
-        hitArea.heightProperty().bind(bloco.heightProperty());
-        hitArea.setFill(Color.TRANSPARENT);
-        hitArea.toBack();
-        hitArea.setCursor(Cursor.HAND);
-        hitArea.setOpacity(0);
-
-        bloco.getChildren().addFirst(hitArea);
-
-        hitArea.setOnMouseClicked(e -> {
+        bloco.setOnMouseClicked(e -> {
             telaVisualizarProjeto(primaryStage);
         });
-
 
         HBox botoes = new HBox(10, editar, excluir);
         botoes.setAlignment(Pos.TOP_RIGHT);
