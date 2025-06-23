@@ -21,7 +21,7 @@ public class CadastroController {
 
     public Integer cadastrar (String login, String nome, String sobrenome, String email, String senha, String confirmaSenha) {
 
-        if (nome == null || sobrenome == null || login == null || senha == null || email == null || confirmaSenha == null) {
+        if (nome.isBlank() || sobrenome.isBlank() || email.isBlank() || login.isBlank() || senha.isBlank() || confirmaSenha.isBlank()) {
             return 1;
         }
 
