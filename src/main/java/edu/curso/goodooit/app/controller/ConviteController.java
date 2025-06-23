@@ -40,7 +40,7 @@ public class ConviteController {
         try {
             convites = conviteDAO.buscarConviteIdDestinatario(autenticado.getID());
         } catch (Exception e) {
-            System.out.println("Erro ao buscar convites: " + e.getMessage());
+            System.out.println("Erro ao buscar convites, SQL quis assim: " + e.getMessage());
         }
 
         convitesObservable.addAll(convites);
@@ -111,8 +111,32 @@ public class ConviteController {
         }
 
         return 5;
+
     }
 
-    //TODO: Finalizar respostas de convite
+    // O retorno de Integer é utilizado para selecionar a mensagem que deve aparecer na view
+
+    public void recusarConvite(Integer idProjeto, Integer idRemetente, Integer idDestinatario) {
+
+        try {
+            Convite c = conviteDAO.buscarConvite(idProjeto, idRemetente, idDestinatario);
+            conviteDAO.excluirConvite(c);
+
+        } catch (Exception e) {
+            System.out.println("Erro ao excluir convite porque o SQL quis assim: " + e.getMessage());
+        }
+    }
+
+    public void aceitarConvite(Integer idProjeto, Integer idRemetente, Integer idDestinatario) {
+
+        try {
+            Convite c = conviteDAO.buscarConvite(idProjeto, idRemetente, idDestinatario);
+            conviteDAO.excluirConvite(c);
+            equipeDAO.adicionarMembroProjeto(idProjeto, idDestinatario);
+        } catch (Exception e) {
+            System.out.println("Erro ao aceitar convite porque o SQL quis assim: " + e.getMessage());
+        }
+
+    }
 
 }
