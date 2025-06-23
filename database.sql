@@ -2,19 +2,19 @@
 --DROP DATABASE GooDooIt;
 
 CREATE
-DATABASE GooDooIt01;
+    DATABASE GooDooIt01;
 USE
-GooDooIt01;
+    GooDooIt01;
 
 --
 
 CREATE TABLE Status
 (
 
-    ID        INT          NOT NULL IDENTITY(1,1),
+    ID        INT          NOT NULL IDENTITY (1,1),
     titulo    VARCHAR(100) NOT NULL,
     descricao VARCHAR(250) NOT NULL
-    PRIMARY KEY (ID)
+        PRIMARY KEY (ID)
 
 );
 
@@ -27,7 +27,7 @@ CREATE TABLE Usuario
     login     VARCHAR(100) NOT NULL UNIQUE,
     senha     VARCHAR(50)  NOT NULL,
     email     VARCHAR(50)  NOT NULL
-    PRIMARY KEY (ID)
+        PRIMARY KEY (ID)
 
 );
 
@@ -42,8 +42,8 @@ CREATE TABLE Projeto
     dataCriacao DATE         NOT NULL,
     LiderID     INT          NOT NULL,
     StatusID    INT          NOT NULL
-    PRIMARY KEY (ID)
-    FOREIGN KEY (StatusID)  REFERENCES Status (ID),
+        PRIMARY KEY (ID)
+        FOREIGN KEY (StatusID) REFERENCES Status (ID),
     FOREIGN KEY (LiderID) REFERENCES Usuario (ID),
 
 
@@ -55,8 +55,8 @@ CREATE TABLE Usuario_Projeto
 
     UsuarioID INT,
     ProjetoID INT
-    PRIMARY KEY (UsuarioID, ProjetoID)
-    FOREIGN KEY (UsuarioID) REFERENCES Usuario (ID),
+        PRIMARY KEY (UsuarioID, ProjetoID)
+        FOREIGN KEY (UsuarioID) REFERENCES Usuario (ID),
     FOREIGN KEY (ProjetoID) REFERENCES Projeto (ID)
 
 );
@@ -87,11 +87,11 @@ CREATE TABLE Tarefa
     dataCriacao   DATE         NOT NULL,
     prioridade    INT          NOT NULL,
     CriadorID     INT          NOT NULL,
-    ResponsavelID INT NULL,
+    ResponsavelID INT          NULL,
     StatusID      INT          NOT NULL,
     ProjetoID     INT          NOT NULL
-    PRIMARY KEY (ID)
-    FOREIGN KEY (CriadorID)        REFERENCES Usuario (ID),
+        PRIMARY KEY (ID)
+        FOREIGN KEY (CriadorID) REFERENCES Usuario (ID),
     FOREIGN KEY (ResponsavelID) REFERENCES Usuario (ID),
     FOREIGN KEY (ProjetoID) REFERENCES Projeto (ID),
     FOREIGN KEY (StatusID) REFERENCES Status (ID)
@@ -120,6 +120,16 @@ VALUES ('Em Andamento', 'Está em progresso'),
 INSERT INTO Projeto (nome, descricao, data_inicio, data_fim, dataCriacao, StatusID, LiderID)
 VALUES ('Sistema de Tarefas', 'Controle de tarefas e quadros', '2025-01-01', '2025-12-31', GETDATE(), 1, 10000),
        ('App Financeiro', 'Aplicativo para gestão financeira', '2025-02-01', '2025-11-30', GETDATE(), 1, 10001),
+       ('Portal de Vendas', 'Plataforma web para gerenciamento de vendas online', '2025-03-01', '2025-09-30', GETDATE(), 2, 10001),
+       ('Sistema CRM', 'Ferramenta de gestão de relacionamento com clientes', '2025-01-15', '2025-08-15', GETDATE(), 3, 10001),
+       ('App Pedidos Móvel', 'Aplicativo mobile para realização de pedidos', '2025-04-01', '2025-10-31', GETDATE(), 1, 10001),
+       ('Dashboard Analítico', 'Painel para visualização de métricas em tempo real', '2025-05-01', '2025-11-30', GETDATE(), 2, 10001),
+       ('Gerenciador de Estoque', 'Sistema para controle de estoque e inventário', '2025-02-10', '2025-07-31', GETDATE(), 3, 10001),
+       ('E-learning Corporativo', 'Plataforma de aprendizagem online para treinamentos internos', '2025-06-01', '2025-12-15', GETDATE(), 1, 10001),
+       ('Site Institucional', 'Website institucional responsivo', '2025-03-20', '2025-06-30', GETDATE(), 2, 10001),
+       ('API de Integração', 'Serviço RESTful para integração com sistemas externos', '2025-02-25', '2025-09-30', GETDATE(), 1, 10001),
+       ('Chatbot de Suporte', 'Chatbot inteligente para atendimento ao cliente', '2025-07-01', '2025-11-30', GETDATE(), 3, 10001),
+       ('Ferramenta de BI', 'Solução de Business Intelligence para análise de dados', '2025-04-15', '2025-10-15', GETDATE(), 2, 10001),
        ('Loja Virtual', 'Plataforma de e-commerce', '2025-03-01', '2025-12-15', GETDATE(), 2, 10002),
        ('Sistema Escolar', 'Gerenciamento acadêmico', '2025-01-15', '2025-10-20', GETDATE(), 1, 10003),
        ('Chat Online', 'Ferramenta de comunicação', '2025-04-01', '2025-09-30', GETDATE(), 3, 10004),

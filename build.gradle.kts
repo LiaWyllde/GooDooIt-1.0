@@ -10,6 +10,7 @@ repositories {
 }
 
 dependencies {
+    implementation("com.microsoft.sqlserver:mssql-jdbc:12.10.0.jre11")
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
 }

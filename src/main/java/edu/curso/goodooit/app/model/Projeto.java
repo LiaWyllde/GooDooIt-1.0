@@ -11,6 +11,10 @@ public class Projeto {
     LocalDate dataFim;
     LocalDate dataCriacao;
     Integer StatusProjetoID;
+
+    //Instancia de status para poder buscar diretamente no codigo apos recuperar da persistencia
+    Status status;
+
     Integer LiderID;
 
     List<Usuario> usuarios;
@@ -18,7 +22,7 @@ public class Projeto {
 
     public Projeto() {}
 
-    public Projeto(Integer ID, String nome, String descricao, LocalDate dataInicio, LocalDate dataFim, LocalDate dataCriacao, Integer statusProjetoID, Integer liderID) {
+    public Projeto(Integer ID, String nome, String descricao, LocalDate dataInicio, LocalDate dataFim, LocalDate dataCriacao, Integer liderID, Integer statusProjetoID) {
         this.ID = ID;
         this.nome = nome;
         this.descricao = descricao;
@@ -125,6 +129,14 @@ public class Projeto {
 
     public void setTarefas(List<Tarefa> tarefas) {
         this.tarefas = tarefas;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
     @Override

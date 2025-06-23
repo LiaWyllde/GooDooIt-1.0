@@ -1,7 +1,14 @@
 package edu.curso.goodooit.app.view;
 
+import edu.curso.goodooit.app.controller.AutenticacaoController;
+import edu.curso.goodooit.app.controller.ControllerRegistry;
 import edu.curso.goodooit.app.controller.LoginController;
+import edu.curso.goodooit.app.controller.MeusProjetosController;
+import edu.curso.goodooit.app.model.Usuario;
+import edu.curso.goodooit.app.persistence.implementations.DataBaseConnection;
+import edu.curso.goodooit.app.persistence.implementations.UsuarioDAO;
 import javafx.application.Application;
+import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -16,19 +23,18 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import java.awt.desktop.AppForegroundListener;
 import java.sql.SQLException;
 
 public class FxTelaLogin extends Application {
 
-    private LoginController loginController;
+    private static LoginController loginController;
 
-    public FxTelaLogin(LoginController loginController) {
-        this.loginController = loginController;
+    public static void setLoginController(LoginController lc) {
+       loginController = lc;
     }
 
-    public FxTelaLogin() {
-
-    }
+    public FxTelaLogin() {}
     // Esse construtor vazio só existe para testes da instância da classe antes de implementar a service
 
     @Override
@@ -60,19 +66,19 @@ public class FxTelaLogin extends Application {
 
         // Se o usuário não estiver logado, mostrar mensagem
         btnEntrar.setOnAction(event -> {
-            if (this.loginController == null) {
-                mensagemErro.setVisible(true);
-                System.out.println("É UM TESTE, ME APAGA!!!");
-            } else {
                 try {
-                    if (!loginController.efetuarLogin(usernameField.textProperty(), passwordField.textProperty())) {
+                    Usuario u = loginController.efetuarLogin(usernameField.getText(), passwordField.getText());
+                    if (u == null) {
                         mensagemErro.setVisible(true);
+                    } else {
+                        System.out.println(AutenticacaoController.getAutenticado().toString());
+                        proximaTela(stage);
                     }
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }
             }
-        });
+        );
 
         // Container vertical
         VBox vbox = new VBox(20, logo, usernameField, passwordField, mensagemErro, btnEntrar);
@@ -111,7 +117,10 @@ public class FxTelaLogin extends Application {
         );
     }
 
-    public static void main(String[] args) {
-        launch();
+    private void proximaTela(Stage primaryStage) {
+        FXMeusProjetos projetos = new FXMeusProjetos();
+        FXMeusProjetos.setMeusProjetosController(ControllerRegistry.getInstance().getMeusProjetosController());
+        projetos.start(primaryStage);
     }
+
 }

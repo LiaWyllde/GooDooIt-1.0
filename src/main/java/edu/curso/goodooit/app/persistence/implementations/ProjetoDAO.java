@@ -21,10 +21,10 @@ public class ProjetoDAO implements IProjetoDAO {
                 rs.getString("descricao"),
                 rs.getDate("data_inicio").toLocalDate(),
                 rs.getDate("data_fim").toLocalDate(),
-                rs.getDate("data_criacao").toLocalDate(),
-                rs.getInt("Status_ProjetoID"),
-                rs.getInt("LiderID")
-        );
+                rs.getDate("dataCriacao").toLocalDate(),
+                rs.getInt("LiderID"),
+                rs.getInt("StatusID")
+                );
     }
 
     @Override
@@ -117,7 +117,7 @@ public class ProjetoDAO implements IProjetoDAO {
                         descricao,
                         data_inicio,
                         data_fim,
-                        data_criacao,
+                        dataCriacao,
                         LiderID,
                         StatusID
                     ) VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -153,7 +153,7 @@ public class ProjetoDAO implements IProjetoDAO {
                         descricao,
                         data_inicio,
                         data_fim,
-                        data_criacao,
+                        dataCricao,
                         StatusID
                      WHERE ID = ?
                 """;

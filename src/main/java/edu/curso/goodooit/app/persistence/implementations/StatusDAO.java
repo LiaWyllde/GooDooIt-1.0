@@ -20,7 +20,7 @@ public class StatusDAO implements IStatusDAO {
     private Status construirStatus(ResultSet rs) throws SQLException {
         return new Status(
                 rs.getInt("ID"),
-                rs.getString("nome"),
+                rs.getString("titulo"),
                 rs.getString("descricao")
         );
     }

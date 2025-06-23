@@ -41,4 +41,9 @@ public class Status {
     public void setDescricao(String descricao) {
         this.descricao = descricao;
     }
+
+    @Override
+    public String toString() {
+        return titulo;
+    }
 }

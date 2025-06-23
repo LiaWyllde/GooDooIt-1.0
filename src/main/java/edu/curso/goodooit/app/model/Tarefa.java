@@ -18,6 +18,8 @@ public class Tarefa {
     private Integer ResponsavelID;
     private Integer ProjetoID;
 
+    private Status status;
+
 
     public Tarefa() {}
 
@@ -209,6 +211,14 @@ public class Tarefa {
 
     public void setProjetoID(Integer projetoID) {
         ProjetoID = projetoID;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
     @Override

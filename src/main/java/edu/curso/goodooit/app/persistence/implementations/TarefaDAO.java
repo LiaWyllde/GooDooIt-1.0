@@ -1,3 +1,4 @@
+
 package edu.curso.goodooit.app.persistence.implementations;
 
 import edu.curso.goodooit.app.model.Tarefa;
@@ -7,16 +8,13 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/*
-TarefaDAO para primeira versao com menos atributos e funcionalidades
-Relacao de tarefa é direta com projeto, não temos listas e quadros por enquanto
- */
 public class TarefaDAO implements ITarefaDAO {
     private final DataBaseConnection dbConn;
 
     public TarefaDAO(DataBaseConnection dbConn) {
         this.dbConn = dbConn;
     }
+
 
     private Tarefa construirTarefa(ResultSet rs) throws SQLException {
         return new Tarefa(
@@ -25,10 +23,10 @@ public class TarefaDAO implements ITarefaDAO {
                 rs.getString("descricao"),
                 rs.getDate("data_inicio").toLocalDate(),
                 rs.getDate("data_fim").toLocalDate(),
-                rs.getDate("data_criacao").toLocalDate(),
+                rs.getDate("dataCriacao").toLocalDate(),
                 rs.getInt("prioridade"),
                 rs.getInt("CriadorID"),
-                rs.getInt("ResponsavelID"),
+                rs.getObject("ResponsavelID") != null ? rs.getInt("ResponsavelID") : null,
                 rs.getInt("StatusID"),
                 rs.getInt("ProjetoID")
         );
@@ -83,8 +81,6 @@ public class TarefaDAO implements ITarefaDAO {
         String sql = """
                     SELECT t.*
                     FROM Tarefa t
-                    INNER JOIN Projeto p
-                    ON t.ProjetoID = p.id
                     INNER JOIN Usuario u
                     ON u.ID = t.ResponsavelID
                     WHERE u.ID = ?
@@ -97,11 +93,9 @@ public class TarefaDAO implements ITarefaDAO {
         String sql = """
                     SELECT t.*
                     FROM Tarefa t
-                    INNER JOIN Projeto p
-                    ON t.ProjetoID = p.id
                     INNER JOIN Usuario u
                     ON u.ID = t.ResponsavelID
-                    WHERE u.ID = ? AND p.id = ?
+                    WHERE u.ID = ? AND t.ProjetoID = ?
                 """;
         List<Tarefa> lista = new ArrayList<>();
         try (Connection conn = dbConn.getConnection();
@@ -123,28 +117,6 @@ public class TarefaDAO implements ITarefaDAO {
         return comporLista(idCriador, sql);
     }
 
-
-    private List<Tarefa> comporLista(Integer id, String sql) throws SQLException {
-        List<Tarefa> lista = new ArrayList<>();
-        try (Connection conn = dbConn.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, id);
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    lista.add(construirTarefa(rs));
-                }
-            }
-        }
-        return lista;
-    }
-
-    @Override
-    public List<Tarefa> buscarTarefaIdLista(Integer idLista) throws SQLException {
-        String sql = "SELECT * FROM tarefa WHERE ListaID = ?";
-        return comporLista(idLista, sql);
-    }
-
-
     @Override
     public List<Tarefa> buscarTarefaPrioridade(int prioridade) throws SQLException {
         String sql = "SELECT * FROM tarefa WHERE prioridade = ?";
@@ -152,23 +124,62 @@ public class TarefaDAO implements ITarefaDAO {
     }
 
     @Override
-    public Integer registrarTarefa(Tarefa tarefa) throws SQLException {
-        String sqlInsert = """
-                    INSERT INTO tarefa (
-                        nome,
-                        descricao,
-                        data_inicio,
-                        data_fim,
-                        data_criacao,
-                        prioridade,
-                        CriadorID,
-                        Status_TarefaID,
-                        ResponsavelID,
-                        ProjetoID
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    public Integer contarTarefasCompletasProjetoId(Integer idProjeto) throws SQLException {
+        String sql = """
+                SELECT COUNT(t.StatusID)
+                FROM Tarefa t
+                WHERE t.StatusID = 3 AND t.ProjetoID = ?;
                 """;
         try (Connection conn = dbConn.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, idProjeto);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Integer contarTarefasIncompletasProjetoId(Integer idProjeto) throws SQLException {
+        String sql = """
+                SELECT COUNT(t.StatusID)
+                FROM Tarefa t
+                WHERE t.StatusID != 3 AND t.ProjetoID = ?;
+                """;
+        try (Connection conn = dbConn.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, idProjeto);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Integer registrarTarefa(Tarefa tarefa) throws SQLException {
+        String sql = """
+                            INSERT INTO tarefa (
+                                    nome,
+                                    descricao,
+                                    data_inicio,
+                                    data_fim,
+                                    dataCriacao,
+                                    prioridade,
+                                    CriadorID,
+                                    StatusID,
+                                    ResponsavelID,
+                                    ProjetoID)
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+                """;
+
+        try (Connection conn = dbConn.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             stmt.setString(1, tarefa.getNome());
             stmt.setString(2, tarefa.getDescricao());
@@ -178,8 +189,13 @@ public class TarefaDAO implements ITarefaDAO {
             stmt.setInt(6, tarefa.getPrioridade());
             stmt.setInt(7, tarefa.getCriadorID());
             stmt.setInt(8, tarefa.getStatusTarefaID());
-            stmt.setInt(9, tarefa.getResponsavelID());
-            stmt.setInt(10,tarefa.getProjetoID());
+
+            if (tarefa.getResponsavelID() != null)
+                stmt.setInt(9, tarefa.getResponsavelID());
+            else
+                stmt.setNull(9, Types.INTEGER);
+
+            stmt.setInt(10, tarefa.getProjetoID());
 
             int linhas = stmt.executeUpdate();
             System.out.println("Linhas afetadas: " + linhas);
@@ -207,19 +223,19 @@ public class TarefaDAO implements ITarefaDAO {
     @Override
     public void atualizarTarefa(Tarefa tarefa) throws SQLException {
         String sql = """
-                    UPDATE tarefa SET
+                UPDATE tarefa SET
                         nome = ?,
                         descricao = ?,
-                        data_inicio = ?,
-                        data_fim = ?,
-                        data_criacao = ?,
+                        data_inicio = ?,data_fim = ?,
+                        dataCriacao = ?,
                         prioridade = ?,
                         CriadorID = ?,
-                        Status_TarefaID = ?,
+                        StatusID = ?,
                         ResponsavelID = ?,
                         ProjetoID = ?
-                    WHERE id = ?
+                        WHERE id = ?
                 """;
+
         try (Connection conn = dbConn.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
@@ -231,12 +247,37 @@ public class TarefaDAO implements ITarefaDAO {
             stmt.setInt(6, tarefa.getPrioridade());
             stmt.setInt(7, tarefa.getCriadorID());
             stmt.setInt(8, tarefa.getStatusTarefaID());
-            stmt.setInt(9, tarefa.getResponsavelID());
-            stmt.setInt(10,tarefa.getProjetoID());
-            stmt.setInt(11,tarefa.getID());
+
+            if (tarefa.getResponsavelID() != null)
+                stmt.setInt(9, tarefa.getResponsavelID());
+            else
+                stmt.setNull(9, Types.INTEGER);
+
+            stmt.setInt(10, tarefa.getProjetoID());
+            stmt.setInt(11, tarefa.getID());
 
             int linhas = stmt.executeUpdate();
             System.out.println("Linhas afetadas: " + linhas);
         }
+    }
+
+    @Override
+    public List<Tarefa> buscarTarefasProjetoId(Integer idProjeto) throws SQLException {
+        String sql = "SELECT * FROM  tarefa WHERE projetoID = ?";
+        return comporLista(idProjeto, sql);
+    }
+
+    private List<Tarefa> comporLista(Integer id, String sql) throws SQLException {
+        List<Tarefa> lista = new ArrayList<>();
+        try (Connection conn = dbConn.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    lista.add(construirTarefa(rs));
+                }
+            }
+        }
+        return lista;
     }
 }
