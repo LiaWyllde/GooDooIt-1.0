@@ -85,13 +85,11 @@ public class MeusProjetosController {
         return null;
     }
 
-    public void salvarProjeto(Integer idProjeto){
-        //TODO: TESTAR
+    public void salvarProjeto(Projeto projetoEditado){
         try{
-            Projeto p = projetoDAO.buscarProjetoId(idProjeto);
-            if (p != null){
-                System.out.println(p.toString());
-                projetoDAO.atualizarProjeto(p);
+            if (projetoEditado != null){
+                System.out.println(projetoEditado.toString());
+                projetoDAO.atualizarProjeto(projetoEditado);
             } else {
                 System.out.println("Projeto não encontrado");
             }
@@ -99,9 +97,14 @@ public class MeusProjetosController {
             e.printStackTrace();
         }
     }
-
     public void criarProjeto(String nome, String descricao, LocalDate dataInicio, LocalDate dataFim) {
         //TODO: Implementar
         System.out.printf("Criando Projeto %s%n Descricao %s%n Data Inicio %s%n Data Final %s%n", nome,descricao,dataInicio.toString(),dataFim.toString());
+        Projeto novoProjeto = new Projeto(nome, descricao, dataInicio, dataFim, LocalDate.now(), 1, AutenticacaoController.getAutenticado().getID());
+        try {
+            projetoDAO.registrarProjeto(novoProjeto);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

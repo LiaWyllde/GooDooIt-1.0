@@ -30,6 +30,7 @@ public class FXMeusProjetos extends Application {
 
     //TODO: Implementar convites do banco, barra lateral clicável e redirecionando
     //TODO: Excluir projeto
+    //TODO: Contagem de projetos
 
     private VBox areaPrincipal;
     private StackPane modalProjeto;
@@ -170,10 +171,8 @@ public class FXMeusProjetos extends Application {
                 lbl.setStyle("-fx-font-family: monospace; -fx-font-size: 18px; -fx-text-fill: black;");
             }
 
-    //        Label icone = new Label("✎");
             Button editar = new Button("Editar");
             Button excluir = new Button("Excluir");
-            ImageView editarEdicao = formatarIcone("/images/edit.jpg");
             editar.setStyle("-fx-font-size: 18px; -fx-text-fill: gray; -fx-font-family: monospace;");
             excluir.setStyle("-fx-font-size: 18px; -fx-text-fill: gray; -fx-font-family: monospace;");
 
@@ -244,7 +243,7 @@ public class FXMeusProjetos extends Application {
 
         // Actions para atualizar o projeto
         btnSalvar.setOnAction(e -> {
-            meusProjetosController.criarProjeto(tfNome.getText(), taDescricao.getText(), dpInicio.getValue(), dpFim.getValue());
+            meusProjetosController.criarProjeto(tfNome.getText().trim(), taDescricao.getText().trim(), dpInicio.getValue(), dpFim.getValue());
             fundo.setVisible(false);
         });
 
@@ -289,7 +288,11 @@ public class FXMeusProjetos extends Application {
 
         // Actions para atualizar o projeto
         btnSalvar.setOnAction(e -> {
-            meusProjetosController.salvarProjeto(p.getID());
+            p.setNome(tfNome.getText());
+            p.setDescricao(taDescricao.getText());
+            p.setDataInicio(dpInicio.getValue());
+            p.setDataFim(dpFim.getValue());
+            meusProjetosController.salvarProjeto(p);
             fundo.setVisible(false);
         });
 
@@ -389,7 +392,7 @@ public class FXMeusProjetos extends Application {
     }
 
     private void telaProjetoDono(Stage primaryStage) {
-        System.out.println("Tela Projeto");
+        start(primaryStage);
     }
 
     private void telaSair(Stage primaryStage) {

@@ -136,8 +136,8 @@ public class ProjetoDAO implements IProjetoDAO {
             stmt.setDate(3, Date.valueOf(projeto.getDataInicio()));
             stmt.setDate(4, Date.valueOf(projeto.getDataFim()));
             stmt.setDate(5, Date.valueOf(projeto.getDataCriacao()));
-            stmt.setInt(6, projeto.getStatusProjetoID());
-            stmt.setInt(7, projeto.getLiderID());
+            stmt.setInt(6, projeto.getLiderID());
+            stmt.setInt(7, projeto.getStatusProjetoID());
 
             int linhas = stmt.executeUpdate();
             System.out.println("Linhas afetadas: " + linhas);
@@ -155,12 +155,12 @@ public class ProjetoDAO implements IProjetoDAO {
     public void atualizarProjeto(Projeto projeto) throws SQLException {
         String sql = """
                     UPDATE Projeto
-                       SET nome,
-                        descricao,
-                        data_inicio,
-                        data_fim,
-                        dataCricao,
-                        StatusID
+                       SET nome = ?,
+                        descricao = ?,
+                        data_inicio = ?,
+                        data_fim = ?,
+                        dataCriacao = ?,
+                        StatusID = ?
                      WHERE ID = ?
                 """;
         try (Connection conn = dbConn.getConnection();

@@ -61,7 +61,7 @@ public class FxTelaLogin extends Application {
         // Se o usuário não estiver logado, mostrar mensagem
         btnEntrar.setOnAction(event -> {
                 try {
-                    Usuario u = loginController.efetuarLogin(usernameField.getText(), passwordField.getText());
+                    Usuario u = loginController.efetuarLogin(usernameField.getText().trim().toLowerCase(), passwordField.getText().trim());
                     if (u == null) {
                         mensagemErro.setVisible(true);
                     } else {
