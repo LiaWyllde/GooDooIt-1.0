@@ -62,7 +62,7 @@ public class EquipeDAO implements IEquipeDAO {
     public List<Usuario> buscarUsuariosPorProjeto(Integer idProjeto) throws SQLException {
         String sql =
                 """
-                        SELECT *
+                        SELECT u.*
                         FROM usuario u
                         INNER JOIN usuario_projeto up ON up.usuarioID = u.id
                         WHERE up.projetoID = ?

@@ -58,7 +58,13 @@ public class ProjetoDAO implements IProjetoDAO {
 
     @Override
     public List<Projeto> buscarProjetoUsuarioLider(Integer idUsuario) throws SQLException {
-        String sql = "SELECT * FROM Projeto WHERE LiderID = ?";
+        String sql = """
+                SELECT p.* 
+                FROM Projeto p
+                INNER JOIN Usuario u
+                ON u.ID = p.LiderID
+                WHERE u.ID = ?;
+                """;
         List<Projeto> lista = new ArrayList<>();
         try (Connection conn = dbConn.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {

@@ -6,8 +6,11 @@ import edu.curso.goodooit.app.controller.MeusProjetosController;
 import edu.curso.goodooit.app.model.Projeto;
 import edu.curso.goodooit.app.model.Usuario;
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -23,6 +26,10 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class FXMeusProjetos extends Application {
+    //Listagem de projeto que sou dono
+
+    //TODO: Implementar convites do banco, barra lateral clicável e redirecionando
+    //TODO: Excluir projeto
 
     private VBox areaPrincipal;
     private StackPane modalProjeto;
@@ -46,7 +53,9 @@ public class FXMeusProjetos extends Application {
         double larguraTela = Screen.getPrimary().getBounds().getWidth();
         double alturaTela = Screen.getPrimary().getBounds().getHeight();
 
-        primaryStage.setTitle("Meus Projetos - Julia Fernandes");
+        Usuario autenticado = AutenticacaoController.getAutenticado();
+        String nomeCompleto = autenticado.getNome() + " " + autenticado.getSobrenome();
+        primaryStage.setTitle("Meus Projetos - " + nomeCompleto);
 
         VBox sidebar = new VBox(15);
         sidebar.setPadding(new Insets(20));
@@ -54,31 +63,29 @@ public class FXMeusProjetos extends Application {
         sidebar.setPrefWidth(220);
         sidebar.setAlignment(Pos.TOP_CENTER);
 
-        Image avatarImage = new Image(getClass().getResourceAsStream("/images/Goo.png"), 100, 100, true, true);
+        Image avatarImage = new Image(getClass().getResourceAsStream("/images/LogoComTexto.png"), 100, 100, true, true);
         ImageView avatarView = new ImageView(avatarImage);
 
-        Label nome = new Label("Julia Fernandes");
+        Label nome = new Label(nomeCompleto);
         nome.setStyle("-fx-font-size: 18px; -fx-font-family: monospace;");
 
         HBox notificacoes = new HBox(20);
         notificacoes.setAlignment(Pos.CENTER);
-        
-        ImageView iconeNotificacao = formatarIcone("/images/notification.png");
-        Label sino = new Label("5"); // Property notificação
-        
+
         ImageView iconeConvite = formatarIcone("/images/envelope.jpg");
-        Label email = new Label("1"); // Property email
-        
-        sino.setStyle("-fx-font-size: 16px;");
+        Label email = new Label("1");
+        email.setCursor(Cursor.HAND);
+
+        email.setOnMouseClicked(e -> modalConvites.setVisible(true));
+
         email.setStyle("-fx-font-size: 16px;");
         notificacoes.getChildren().addAll(iconeConvite, email);
 
         sidebar.getChildren().addAll(avatarView, nome, notificacoes);
 
         Map<String, Runnable> botoes = new LinkedHashMap<>();
-        botoes.put("Projetos", () -> telaProjetoDono(primaryStage));
+        botoes.put("Meus Projetos", () -> telaProjetoDono(primaryStage));
         botoes.put("Colaborando", () -> telaProjetoColaborador(primaryStage));
-        botoes.put("Equipes", () -> telaEquipes(primaryStage));
         botoes.put("Tarefas", () -> telaTarefas(primaryStage));
         botoes.put("Editar Perfil", () -> telaEditarPerfil(primaryStage));
         botoes.put("Sair", () -> telaSair(primaryStage));
@@ -102,7 +109,7 @@ public class FXMeusProjetos extends Application {
         VBox.setVgrow(areaPrincipal, Priority.ALWAYS);
         areaPrincipal.setMaxWidth(Double.MAX_VALUE);
 
-        Label titulo = new Label("Meus projetos");
+        Label titulo = new Label("Meus projetos - ");
         titulo.setStyle("-fx-font-size: 22px; -fx-font-family: monospace; -fx-text-fill: black;");
 
         VBox projetosContainer = new VBox(15);
@@ -129,10 +136,10 @@ public class FXMeusProjetos extends Application {
         Button btnCriar = new Button("Criar novo projeto");
         estilizarBotao(btnCriar);
 
-        Projeto projetoVazio = new Projeto();
-        btnCriar.setOnAction(e -> abrirModalProjeto(projetoVazio));
+        btnCriar.setOnAction(e -> abrirModalProjeto());
 
-        areaPrincipal.getChildren().addAll(titulo, projetosContainer, btnCriar);
+        areaPrincipal.setAlignment(Pos.CENTER);
+        areaPrincipal.getChildren().addAll(titulo, scroll, btnCriar);
 
         StackPane painelCinza = new StackPane(areaPrincipal);
         painelCinza.setStyle("-fx-background-color: #dddddd; -fx-background-radius: 20px;");
@@ -147,39 +154,44 @@ public class FXMeusProjetos extends Application {
         primaryStage.show();
     }
 
-    private VBox criarBlocoProjeto(Projeto p, Integer concluidas, Integer outras) {
-        VBox bloco = new VBox(10);
-        bloco.setPadding(new Insets(20));
-        bloco.setStyle("-fx-background-color: white; -fx-background-radius: 15px;");
-        bloco.setMaxWidth(Double.MAX_VALUE);
+        private VBox criarBlocoProjeto(Projeto p, Integer concluidas, Integer outras) {
+            VBox bloco = new VBox(10);
+            bloco.setCursor(Cursor.HAND);
+            bloco.setPadding(new Insets(20));
+            bloco.setStyle("-fx-background-color: white; -fx-background-radius: 15px; -fx-border-color: black; -fx-border-radius: 10px;");
+            bloco.setMaxWidth(Double.MAX_VALUE);
 
-        Label nomeProjeto = new Label(p.getNome());
-        Label status = new Label("Status: " + p.getStatus().toString());
-        Label lblConcluidas = new Label("Tarefas concluídas: " + concluidas);
-        Label lblOutras = new Label("Outras tarefas: " + outras);
+            Label nomeProjeto = new Label(p.getNome());
+            Label status = new Label("Status: " + p.getStatus().toString());
+            Label lblConcluidas = new Label("Tarefas concluídas: " + concluidas);
+            Label lblOutras = new Label("Outras tarefas: " + outras);
 
-        for (Label lbl : new Label[]{nomeProjeto, status, lblConcluidas, lblOutras}) {
-            lbl.setStyle("-fx-font-family: monospace; -fx-font-size: 18px; -fx-text-fill: black;");
+            for (Label lbl : new Label[]{nomeProjeto, status, lblConcluidas, lblOutras}) {
+                lbl.setStyle("-fx-font-family: monospace; -fx-font-size: 18px; -fx-text-fill: black;");
+            }
+
+    //        Label icone = new Label("✎");
+            Button editar = new Button("Editar");
+            Button excluir = new Button("Excluir");
+            ImageView editarEdicao = formatarIcone("/images/edit.jpg");
+            editar.setStyle("-fx-font-size: 18px; -fx-text-fill: gray; -fx-font-family: monospace;");
+            excluir.setStyle("-fx-font-size: 18px; -fx-text-fill: gray; -fx-font-family: monospace;");
+
+            editar.setOnMouseClicked(e -> {
+                StackPane modal = criarModalEditarProjeto(p);
+                root.getChildren().add(modal);
+                abrirModalProjeto(p,modal);
+            });
+
+            HBox botoes = new HBox(10, editar, excluir);
+            botoes.setAlignment(Pos.TOP_RIGHT);
+            StackPane.setAlignment(botoes, Pos.TOP_RIGHT);
+            StackPane.setMargin(botoes, new Insets(10));
+
+            StackPane stack = new StackPane(bloco, botoes);
+            bloco.getChildren().addAll(nomeProjeto, status, lblConcluidas, lblOutras);
+            return new VBox(stack);
         }
-
-//        Label icone = new Label("✎");
-        Button icone = new Button("Editar");
-        ImageView iconeEdicao = formatarIcone("/images/edit.jpg");
-        icone.setStyle("-fx-font-size: 18px; -fx-text-fill: gray; -fx-font-family: monospace;");
-
-        icone.setOnMouseClicked(e -> {
-            StackPane modal = criarModalProjeto(p);
-            root.getChildren().add(modal);
-            abrirModalProjeto(p,modal);
-        });
-
-        StackPane stack = new StackPane(bloco, icone);
-        StackPane.setAlignment(icone, Pos.TOP_RIGHT);
-        StackPane.setMargin(icone, new Insets(10));
-
-        bloco.getChildren().addAll(nomeProjeto, status, lblConcluidas, lblOutras);
-        return new VBox(stack);
-    }
 
     private void abrirModalProjeto(Projeto p, StackPane modal) {
         TextField tfNome = new TextField(p.getNome());
@@ -189,14 +201,58 @@ public class FXMeusProjetos extends Application {
         modal.setVisible(true);
     }
 
-    private void abrirModalProjeto(Projeto p) {
-        p.setID(1);
-        modalProjeto = criarModalProjeto(p);
+    private void abrirModalProjeto() {
+        modalProjeto = criarModalCriarProjeto();
         root.getChildren().add(modalProjeto);
         modalProjeto.setVisible(true);
     }
 
-    public StackPane criarModalProjeto(Projeto p) {
+    private StackPane criarModalCriarProjeto() {
+        double largura = Screen.getPrimary().getBounds().getWidth();
+        double altura = Screen.getPrimary().getBounds().getHeight();
+
+        VBox conteudoModal = new VBox(10);
+        conteudoModal.setPadding(new Insets(20));
+        conteudoModal.setAlignment(Pos.CENTER_LEFT);
+        conteudoModal.setMaxWidth(largura * 0.5);
+        conteudoModal.setMaxHeight(altura * 0.5);
+        conteudoModal.setStyle("-fx-background-color: #E6E6E6; -fx-background-radius: 20;");
+
+        TextField tfNome = new TextField();
+        TextArea taDescricao = new TextArea();
+        DatePicker dpInicio = new DatePicker();
+        DatePicker dpFim = new DatePicker();
+
+        Button btnSalvar = new Button("Salvar");
+        Button btnCancelar = new Button("Cancelar");
+
+        HBox botoes = new HBox(20, btnSalvar, btnCancelar);
+        botoes.setAlignment(Pos.CENTER);
+
+        conteudoModal.getChildren().addAll(
+                new Label("Nome do Projeto"), tfNome,
+                new Label("Descrição"), taDescricao,
+                new Label("Prazo previsto para início"), dpInicio,
+                new Label("Prazo previsto para finalização"), dpFim,
+                botoes
+        );
+
+        StackPane fundo = new StackPane(conteudoModal);
+        fundo.setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);");
+        fundo.setVisible(false);
+        fundo.setAlignment(Pos.CENTER);
+
+        // Actions para atualizar o projeto
+        btnSalvar.setOnAction(e -> {
+            meusProjetosController.criarProjeto(tfNome.getText(), taDescricao.getText(), dpInicio.getValue(), dpFim.getValue());
+            fundo.setVisible(false);
+        });
+
+        btnCancelar.setOnAction(e -> fundo.setVisible(false));
+        return fundo;
+    }
+
+    public StackPane criarModalEditarProjeto(Projeto p) {
         double largura = Screen.getPrimary().getBounds().getWidth();
         double altura = Screen.getPrimary().getBounds().getHeight();
 
@@ -239,10 +295,6 @@ public class FXMeusProjetos extends Application {
 
         btnCancelar.setOnAction(e -> fundo.setVisible(false));
         return fundo;
-    }
-
-    private Button botaoMenu(String texto, boolean roxo) {
-        return botaoMenu(texto, roxo, false);
     }
 
     private Button botaoMenu(String texto, boolean roxo, boolean selecionado) {
@@ -336,7 +388,23 @@ public class FXMeusProjetos extends Application {
         return iconeEdit;
     }
 
-    public static void main(String[] args) {
-        launch(args);
+    private void telaProjetoDono(Stage primaryStage) {
+        System.out.println("Tela Projeto");
+    }
+
+    private void telaSair(Stage primaryStage) {
+        System.out.println("Tela Sair");
+    }
+
+    private void telaEditarPerfil(Stage primaryStage) {
+        System.out.println("Tela EditarPerfil");
+    }
+
+    private void telaTarefas(Stage primaryStage) {
+        System.out.println("Tela Tarefas");
+    }
+
+    private void telaProjetoColaborador(Stage primaryStage) {
+        System.out.println("Tela ProjetoColaborador");
     }
 }

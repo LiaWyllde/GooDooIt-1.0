@@ -7,6 +7,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.List;
 
 public class MeusProjetosController {
@@ -85,18 +86,22 @@ public class MeusProjetosController {
     }
 
     public void salvarProjeto(Integer idProjeto){
-        System.out.println("Editando projeto...");
-        //If projeto existe then dao.atualizar
-        //If projeto !existe then dao.registrar
+        //TODO: TESTAR
         try{
             Projeto p = projetoDAO.buscarProjetoId(idProjeto);
             if (p != null){
                 System.out.println(p.toString());
+                projetoDAO.atualizarProjeto(p);
             } else {
-                System.out.println("Registrando projeto");
+                System.out.println("Projeto não encontrado");
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public void criarProjeto(String nome, String descricao, LocalDate dataInicio, LocalDate dataFim) {
+        //TODO: Implementar
+        System.out.printf("Criando Projeto %s%n Descricao %s%n Data Inicio %s%n Data Final %s%n", nome,descricao,dataInicio.toString(),dataFim.toString());
     }
 }
