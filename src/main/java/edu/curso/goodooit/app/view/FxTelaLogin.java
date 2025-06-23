@@ -12,7 +12,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -25,53 +25,63 @@ public class FxTelaLogin extends Application {
     private static LoginController loginController;
 
     public static void setLoginController(LoginController lc) {
-       loginController = lc;
+        loginController = lc;
     }
 
     @Override
     public void start(Stage stage) {
-        // Imagem do logo
+        // Logo
         ImageView logo = new ImageView(new Image(getClass().getResourceAsStream("/images/LogoComTexto.png")));
         logo.setFitHeight(180);
         logo.setPreserveRatio(true);
 
-        // Campo de nome de usuário
+        // Campos
         TextField usernameField = new TextField();
         usernameField.setPromptText("nome de usuário");
         estilizarCampo(usernameField);
 
-        // Campo de senha
         PasswordField passwordField = new PasswordField();
         passwordField.setPromptText("senha");
         estilizarCampo(passwordField);
 
-        // Texto de erro (inicialmente invisível)
+        // Mensagem de erro
         Text mensagemErro = new Text("Usuário ou senha inválido!");
         mensagemErro.setFill(Color.FIREBRICK);
         mensagemErro.setFont(Font.font("Courier New", 18));
-        mensagemErro.setVisible(false); // começa invisível
+        mensagemErro.setVisible(false);
 
-        // Botão de entrar
+        // Botões
         Button btnEntrar = new Button("Entrar");
+        Button btnCadastrar = new Button("Cadastrar");
         estilizarBotao(btnEntrar);
+        estilizarBotao(btnCadastrar);
 
-        // Se o usuário não estiver logado, mostrar mensagem
+        HBox hboxBotoes = new HBox(20, btnEntrar, btnCadastrar);
+        hboxBotoes.setAlignment(Pos.CENTER);
+
         btnEntrar.setOnAction(event -> {
-                try {
-                    Usuario u = loginController.efetuarLogin(usernameField.getText().trim().toLowerCase(), passwordField.getText().trim());
-                    if (u == null) {
-                        mensagemErro.setVisible(true);
-                    } else {
-                        proximaTela(stage);
-                    }
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
+            try {
+                Usuario u = loginController.efetuarLogin(
+                        usernameField.getText().trim().toLowerCase(),
+                        passwordField.getText().trim()
+                );
+                if (u == null) {
+                    mensagemErro.setVisible(true);
+                } else {
+                    proximaTela(stage);
                 }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
             }
-        );
+        });
 
-        // Container vertical
-        VBox vbox = new VBox(20, logo, usernameField, passwordField, mensagemErro, btnEntrar);
+        btnCadastrar.setOnAction(event -> {
+            FXTelaCadastro cadastro = new FXTelaCadastro();
+            FXTelaCadastro.setCadastroController(AllControllerRegistry.getInstance().getCadastroController());
+            cadastro.start(stage);
+        });
+
+        VBox vbox = new VBox(20, logo, usernameField, passwordField, mensagemErro, hboxBotoes);
         vbox.setPadding(new Insets(50));
         vbox.setAlignment(Pos.CENTER);
         vbox.setStyle("-fx-background-color: #d9d9d9;");
@@ -112,5 +122,4 @@ public class FxTelaLogin extends Application {
         FXMeusProjetos.setMeusProjetosController(AllControllerRegistry.getInstance().getMeusProjetosController());
         projetos.start(primaryStage);
     }
-
 }

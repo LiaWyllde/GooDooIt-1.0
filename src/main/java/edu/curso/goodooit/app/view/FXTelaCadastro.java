@@ -1,5 +1,6 @@
 package edu.curso.goodooit.app.view;
 
+import edu.curso.goodooit.app.controller.CadastroController;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -15,14 +16,20 @@ import javafx.stage.Stage;
 
 public class FXTelaCadastro extends Application {
 
+
+    private static CadastroController cadastroController;
     private Text mensagem;
+
+    public static void setCadastroController(CadastroController cadastroController) {
+        FXTelaCadastro.cadastroController = cadastroController;
+    }
 
     @Override
     public void start(Stage stage) {
 
         // Logo do sistema
         ImageView logo = new ImageView(new Image(getClass().getResourceAsStream("/images/LogoComTexto.png")));
-        logo.setFitHeight(120);
+        logo.setFitHeight(300);
         logo.setPreserveRatio(true);
 
         // Título
@@ -47,11 +54,12 @@ public class FXTelaCadastro extends Application {
         // Botões
         Button btnCadastrar = new Button("Inscrever-se");
         Button btnSair = new Button("Sair");
-        estilizarBotaoCinza(btnCadastrar);
-        estilizarBotaoCinza(btnSair);
+        estilizarBotao(btnCadastrar);
+        estilizarBotao(btnSair);
 
         btnCadastrar.setOnAction(e -> {
-            int resultado = cadastrarUsuario(
+            int resultado =
+                    cadastroController.cadastrar(
                     usernameField.getText(),
                     nomeField.getText(),
                     sobrenomeField.getText(),
@@ -59,6 +67,7 @@ public class FXTelaCadastro extends Application {
                     senhaField.getText(),
                     confirmarField.getText()
             );
+            System.out.println(resultado);
             exibirMensagem(resultado);
         });
 
@@ -78,14 +87,14 @@ public class FXTelaCadastro extends Application {
         painelCentral.setPadding(new Insets(30));
         painelCentral.setAlignment(Pos.CENTER);
         painelCentral.setStyle("-fx-background-color: #c6addb; -fx-background-radius: 20px;");
-        painelCentral.setMaxWidth(600);
+        painelCentral.setMaxWidth(800);
 
         VBox root = new VBox(30, logo, painelCentral);
         root.setAlignment(Pos.CENTER);
         root.setStyle("-fx-background-color: #d9d9d9;");
         root.setPadding(new Insets(30));
 
-        Scene scene = new Scene(root, 900, 700);
+        Scene scene = new Scene(root, 1200, 1000);
         stage.setTitle("Cadastro - GooDoolt");
         stage.setScene(scene);
         stage.show();
@@ -121,29 +130,17 @@ public class FXTelaCadastro extends Application {
         return campo;
     }
 
-    private void estilizarBotaoCinza(Button btn) {
-        btn.setFont(Font.font("Courier New", 16));
-        btn.setStyle(
-                "-fx-background-color: #d8d8d8;" +
-                        "-fx-background-radius: 10px;" +
-                        "-fx-cursor: hand;" +
-                        "-fx-padding: 8 20;"
+    private void estilizarBotao(Button botao) {
+        botao.setPrefWidth(200);
+        botao.setPrefHeight(45);
+        botao.setStyle(
+                "-fx-background-color: #6A0DAD;" +
+                        "-fx-text-fill: white;" +
+                        "-fx-font-size: 18px;" +
+                        "-fx-font-family: 'Courier New';" +
+                        "-fx-background-radius: 15px;" +
+                        "-fx-cursor: hand;"
         );
-    }
-
-    // Simulação de método principal só para a tela rodar, precisa integrar com a controller
-    private int cadastrarUsuario(String username, String nome, String sobrenome, String email, String senha, String confirmar) {
-        if (username.isBlank() || nome.isBlank() || sobrenome.isBlank() ||
-                email.isBlank() || senha.isBlank() || confirmar.isBlank()) {
-            return 1; // campos vazios
-        }
-        if (username.equalsIgnoreCase("LiaFernandes")) {
-            return 2; // usuário em uso
-        }
-        if (!senha.equals(confirmar)) {
-            return 3; // senha não confere
-        }
-        return 4; // sucesso
     }
 
     private void exibirMensagem(int resultado) {

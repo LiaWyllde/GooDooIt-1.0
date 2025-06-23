@@ -19,7 +19,7 @@ public class CadastroController {
         4 - Sucesso em cadastrar
      */
 
-    public Integer cadastrar(String nome, String sobrenome, String login, String senha, String email, String confirmaSenha) {
+    public Integer cadastrar (String login, String nome, String sobrenome, String email, String senha, String confirmaSenha) {
 
         if (nome == null || sobrenome == null || login == null || senha == null || email == null || confirmaSenha == null) {
             return 1;
