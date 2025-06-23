@@ -7,16 +7,16 @@ import edu.curso.goodooit.app.persistence.implementations.UsuarioDAO;
 import javafx.application.Application;
 
 public class Main {
-    public static void main(String[] args){
+    public static void main(String[] args) {
         String password = "Nick159642@";
         DataBaseConnection dbConn = new DataBaseConnection("GooDooIt01", "sa", password, "localhost", 1433);
         UsuarioDAO uDAO = new UsuarioDAO(dbConn);
 
-        try{
+        try {
             AllControllerRegistry.initialize(dbConn);
-            LoginController lc = new LoginController(uDAO);
+            AllControllerRegistry cr = AllControllerRegistry.getInstance();
             FxTelaLogin telaLogin = new FxTelaLogin();
-            FxTelaLogin.setLoginController(lc);
+            FxTelaLogin.setLoginController(cr.getLoginController());
             Application.launch(telaLogin.getClass(), args);
         } catch (Exception e) {
             e.printStackTrace();

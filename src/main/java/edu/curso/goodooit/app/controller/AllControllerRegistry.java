@@ -21,6 +21,7 @@ public class AllControllerRegistry {
     private final LoginController loginController;
     private final AlterarSenhaController alterarSenhaController;
     private final AlterarDadosUsuarioController alterarDadosUsuarioController;
+    private final ConviteController conviteController;
 
 
     public AllControllerRegistry(DataBaseConnection dbConn) {
@@ -35,6 +36,7 @@ public class AllControllerRegistry {
         this.loginController = new LoginController(usuarioDAO);
         this.alterarSenhaController = new AlterarSenhaController(usuarioDAO);
         this.alterarDadosUsuarioController = new AlterarDadosUsuarioController(usuarioDAO);
+        this.conviteController = new ConviteController(conviteDAO, usuarioDAO, projetoDAO, equipeDAO);
     }
 
     public static void initialize(DataBaseConnection dbConn) {
@@ -55,5 +57,15 @@ public class AllControllerRegistry {
         return loginController;
     }
 
+    public AlterarSenhaController getAlterarSenhaController() {
+        return alterarSenhaController;
+    }
 
+    public AlterarDadosUsuarioController getAlterarDadosUsuarioController() {
+        return alterarDadosUsuarioController;
+    }
+
+    public ConviteController getConviteController() {
+        return conviteController;
+    }
 }

@@ -62,4 +62,41 @@ public class MeusProjetosController {
         }
         return null;
     }
+
+    public Projeto buscarProjeto(Integer idProjeto){
+        try {
+            return projetoDAO.buscarProjetoId(idProjeto);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    /*
+        Implementar na fronteira tratativa para projeto nulo
+     */
+
+    public Projeto buscarProjeto(String nomeProjeto){
+        try {
+            return projetoDAO.buscarProjetoNome(nomeProjeto);
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public void salvarProjeto(Integer idProjeto){
+        System.out.println("Editando projeto...");
+        //If projeto existe then dao.atualizar
+        //If projeto !existe then dao.registrar
+        try{
+            Projeto p = projetoDAO.buscarProjetoId(idProjeto);
+            if (p != null){
+                System.out.println(p.toString());
+            } else {
+                System.out.println("Registrando projeto");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }
