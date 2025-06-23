@@ -45,7 +45,7 @@ public class FXTelaProjetoDono extends Application {
         Label titulo = new Label("Projeto galo eletrônico");
         titulo.setStyle("-fx-font-size: 20px; -fx-font-family: monospace;");
 
-        ImageView iconeEdicao = usuarioEhDono ? formatarIcone("/images/edit.jpg") : formatarIcone(" /images/view.jpg");
+        Button iconeEdicao = usuarioEhDono ? new Button("Editar") : new Button("Ver");
         iconeEdicao.setStyle("-fx-font-size: 16px; -fx-text-fill: gray;");
         if (usuarioEhDono) {
             iconeEdicao.setOnMouseClicked(e -> abrirModalProjeto("Projeto galo eletrônico", "Projeto inicial para confecção dos modelos do Galotron3000", "28/04/2025", "22/10/2027"));
@@ -129,14 +129,10 @@ public class FXTelaProjetoDono extends Application {
         config.setStyle("-fx-background-color: white; -fx-background-radius: 12px; -fx-padding: 20;");
         config.setVisible(usuarioEhDono);
         
-        config.add(formatarIcone("/images/edit.jpg"), 0, 0);
-        config.add(new Label("Gerenciar membros"), 1, 0);
-        config.add(formatarIcone("/images/edit.jpg"), 2, 0);
-        config.add(new Label("Gerenciar listas"), 3, 0);
-        config.add(formatarIcone("/images/edit.jpg"), 4, 0);
-        config.add(new Label("Gerenciar status"), 5, 0);
-        config.add(formatarIcone("/images/edit.jpg"), 6, 0);
-        config.add(new Label("Gerenciar tarefas"), 7, 0);
+        config.add(new Button("Gerenciar membros"), 0, 0);
+        config.add(new Button("Gerenciar listas"), 1, 0);
+        config.add(new Button("Gerenciar status"), 2, 0);
+        config.add(new Button("Gerenciar tarefas"), 3, 0);
 
         Label criado = new Label("Criado em 11/03/2025");
         criado.setStyle("-fx-font-size: 11px; -fx-font-family: monospace;");

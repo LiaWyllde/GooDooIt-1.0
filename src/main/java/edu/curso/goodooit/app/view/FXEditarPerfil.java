@@ -164,7 +164,10 @@ public class FXEditarPerfil extends Application {
         StackPane campoComIcone;
 
         if (iconeTexto.equals("✏️")) {
-            ImageView iconeEdit = formatarIcone("/images/edit.jpg");
+            Button iconeEdit = new Button("Editar");
+            iconeEdit.setStyle("-fx-color: yellow");
+            StackPane.setAlignment(iconeEdit, Pos.CENTER_RIGHT);
+            StackPane.setMargin(iconeEdit, new Insets(0, 10, 0, 0));
 
             if (labelTexto.equalsIgnoreCase("Senha")) {
                 campo.setEditable(false);
@@ -174,7 +177,11 @@ public class FXEditarPerfil extends Application {
             campoComIcone = new StackPane(campo, iconeEdit);
 
         } else {
-            campoComIcone = new StackPane(campo, formatarIcone("/images/blocked.jpg"));
+        	Button iconeEdit = new Button("Bloqueado");
+            iconeEdit.setStyle("-fx-color: red");
+            StackPane.setAlignment(iconeEdit, Pos.CENTER_RIGHT);
+            StackPane.setMargin(iconeEdit, new Insets(0, 10, 0, 0));
+            campoComIcone = new StackPane(campo, iconeEdit);
         }
 
         return new VBox(5, label, campoComIcone);
@@ -193,7 +200,7 @@ public class FXEditarPerfil extends Application {
         conteudo.setMaxHeight(altura * 0.4);
         conteudo.setStyle("-fx-background-color: #E6E6E6; -fx-background-radius: 20;");
 
-        ImageView iconSenha = formatarIcone("/images/password.png");
+        ImageView iconSenha = formatarIcone("/password.png");
         Label titulo = new Label("Alterar Senha");
         titulo.setStyle("-fx-font-size: 24px; -fx-text-fill: #6A0DAD; -fx-font-weight: bold;");
 

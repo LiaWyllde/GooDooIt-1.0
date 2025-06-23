@@ -157,15 +157,13 @@ public class FXVisualizarTarefasProjeto extends Application {
         acoes.setAlignment(Pos.CENTER_RIGHT);
 
         
-        ImageView visualizar = formatarIcone("/images/view.jpg");
-        visualizar.setStyle("-fx-font-size: 14px;");
+        Label visualizar = new Label("Ver");
+        visualizar.setStyle("-fx-font-size: 14px;-fx-text-fill: black");
 
         if (ehDono) {
-            Button editar = new Button();
-            editar.setGraphic(formatarIcone("/images/edit.jpg"));
+            Button editar = new Button("Editar");
             
-            Button excluir = new Button();
-            excluir.setGraphic(formatarIcone("/images/delete.jpg"));
+            Button excluir = new Button("Remover");
             
             editar.setStyle("-fx-font-size: 14px;");
             excluir.setStyle("-fx-font-size: 14px;");
@@ -174,6 +172,8 @@ public class FXVisualizarTarefasProjeto extends Application {
             excluir.setOnAction(e -> System.out.println("Excluir: " + nome));
 
             acoes.getChildren().addAll(visualizar, editar, excluir);
+        } else {
+        	acoes.getChildren().addAll(visualizar);
         }
 
         tarefaBox.getChildren().addAll(nomeTarefa, status, prioridadeLbl, prazoLbl, origemLbl, acoes);

@@ -164,9 +164,8 @@ public class FXVisualizarMembrosProjeto extends Application {
         acoes.setAlignment(Pos.CENTER_RIGHT);
 
         if (usuarioEhDono) {
-            Button remover = new Button();
-            remover.setGraphic(formatarIcone("/images/delete.jpg"));
-            remover.setStyle("-fx-font-size: 12px;");
+            Button remover = new Button("Remover");
+            remover.setStyle("-fx-font-size: 12px; -fx-color:red");
             remover.setOnAction(e -> System.out.println("Remover: " + username));
             acoes.getChildren().add(remover);
         }
