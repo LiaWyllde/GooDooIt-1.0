@@ -6,6 +6,7 @@ import edu.curso.goodooit.app.controller.MeusProjetosController;
 import edu.curso.goodooit.app.model.Projeto;
 import edu.curso.goodooit.app.model.Usuario;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -18,6 +19,10 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class FXMeusProjetos extends Application {
     //Listagem de projeto que sou dono
@@ -72,15 +77,25 @@ public class FXMeusProjetos extends Application {
 
         sidebar.getChildren().addAll(avatarView, nome, notificacoes);
 
-        sidebar.getChildren().addAll(
-                botaoMenu("Meus projetos", true),
-                botaoMenu("Colaborando", false),
-                botaoMenu("Equipes", true),
-                botaoMenu("Tarefas", false),
-                botaoMenu("Editar perfil", true),
-                botaoMenu("Sair", false)
-        );
+        Map<String,Runnable> botoes = new LinkedHashMap<>();
+        botoes.put("Projetos",    () -> telaProjetoDono(primaryStage));
+        botoes.put("Colaborando", () -> telaProjetoColaborador(primaryStage));
+        botoes.put("Equipes",     () -> telaEquipes(primaryStage));
+        botoes.put("Tarefas",     () -> telaTarefas(primaryStage));
+        botoes.put("Editar Perfil", () -> telaEditarPerfil(primaryStage));
+        botoes.put("Sair",        () -> telaSair(primaryStage));
 
+        AtomicBoolean roxoFlag = new AtomicBoolean(true);
+
+        botoes.forEach((label, action) -> {
+            boolean roxo = roxoFlag.get();
+
+            Button btn = botaoMenu(label, roxo, false);
+            btn.setCursor(Cursor.HAND);
+            btn.setOnAction(e -> action.run());
+            sidebar.getChildren().add(btn);
+            roxoFlag.set(!roxo);
+        });
 
         areaPrincipal = new VBox(30);
         areaPrincipal.setPadding(new Insets(20));
@@ -126,7 +141,7 @@ public class FXMeusProjetos extends Application {
         HBox.setHgrow(painelCinza, Priority.ALWAYS);
 
         modalProjeto = criarModalProjeto(() -> System.out.println("Projeto salvo."));
-        modalConvites = criarModalVisualizarConvites( () -> System.out.println("Saindo do Visualizar Convites"));
+        modalConvites = criarModalVisualizarConvites(() -> System.out.println("Saindo do Visualizar Convites"));
 
 
         StackPane root = new StackPane(new HBox(sidebar, painelCinza), modalProjeto, modalConvites);
@@ -223,8 +238,6 @@ public class FXMeusProjetos extends Application {
     private Button botaoMenu(String texto, boolean roxo) {
         Button btn = botaoMenu(texto, roxo, false);
         btn.setCursor(Cursor.HAND);
-        btn.setOnAction(e ->);
-
         return btn;
     }
 
@@ -311,6 +324,26 @@ public class FXMeusProjetos extends Application {
     }
 
     private void telaProjetoDono(Stage primaryStage) {
-        //FXVisualizarTarefasProjeto
+        System.out.println("Tela Projeto");
+    }
+
+    private void telaSair(Stage primaryStage) {
+        System.out.println("Tela Sair");
+    }
+
+    private void telaEditarPerfil(Stage primaryStage) {
+        System.out.println("Tela EditarPerfil");
+    }
+
+    private void telaTarefas(Stage primaryStage) {
+        System.out.println("Tela Tarefas");
+    }
+
+    private void telaEquipes(Stage primaryStage) {
+        System.out.println("Tela Equipes");
+    }
+
+    private void telaProjetoColaborador(Stage primaryStage) {
+        System.out.println("Tela ProjetoColaborador");
     }
 }
