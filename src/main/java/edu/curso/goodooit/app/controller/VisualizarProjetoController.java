@@ -125,5 +125,7 @@ public class VisualizarProjetoController {
 
     // TODO: Alteração de dados do projeto
     // TODO: Uusário sair do projeto
+    //Reutilizar os botões da tela de meus projetos
+
 
 }

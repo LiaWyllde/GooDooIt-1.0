@@ -11,10 +11,31 @@ public class CadastroController {
         this.usuarioDAO = usuarioDAO;
     }
 
-    public boolean cadastrar(String nome, String sobrenome, String login, String senha, String email) {
+    /*
+        0 - Passou pela validação de um sub metodo
+        1 - Campos vazios
+        2 - Usuário já utilizado
+        3 - Senha não confere
+        4 - Sucesso em cadastrar
+     */
 
-        if (nome == null || sobrenome == null || login == null || senha == null || email == null) {
-            return false;
+    public Integer cadastrar(String nome, String sobrenome, String login, String senha, String email, String confirmaSenha) {
+
+        if (nome == null || sobrenome == null || login == null || senha == null || email == null || confirmaSenha == null) {
+            return 1;
+        }
+
+        try{
+            String buscar = usuarioDAO.buscarUsuarioLogin(login).getLogin();
+            if (buscar != null) {
+                return 2;
+            }
+        } catch (Exception e) {
+            System.out.println("Erro ao validar login: " + e.getMessage());
+        }
+
+        if (!senha.equals(confirmaSenha)) {
+            return 3;
         }
 
         Usuario usuario = new Usuario(nome, sobrenome, login, senha, email);
@@ -26,7 +47,7 @@ public class CadastroController {
         } catch (Exception e) {
             System.out.println("Erro ao cadastrar, SQL quis assim: " + e.getMessage());
         }
-        return true;
+        return 4;
     }
 
     //Cntrole de visibilidade de mensagem de "cadastro concluído" e "campos obrigatórios"
