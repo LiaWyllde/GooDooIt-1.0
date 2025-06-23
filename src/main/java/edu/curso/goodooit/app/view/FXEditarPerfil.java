@@ -1,5 +1,7 @@
 package edu.curso.goodooit.app.view;
 
+import edu.curso.goodooit.app.controller.AlterarDadosUsuarioController;
+import edu.curso.goodooit.app.controller.AlterarSenhaController;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -16,7 +18,18 @@ public class FXEditarPerfil extends Application {
     private VBox areaPrincipal;
     private StackPane modalSenhaGlobal;
     private StackPane modalEsqueciSenha;
-    
+
+    private static AlterarDadosUsuarioController alterarDadosUsuarioController;
+    private static AlterarSenhaController alterarSenhaController;
+
+    public static void setAlterarDadosUsuarioController(AlterarDadosUsuarioController alterarDadosUsuarioController) {
+        FXEditarPerfil.alterarDadosUsuarioController = alterarDadosUsuarioController;
+    }
+
+    public static void setAlterarSenhaController(AlterarSenhaController alterarSenhaController) {
+        FXEditarPerfil.alterarSenhaController = alterarSenhaController;
+    }
+
     @Override
     public void start(Stage primaryStage) {
         double larguraTela = Screen.getPrimary().getBounds().getWidth();
@@ -38,13 +51,13 @@ public class FXEditarPerfil extends Application {
 
         HBox notificacoes = new HBox(20);
         notificacoes.setAlignment(Pos.CENTER);
-        
+
         ImageView iconeNotificacao = formatarIcone("/images/notification.png");
         Label sino = new Label("5"); // Property notificação
-        
+
         ImageView iconeConvite = formatarIcone("/images/envelope.jpg");
         Label email = new Label("1"); // Property email
-        
+
         sino.setStyle("-fx-font-size: 16px;");
         email.setStyle("-fx-font-size: 16px;");
         notificacoes.getChildren().addAll(iconeNotificacao, sino, iconeConvite, email);
@@ -177,7 +190,7 @@ public class FXEditarPerfil extends Application {
             campoComIcone = new StackPane(campo, iconeEdit);
 
         } else {
-        	Button iconeEdit = new Button("Bloqueado");
+            Button iconeEdit = new Button("Bloqueado");
             iconeEdit.setStyle("-fx-color: red");
             StackPane.setAlignment(iconeEdit, Pos.CENTER_RIGHT);
             StackPane.setMargin(iconeEdit, new Insets(0, 10, 0, 0));
@@ -229,7 +242,7 @@ public class FXEditarPerfil extends Application {
         btnEsqueci.setMaxWidth(220);
 
         btnSalvar.setOnAction(e -> {
-        	// Listener da alteração de senha
+            // Listener da alteração de senha
             acaoSalvarSenha.run();
             modalSenhaGlobal.setVisible(false);
         });

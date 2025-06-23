@@ -180,6 +180,44 @@ public class ProjetoDAO implements IProjetoDAO {
     }
 
     @Override
+    public Integer contarProjetosLiderId(Integer idLider) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM Projeto WHERE LiderID = ?";
+        try (Connection conn = dbConn.getConnection();
+        PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, idLider);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Integer contarProjetosColaboradorId(Integer idColaborador) throws SQLException {
+        String sql = """
+                SELECT COUNT(p.ID)
+                FROM Projeto p
+                INNER JOIN Usuario_Projeto up
+                ON up.ProjetoID = p.ID
+                INNER JOIN Usuario u
+                ON u.ID = up.UsuarioID
+                WHERE u.ID = ?
+                """;
+        try (Connection conn = dbConn.getConnection();
+        PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, idColaborador);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
     public void excluirProjeto(Projeto projeto) throws SQLException {
         String sql = "DELETE FROM Projeto WHERE ID = ?";
         try (Connection conn = dbConn.getConnection();
@@ -189,4 +227,6 @@ public class ProjetoDAO implements IProjetoDAO {
             System.out.println("Linhas afetadas: " + linhas);
         }
     }
+
+
 }

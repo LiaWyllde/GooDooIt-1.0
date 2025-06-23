@@ -1,7 +1,6 @@
 package edu.curso.goodooit.app.view;
 
 import edu.curso.goodooit.app.controller.AllControllerRegistry;
-import edu.curso.goodooit.app.controller.LoginController;
 import edu.curso.goodooit.app.persistence.implementations.DataBaseConnection;
 import edu.curso.goodooit.app.persistence.implementations.UsuarioDAO;
 import javafx.application.Application;

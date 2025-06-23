@@ -28,9 +28,6 @@ public class FxTelaLogin extends Application {
        loginController = lc;
     }
 
-    public FxTelaLogin() {}
-    // Esse construtor vazio só existe para testes da instância da classe antes de implementar a service
-
     @Override
     public void start(Stage stage) {
         // Imagem do logo

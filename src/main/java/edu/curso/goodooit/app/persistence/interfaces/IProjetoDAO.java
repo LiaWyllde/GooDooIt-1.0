@@ -22,4 +22,7 @@ public interface IProjetoDAO {
 
     public void atualizarProjeto(Projeto projeto) throws SQLException;
 
+    public Integer contarProjetosLiderId(Integer idLider) throws SQLException;
+
+    public Integer contarProjetosColaboradorId(Integer idColaborador) throws SQLException;
 }

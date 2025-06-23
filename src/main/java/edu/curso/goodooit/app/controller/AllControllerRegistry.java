@@ -1,5 +1,6 @@
 package edu.curso.goodooit.app.controller;
 
+import edu.curso.goodooit.app.model.Tarefa;
 import edu.curso.goodooit.app.persistence.implementations.*;
 
 public class AllControllerRegistry {
@@ -22,6 +23,8 @@ public class AllControllerRegistry {
     private final AlterarSenhaController alterarSenhaController;
     private final AlterarDadosUsuarioController alterarDadosUsuarioController;
     private final ConviteController conviteController;
+//    private final TarefaController tarefaController;
+    private final VisualizarProjetoController visualizarProjetoController;
 
 
     public AllControllerRegistry(DataBaseConnection dbConn) {
@@ -32,11 +35,14 @@ public class AllControllerRegistry {
         this.statusDAO = new StatusDAO(dbConn);
         this.tarefaDAO = new TarefaDAO(dbConn);
         this.projetoDAO = new ProjetoDAO(dbConn);
+        AutenticacaoController autenticacaoController = new AutenticacaoController();
         this.meusProjetosController = new MeusProjetosController(usuarioDAO, projetoDAO, statusDAO, tarefaDAO, equipeDAO);
         this.loginController = new LoginController(usuarioDAO);
         this.alterarSenhaController = new AlterarSenhaController(usuarioDAO);
         this.alterarDadosUsuarioController = new AlterarDadosUsuarioController(usuarioDAO);
         this.conviteController = new ConviteController(conviteDAO, usuarioDAO, projetoDAO, equipeDAO);
+//        this.tarefaController = new TarefaController(autenticacaoController, usuarioDAO, tarefaDAO, statusDAO, equipeDAO);
+        this.visualizarProjetoController = new VisualizarProjetoController(projetoDAO, usuarioDAO, autenticacaoController, tarefaDAO, statusDAO, equipeDAO);
     }
 
     public static void initialize(DataBaseConnection dbConn) {
@@ -67,5 +73,13 @@ public class AllControllerRegistry {
 
     public ConviteController getConviteController() {
         return conviteController;
+    }
+
+//    public TarefaController getTarefaController() {
+//        return tarefaController;
+//    }
+
+    public VisualizarProjetoController getVisualizarProjetoController() {
+        return visualizarProjetoController;
     }
 }

@@ -25,6 +25,16 @@ public class MeusProjetosController {
         this.equipeDAO = equipeDAO;
     }
 
+    public Integer contarProjetosLider(){
+        Usuario autenticado = AutenticacaoController.getAutenticado();
+        try{
+            return projetoDAO.contarProjetosLiderId(autenticado.getID());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public ObservableList<Projeto> getProjetos() {
         Usuario autenticado = AutenticacaoController.getAutenticado();
         ObservableList<Projeto> projetosObservable = FXCollections.observableArrayList();
@@ -85,7 +95,7 @@ public class MeusProjetosController {
         return null;
     }
 
-    public void salvarProjeto(Projeto projetoEditado){
+    public void editarProjeto(Projeto projetoEditado){
         try{
             if (projetoEditado != null){
                 System.out.println(projetoEditado.toString());
@@ -98,11 +108,19 @@ public class MeusProjetosController {
         }
     }
     public void criarProjeto(String nome, String descricao, LocalDate dataInicio, LocalDate dataFim) {
-        //TODO: Implementar
         System.out.printf("Criando Projeto %s%n Descricao %s%n Data Inicio %s%n Data Final %s%n", nome,descricao,dataInicio.toString(),dataFim.toString());
         Projeto novoProjeto = new Projeto(nome, descricao, dataInicio, dataFim, LocalDate.now(), 1, AutenticacaoController.getAutenticado().getID());
         try {
             projetoDAO.registrarProjeto(novoProjeto);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void excluirProjeto(Projeto p) {
+        System.out.printf("Excluindo projeto %s%n Descricao %s%n Data Inicio %s%n Data Final %s%n", p.getNome().trim(), p.getDescricao().trim(), p.getDataInicio().toString(), p.getDataFim().toString());
+        try{
+            projetoDAO.excluirProjeto(p);
         } catch (SQLException e) {
             e.printStackTrace();
         }
