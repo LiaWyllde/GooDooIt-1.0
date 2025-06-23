@@ -60,12 +60,12 @@ public class FXTelaCadastro extends Application {
         btnCadastrar.setOnAction(e -> {
             int resultado =
                     cadastroController.cadastrar(
-                    usernameField.getText(),
-                    nomeField.getText(),
-                    sobrenomeField.getText(),
-                    emailField.getText(),
-                    senhaField.getText(),
-                    confirmarField.getText()
+                    usernameField.getText().trim(),
+                    nomeField.getText().trim(),
+                    sobrenomeField.getText().trim(),
+                    emailField.getText().trim(),
+                    senhaField.getText().trim(),
+                    confirmarField.getText().trim()
             );
             System.out.println(resultado);
             exibirMensagem(resultado);

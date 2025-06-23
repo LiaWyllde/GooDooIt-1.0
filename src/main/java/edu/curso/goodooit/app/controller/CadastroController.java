@@ -26,12 +26,12 @@ public class CadastroController {
         }
 
         try{
-            String buscar = usuarioDAO.buscarUsuarioLogin(login).getLogin();
+            Usuario buscar = usuarioDAO.buscarUsuarioLogin(login);
             if (buscar != null) {
                 return 2;
             }
         } catch (Exception e) {
-            System.out.println("Erro ao validar login: " + e.getMessage());
+            System.out.println("Usuário não existe na database " + e.getMessage());
         }
 
         if (!senha.equals(confirmaSenha)) {
@@ -43,7 +43,6 @@ public class CadastroController {
         try {
             Integer id = usuarioDAO.registrarUsuario(usuario);
             usuario.setID(id);
-            usuarioDAO.atualizarUsuario(usuario);
         } catch (Exception e) {
             System.out.println("Erro ao cadastrar, SQL quis assim: " + e.getMessage());
         }
