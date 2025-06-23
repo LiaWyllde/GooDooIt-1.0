@@ -25,6 +25,7 @@ public class AllControllerRegistry {
     private final ConviteController conviteController;
     private final TarefaController tarefaController;
     private final VisualizarProjetoController visualizarProjetoController;
+    private final CadastroController cadastroController;
 
 
     public AllControllerRegistry(DataBaseConnection dbConn) {
@@ -43,6 +44,7 @@ public class AllControllerRegistry {
         this.conviteController = new ConviteController(conviteDAO, usuarioDAO, projetoDAO, equipeDAO);
         this.tarefaController = new TarefaController(autenticacaoController, tarefaDAO, statusDAO);
         this.visualizarProjetoController = new VisualizarProjetoController(autenticacaoController, tarefaDAO, statusDAO, equipeDAO);
+        this.cadastroController = new CadastroController(usuarioDAO);
     }
 
     public static void initialize(DataBaseConnection dbConn) {

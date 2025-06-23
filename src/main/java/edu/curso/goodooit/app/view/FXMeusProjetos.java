@@ -17,6 +17,8 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
@@ -150,51 +152,61 @@ public class FXMeusProjetos extends Application {
 
 
     private VBox criarBlocoProjeto(Projeto p, Integer concluidas, Integer outras, Stage primaryStage) {
-            VBox bloco = new VBox(10);
-            bloco.setCursor(Cursor.HAND);
-            bloco.setPadding(new Insets(20));
-            bloco.setStyle("-fx-background-color: white; -fx-background-radius: 15px; -fx-border-color: black; -fx-border-radius: 10px;");
-            bloco.setMaxWidth(Double.MAX_VALUE);
+        VBox bloco = new VBox(10);
+        bloco.setCursor(Cursor.HAND);
+        bloco.setPadding(new Insets(20));
+        bloco.setStyle("-fx-background-color: white; -fx-background-radius: 15px; -fx-border-color: black; -fx-border-radius: 10px;");
+        bloco.setMaxWidth(Double.MAX_VALUE);
 
-            Label nomeProjeto = new Label(p.getNome());
-            Label status = new Label("Status: " + p.getStatus().toString());
-            Label lblConcluidas = new Label("Tarefas concluídas: " + concluidas);
-            Label lblOutras = new Label("Outras tarefas: " + outras);
+        Label nomeProjeto = new Label(p.getNome());
+        Label status = new Label("Status: " + p.getStatus().toString());
+        Label lblConcluidas = new Label("Tarefas concluídas: " + concluidas);
+        Label lblOutras = new Label("Outras tarefas: " + outras);
 
-            for (Label lbl : new Label[]{nomeProjeto, status, lblConcluidas, lblOutras}) {
-                lbl.setStyle("-fx-font-family: monospace; -fx-font-size: 18px; -fx-text-fill: black;");
-            }
-
-            Button editar = new Button("Editar");
-            Button excluir = new Button("Excluir");
-            editar.setStyle("-fx-font-size: 18px; -fx-text-fill: gray; -fx-font-family: monospace;");
-            excluir.setStyle("-fx-font-size: 18px; -fx-text-fill: gray; -fx-font-family: monospace;");
-
-            editar.setOnMouseClicked(e -> {
-                StackPane modal = criarModalEditarProjeto(p);
-                root.getChildren().add(modal);
-                abrirModalProjeto(p,modal);
-            });
-
-            excluir.setOnMouseClicked(e -> {
-                //Todo: Se der tempo fazer a confirmação de delete
-                meusProjetosController.excluirProjeto(p);
-            });
-
-            bloco.setOnMouseClicked(e -> {
-                telaVisualizarProjeto(primaryStage);
-            });
-
-
-            HBox botoes = new HBox(10, editar, excluir);
-            botoes.setAlignment(Pos.TOP_RIGHT);
-            StackPane.setAlignment(botoes, Pos.TOP_RIGHT);
-            StackPane.setMargin(botoes, new Insets(10));
-
-            StackPane stack = new StackPane(bloco, botoes);
-            bloco.getChildren().addAll(nomeProjeto, status, lblConcluidas, lblOutras);
-            return new VBox(stack);
+        for (Label lbl : new Label[]{nomeProjeto, status, lblConcluidas, lblOutras}) {
+            lbl.setStyle("-fx-font-family: monospace; -fx-font-size: 18px; -fx-text-fill: black;");
         }
+
+        Button editar = new Button("Editar");
+        Button excluir = new Button("Excluir");
+        editar.setStyle("-fx-font-size: 18px; -fx-text-fill: gray; -fx-font-family: monospace;");
+        excluir.setStyle("-fx-font-size: 18px; -fx-text-fill: gray; -fx-font-family: monospace;");
+
+        editar.setOnMouseClicked(e -> {
+            StackPane modal = criarModalEditarProjeto(p);
+            root.getChildren().add(modal);
+            abrirModalProjeto(p, modal);
+        });
+
+        excluir.setOnMouseClicked(e -> {
+            //Todo: Se der tempo fazer a confirmação de delete
+            meusProjetosController.excluirProjeto(p);
+        });
+
+        Rectangle hitArea = new Rectangle();
+        hitArea.widthProperty().bind(bloco.widthProperty());
+        hitArea.heightProperty().bind(bloco.heightProperty());
+        hitArea.setFill(Color.TRANSPARENT);
+        hitArea.toBack();
+        hitArea.setCursor(Cursor.HAND);
+        hitArea.setOpacity(0);
+
+        bloco.getChildren().addFirst(hitArea);
+
+        hitArea.setOnMouseClicked(e -> {
+            telaVisualizarProjeto(primaryStage);
+        });
+
+
+        HBox botoes = new HBox(10, editar, excluir);
+        botoes.setAlignment(Pos.TOP_RIGHT);
+        StackPane.setAlignment(botoes, Pos.TOP_RIGHT);
+        StackPane.setMargin(botoes, new Insets(10));
+
+        StackPane stack = new StackPane(bloco, botoes);
+        bloco.getChildren().addAll(nomeProjeto, status, lblConcluidas, lblOutras);
+        return new VBox(stack);
+    }
 
     private void abrirModalProjeto(Projeto p, StackPane modal) {
         TextField tfNome = new TextField(p.getNome());
@@ -377,7 +389,7 @@ public class FXMeusProjetos extends Application {
         return fundo;
     }
 
-    private void abrirModalSair(Stage primaryStage){
+    private void abrirModalSair(Stage primaryStage) {
         StackPane fundo = criarModalSair(primaryStage);
         root.getChildren().add(fundo);
         fundo.setVisible(true);
