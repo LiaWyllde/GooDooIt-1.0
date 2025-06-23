@@ -19,6 +19,8 @@ public class ControllerRegistry {
     //Controllers
     private final MeusProjetosController meusProjetosController;
     private final LoginController loginController;
+    private final AlterarSenhaController alterarSenhaController;
+    private final AlterarDadosUsuarioController alterarDadosUsuarioController;
 
 
     public ControllerRegistry(DataBaseConnection dbConn) {
@@ -31,6 +33,8 @@ public class ControllerRegistry {
         this.projetoDAO = new ProjetoDAO(dbConn);
         this.meusProjetosController = new MeusProjetosController(usuarioDAO, projetoDAO, statusDAO, tarefaDAO, equipeDAO);
         this.loginController = new LoginController(usuarioDAO);
+        this.alterarSenhaController = new AlterarSenhaController(usuarioDAO);
+        this.alterarDadosUsuarioController = new AlterarDadosUsuarioController(usuarioDAO);
     }
 
     public static void initialize(DataBaseConnection dbConn) {
@@ -50,4 +54,6 @@ public class ControllerRegistry {
     public LoginController getLoginController() {
         return loginController;
     }
+
+
 }

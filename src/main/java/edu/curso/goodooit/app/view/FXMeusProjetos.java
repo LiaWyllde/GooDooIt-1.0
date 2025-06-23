@@ -1,6 +1,9 @@
 package edu.curso.goodooit.app.view;
 
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -10,6 +13,10 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class FXMeusProjetos extends Application {
 
@@ -41,26 +48,37 @@ public class FXMeusProjetos extends Application {
 
         HBox notificacoes = new HBox(20);
         notificacoes.setAlignment(Pos.CENTER);
-        
-        ImageView iconeNotificacao = formatarIcone("/images/notification.png");
-        Label sino = new Label("5"); // Property notificação
-        
+
         ImageView iconeConvite = formatarIcone("/images/envelope.jpg");
-        Label email = new Label("1"); // Property email
-        
-        sino.setStyle("-fx-font-size: 16px;");
+        Label email = new Label("1");
+        email.setCursor(Cursor.HAND);
+
+        email.setOnMouseClicked(e -> modalConvites.setVisible(true));
+
         email.setStyle("-fx-font-size: 16px;");
         notificacoes.getChildren().addAll(iconeNotificacao, sino, iconeConvite, email);
 
         sidebar.getChildren().addAll(avatarView, nome, notificacoes);
-        sidebar.getChildren().addAll(
-                botaoMenu("Meus projetos", true),
-                botaoMenu("Colaborando", false),
-                botaoMenu("Equipes", true),
-                botaoMenu("Tarefas", false),
-                botaoMenu("Editar perfil", true),
-                botaoMenu("Sair", false)
-        );
+
+        Map<String,Runnable> botoes = new LinkedHashMap<>();
+        botoes.put("Projetos",    () -> telaProjetoDono(primaryStage));
+        botoes.put("Colaborando", () -> telaProjetoColaborador(primaryStage));
+        botoes.put("Equipes",     () -> telaEquipes(primaryStage));
+        botoes.put("Tarefas",     () -> telaTarefas(primaryStage));
+        botoes.put("Editar Perfil", () -> telaEditarPerfil(primaryStage));
+        botoes.put("Sair",        () -> telaSair(primaryStage));
+
+        AtomicBoolean roxoFlag = new AtomicBoolean(true);
+
+        botoes.forEach((label, action) -> {
+            boolean roxo = roxoFlag.get();
+
+            Button btn = botaoMenu(label, roxo, false);
+            btn.setCursor(Cursor.HAND);
+            btn.setOnAction(e -> action.run());
+            sidebar.getChildren().add(btn);
+            roxoFlag.set(!roxo);
+        });
 
         areaPrincipal = new VBox(30);
         areaPrincipal.setPadding(new Insets(20));
@@ -97,6 +115,8 @@ public class FXMeusProjetos extends Application {
         HBox.setHgrow(painelCinza, Priority.ALWAYS);
 
         modalProjeto = criarModalProjeto(() -> System.out.println("Projeto salvo."));
+        modalConvites = criarModalVisualizarConvites(() -> System.out.println("Saindo do Visualizar Convites"));
+
 
         StackPane root = new StackPane(new HBox(sidebar, painelCinza), modalProjeto);
         Scene scene = new Scene(root, larguraTela, alturaTela * 0.9);
@@ -189,7 +209,9 @@ public class FXMeusProjetos extends Application {
     }
 
     private Button botaoMenu(String texto, boolean roxo) {
-        return botaoMenu(texto, roxo, false);
+        Button btn = botaoMenu(texto, roxo, false);
+        btn.setCursor(Cursor.HAND);
+        return btn;
     }
 
     private Button botaoMenu(String texto, boolean roxo, boolean selecionado) {
@@ -211,7 +233,36 @@ public class FXMeusProjetos extends Application {
         return iconeEdit;
     }
 
-    public static void main(String[] args) {
-        launch(args);
+    public ImageView formatarIcone(String path) {
+        ImageView iconeEdit = new ImageView(new Image(getClass().getResourceAsStream(path)));
+        iconeEdit.setFitWidth(18);
+        iconeEdit.setFitHeight(18);
+        StackPane.setAlignment(iconeEdit, Pos.CENTER_RIGHT);
+        StackPane.setMargin(iconeEdit, new Insets(0, 10, 0, 0));
+        return iconeEdit;
+    }
+
+    private void telaProjetoDono(Stage primaryStage) {
+        System.out.println("Tela Projeto");
+    }
+
+    private void telaSair(Stage primaryStage) {
+        System.out.println("Tela Sair");
+    }
+
+    private void telaEditarPerfil(Stage primaryStage) {
+        System.out.println("Tela EditarPerfil");
+    }
+
+    private void telaTarefas(Stage primaryStage) {
+        System.out.println("Tela Tarefas");
+    }
+
+    private void telaEquipes(Stage primaryStage) {
+        System.out.println("Tela Equipes");
+    }
+
+    private void telaProjetoColaborador(Stage primaryStage) {
+        System.out.println("Tela ProjetoColaborador");
     }
 }
