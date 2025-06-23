@@ -11,15 +11,11 @@ import java.util.Objects;
 public class VisualizarProjetoController {
 
     private final AutenticacaoController autenticacaoController;
-    private final ProjetoDAO projetoDAO;
-    private final UsuarioDAO usuarioDAO;
     private final TarefaDAO tarefaDAO;
     private final StatusDAO statusDAO;
     private final EquipeDAO equipeDAO;
 
-    public VisualizarProjetoController(ProjetoDAO projetoDAO, UsuarioDAO usuarioDAO, AutenticacaoController autenticacaoController, TarefaDAO tarefaDAO, StatusDAO statusDAO, EquipeDAO equipeDAO) {
-        this.projetoDAO = projetoDAO;
-        this.usuarioDAO = usuarioDAO;
+    public VisualizarProjetoController(AutenticacaoController autenticacaoController, TarefaDAO tarefaDAO, StatusDAO statusDAO, EquipeDAO equipeDAO) {
         this.autenticacaoController = autenticacaoController;
         this.tarefaDAO = tarefaDAO;
         this.statusDAO = statusDAO;
@@ -128,5 +124,6 @@ public class VisualizarProjetoController {
     }
 
     // TODO: Alteração de dados do projeto
+    // TODO: Uusário sair do projeto
 
 }

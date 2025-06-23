@@ -37,37 +37,6 @@ public class Tarefa {
         ProjetoID = projetoID;
     }
 
-    public Tarefa(Integer ID, String nome, String descricao, int posicao, LocalDate dataInicio, LocalDate dataFim, LocalDate dataCriacao, int prioridade, Integer statusTarefaID, Integer quadroID, Integer listaID, Integer criadorID, Integer responsavelID) {
-        this.ID = ID;
-        this.nome = nome;
-        this.descricao = descricao;
-        this.posicao = posicao;
-        this.dataInicio = dataInicio;
-        this.dataFim = dataFim;
-        this.dataCriacao = dataCriacao;
-        this.prioridade = prioridade;
-        StatusTarefaID = statusTarefaID;
-        QuadroID = quadroID;
-        ListaID = listaID;
-        CriadorID = criadorID;
-        ResponsavelID = responsavelID;
-    }
-
-    public Tarefa(String nome, String descricao, int posicao, LocalDate dataInicio, LocalDate dataFim, LocalDate dataCriacao, int prioridade, Integer statusTarefaID, Integer quadroID, Integer listaID, Integer criadorID, Integer responsavelID) {
-        this.nome = nome;
-        this.descricao = descricao;
-        this.posicao = posicao;
-        this.dataInicio = dataInicio;
-        this.dataFim = dataFim;
-        this.dataCriacao = dataCriacao;
-        this.prioridade = prioridade;
-        StatusTarefaID = statusTarefaID;
-        QuadroID = quadroID;
-        ListaID = listaID;
-        CriadorID = criadorID;
-        ResponsavelID = responsavelID;
-    }
-
     public Tarefa(String nome, String descricao, int posicao, LocalDate dataInicio, LocalDate dataFim, LocalDate dataCriacao, int prioridade) {
         this.nome = nome;
         this.descricao = descricao;

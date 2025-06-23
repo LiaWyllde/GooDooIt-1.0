@@ -8,8 +8,6 @@ import javafx.beans.property.StringProperty;
 import javax.naming.AuthenticationNotSupportedException;
 import java.sql.SQLException;
 
-//A controller de login pega as informações na ui.vew e requisita na DAO
-
 public class LoginController {
     private UsuarioDAO usuarioDAO;
 
