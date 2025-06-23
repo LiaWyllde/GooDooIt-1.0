@@ -16,13 +16,11 @@ import java.util.Objects;
 public class TarefaController {
 
     private final AutenticacaoController autenticacaoController;
-    private final UsuarioDAO usuarioDAO;
     private final TarefaDAO tarefaDAO;
     private final StatusDAO statusDAO;
 
-    public TarefaController(AutenticacaoController autenticacaoController, UsuarioDAO usuarioDAO, TarefaDAO tarefaDAO, StatusDAO statusDAO) {
+    public TarefaController(AutenticacaoController autenticacaoController, TarefaDAO tarefaDAO, StatusDAO statusDAO) {
         this.autenticacaoController = autenticacaoController;
-        this.usuarioDAO = usuarioDAO;
         this.tarefaDAO = tarefaDAO;
         this.statusDAO = statusDAO;
     }
