@@ -223,8 +223,6 @@ public class FXMeusProjetos extends Application {
     private Button botaoMenu(String texto, boolean roxo) {
         Button btn = botaoMenu(texto, roxo, false);
         btn.setCursor(Cursor.HAND);
-        btn.setOnAction(e ->);
-
         return btn;
     }
 
