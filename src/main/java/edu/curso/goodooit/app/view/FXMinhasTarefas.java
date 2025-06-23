@@ -36,11 +36,16 @@ public class FXMinhasTarefas extends Application {
 
         HBox notificacoes = new HBox(20);
         notificacoes.setAlignment(Pos.CENTER);
-        Label sino = new Label("🔔 5");
-        Label email = new Label("✉️ 1");
+
+        ImageView iconeNotificacao = formatarIcone("/images/notification.png");
+        Label sino = new Label("5"); // Property notificação
+        
+        ImageView iconeConvite = formatarIcone("/images/envelope.jpg");
+        Label email = new Label("1"); // Property email
+        
         sino.setStyle("-fx-font-size: 16px;");
         email.setStyle("-fx-font-size: 16px;");
-        notificacoes.getChildren().addAll(sino, email);
+        notificacoes.getChildren().addAll(iconeNotificacao, sino, iconeConvite, email);
 
         sidebar.getChildren().addAll(avatarView, nome, notificacoes);
         sidebar.getChildren().addAll(
@@ -139,6 +144,15 @@ public class FXMinhasTarefas extends Application {
         return box;
     }
 
+    public ImageView formatarIcone(String path) {
+        ImageView iconeEdit = new ImageView(new Image(getClass().getResourceAsStream(path)));
+        iconeEdit.setFitWidth(18);
+        iconeEdit.setFitHeight(18);
+        StackPane.setAlignment(iconeEdit, Pos.CENTER_RIGHT);
+        StackPane.setMargin(iconeEdit, new Insets(0, 10, 0, 0));
+        return iconeEdit;
+    }
+    
     public static void main(String[] args) {
         launch(args);
     }
