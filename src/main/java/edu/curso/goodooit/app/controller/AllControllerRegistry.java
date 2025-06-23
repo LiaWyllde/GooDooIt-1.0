@@ -23,7 +23,7 @@ public class AllControllerRegistry {
     private final AlterarSenhaController alterarSenhaController;
     private final AlterarDadosUsuarioController alterarDadosUsuarioController;
     private final ConviteController conviteController;
-//    private final TarefaController tarefaController;
+    private final TarefaController tarefaController;
     private final VisualizarProjetoController visualizarProjetoController;
 
 
@@ -41,8 +41,8 @@ public class AllControllerRegistry {
         this.alterarSenhaController = new AlterarSenhaController(usuarioDAO);
         this.alterarDadosUsuarioController = new AlterarDadosUsuarioController(usuarioDAO);
         this.conviteController = new ConviteController(conviteDAO, usuarioDAO, projetoDAO, equipeDAO);
-//        this.tarefaController = new TarefaController(autenticacaoController, usuarioDAO, tarefaDAO, statusDAO, equipeDAO);
-        this.visualizarProjetoController = new VisualizarProjetoController(projetoDAO, usuarioDAO, autenticacaoController, tarefaDAO, statusDAO, equipeDAO);
+        this.tarefaController = new TarefaController(autenticacaoController, tarefaDAO, statusDAO);
+        this.visualizarProjetoController = new VisualizarProjetoController(autenticacaoController, tarefaDAO, statusDAO, equipeDAO);
     }
 
     public static void initialize(DataBaseConnection dbConn) {
@@ -75,9 +75,9 @@ public class AllControllerRegistry {
         return conviteController;
     }
 
-//    public TarefaController getTarefaController() {
-//        return tarefaController;
-//    }
+    public TarefaController getTarefaController() {
+        return tarefaController;
+    }
 
     public VisualizarProjetoController getVisualizarProjetoController() {
         return visualizarProjetoController;

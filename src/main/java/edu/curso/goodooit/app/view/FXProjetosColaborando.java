@@ -16,7 +16,10 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
@@ -24,13 +27,10 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class FXMeusProjetos extends Application {
-    //ToDo: Visualizar projeto pelo bloco de projeto
+public class FXProjetosColaborando extends Application {
 
     private VBox areaPrincipal;
-    private StackPane modalProjeto;
     private StackPane root;
-
 
     private static MeusProjetosController meusProjetosController;
 
@@ -45,7 +45,7 @@ public class FXMeusProjetos extends Application {
 
         Usuario autenticado = AutenticacaoController.getAutenticado();
         String nomeCompleto = autenticado.getNome() + " " + autenticado.getSobrenome();
-        primaryStage.setTitle("Meus Projetos - " + nomeCompleto);
+        primaryStage.setTitle("Projeto que participo - " + nomeCompleto);
 
         VBox sidebar = criarSideBar(primaryStage, nomeCompleto);
 
@@ -56,7 +56,7 @@ public class FXMeusProjetos extends Application {
         VBox.setVgrow(areaPrincipal, Priority.ALWAYS);
         areaPrincipal.setMaxWidth(Double.MAX_VALUE);
 
-        Label titulo = new Label("Meus projetos - " + meusProjetosController.contarProjetosLider());
+        Label titulo = new Label("Projetos que participo - " + meusProjetosController.contarProjetosColaborador());
         titulo.setStyle("-fx-font-size: 22px; -fx-font-family: monospace; -fx-text-fill: black;");
 
         VBox projetosContainer = new VBox(15);
@@ -64,10 +64,9 @@ public class FXMeusProjetos extends Application {
         projetosContainer.setMaxWidth(Double.MAX_VALUE);
         VBox.setVgrow(projetosContainer, Priority.ALWAYS);
 
-
         // Listando todos os projetos que o usuario eh dono
         ObservableList<Projeto> projetos = FXCollections.observableArrayList();
-        projetos = meusProjetosController.getProjetosLider();
+        projetos = meusProjetosController.getProjetosColaborador();
         for (Projeto p : projetos) {
             Integer concluidas = meusProjetosController.contarTarefasConcluidas(p.getID());
             Integer outras = meusProjetosController.contarTarefasNaoConcluidas(p.getID());
@@ -80,13 +79,9 @@ public class FXMeusProjetos extends Application {
         scroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         VBox.setVgrow(scroll, Priority.ALWAYS);
 
-        Button btnCriar = new Button("Criar novo projeto");
-        estilizarBotao(btnCriar);
-
-        btnCriar.setOnAction(e -> abrirModalProjeto());
 
         areaPrincipal.setAlignment(Pos.CENTER);
-        areaPrincipal.getChildren().addAll(titulo, scroll, btnCriar);
+        areaPrincipal.getChildren().addAll(titulo, scroll);
 
         StackPane painelCinza = new StackPane(areaPrincipal);
         painelCinza.setStyle("-fx-background-color: #dddddd; -fx-background-radius: 20px;");
@@ -150,158 +145,41 @@ public class FXMeusProjetos extends Application {
 
 
     private VBox criarBlocoProjeto(Projeto p, Integer concluidas, Integer outras, Stage primaryStage) {
-            VBox bloco = new VBox(10);
-            bloco.setCursor(Cursor.HAND);
-            bloco.setPadding(new Insets(20));
-            bloco.setStyle("-fx-background-color: white; -fx-background-radius: 15px; -fx-border-color: black; -fx-border-radius: 10px;");
-            bloco.setMaxWidth(Double.MAX_VALUE);
+        VBox bloco = new VBox(10);
+        bloco.setCursor(Cursor.HAND);
+        bloco.setPadding(new Insets(20));
+        bloco.setStyle("-fx-background-color: white; -fx-background-radius: 15px; -fx-border-color: black; -fx-border-radius: 10px;");
+        bloco.setMaxWidth(Double.MAX_VALUE);
 
-            Label nomeProjeto = new Label(p.getNome());
-            Label status = new Label("Status: " + p.getStatus().toString());
-            Label lblConcluidas = new Label("Tarefas concluídas: " + concluidas);
-            Label lblOutras = new Label("Outras tarefas: " + outras);
+        Label nomeProjeto = new Label(p.getNome());
+        Label status = new Label("Status: " + p.getStatus().toString());
+        Label lblConcluidas = new Label("Tarefas concluídas: " + concluidas);
+        Label lblOutras = new Label("Outras tarefas: " + outras);
 
-            for (Label lbl : new Label[]{nomeProjeto, status, lblConcluidas, lblOutras}) {
-                lbl.setStyle("-fx-font-family: monospace; -fx-font-size: 18px; -fx-text-fill: black;");
-            }
-
-            Button editar = new Button("Editar");
-            Button excluir = new Button("Excluir");
-            editar.setStyle("-fx-font-size: 18px; -fx-text-fill: gray; -fx-font-family: monospace;");
-            excluir.setStyle("-fx-font-size: 18px; -fx-text-fill: gray; -fx-font-family: monospace;");
-
-            editar.setOnMouseClicked(e -> {
-                StackPane modal = criarModalEditarProjeto(p);
-                root.getChildren().add(modal);
-                abrirModalProjeto(p,modal);
-            });
-
-            excluir.setOnMouseClicked(e -> {
-                //Todo: Se der tempo fazer a confirmação de delete
-                meusProjetosController.excluirProjeto(p);
-            });
-
-            bloco.setOnMouseClicked(e -> {
-                telaVisualizarProjeto(primaryStage);
-            });
-
-
-            HBox botoes = new HBox(10, editar, excluir);
-            botoes.setAlignment(Pos.TOP_RIGHT);
-            StackPane.setAlignment(botoes, Pos.TOP_RIGHT);
-            StackPane.setMargin(botoes, new Insets(10));
-
-            StackPane stack = new StackPane(bloco, botoes);
-            bloco.getChildren().addAll(nomeProjeto, status, lblConcluidas, lblOutras);
-            return new VBox(stack);
+        for (Label lbl : new Label[]{nomeProjeto, status, lblConcluidas, lblOutras}) {
+            lbl.setStyle("-fx-font-family: monospace; -fx-font-size: 18px; -fx-text-fill: black;");
         }
 
-    private void abrirModalProjeto(Projeto p, StackPane modal) {
-        TextField tfNome = new TextField(p.getNome());
-        TextArea taDescricao = new TextArea(p.getDescricao());
-        DatePicker dpInicio = new DatePicker(p.getDataInicio());
-        DatePicker dpFim = new DatePicker(p.getDataFim());
-        modal.setVisible(true);
-    }
+        Button btnDeixarProjeto = new Button("Abandonar Projeto");
+        btnDeixarProjeto.setStyle("-fx-font-size: 18px; -fx-text-fill: gray; -fx-font-family: monospace;");
 
-    private void abrirModalProjeto() {
-        modalProjeto = criarModalCriarProjeto();
-        root.getChildren().add(modalProjeto);
-        modalProjeto.setVisible(true);
-    }
-
-    private StackPane criarModalCriarProjeto() {
-        double largura = Screen.getPrimary().getBounds().getWidth();
-        double altura = Screen.getPrimary().getBounds().getHeight();
-
-        VBox conteudoModal = new VBox(10);
-        conteudoModal.setPadding(new Insets(20));
-        conteudoModal.setAlignment(Pos.CENTER_LEFT);
-        conteudoModal.setMaxWidth(largura * 0.5);
-        conteudoModal.setMaxHeight(altura * 0.5);
-        conteudoModal.setStyle("-fx-background-color: #E6E6E6; -fx-background-radius: 20;");
-
-        TextField tfNome = new TextField();
-        TextArea taDescricao = new TextArea();
-        DatePicker dpInicio = new DatePicker();
-        DatePicker dpFim = new DatePicker();
-
-        Button btnSalvar = new Button("Salvar");
-        Button btnCancelar = new Button("Cancelar");
-
-        HBox botoes = new HBox(20, btnSalvar, btnCancelar);
-        botoes.setAlignment(Pos.CENTER);
-
-        conteudoModal.getChildren().addAll(
-                new Label("Nome do Projeto"), tfNome,
-                new Label("Descrição"), taDescricao,
-                new Label("Prazo previsto para início"), dpInicio,
-                new Label("Prazo previsto para finalização"), dpFim,
-                botoes
-        );
-
-        StackPane fundo = new StackPane(conteudoModal);
-        fundo.setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);");
-        fundo.setVisible(false);
-        fundo.setAlignment(Pos.CENTER);
-
-        // Actions para atualizar o projeto
-        btnSalvar.setOnAction(e -> {
-            meusProjetosController.criarProjeto(tfNome.getText().trim(), taDescricao.getText().trim(), dpInicio.getValue(), dpFim.getValue());
-            fundo.setVisible(false);
+        btnDeixarProjeto.setOnMouseClicked(e -> {
+            //Todo: Se der tempo fazer a confirmação de saida
+            meusProjetosController.deixarProjeto(p);
         });
 
-        btnCancelar.setOnAction(e -> fundo.setVisible(false));
-        return fundo;
-    }
-
-    private StackPane criarModalEditarProjeto(Projeto p) {
-        double largura = Screen.getPrimary().getBounds().getWidth();
-        double altura = Screen.getPrimary().getBounds().getHeight();
-
-        VBox conteudoModal = new VBox(10);
-        conteudoModal.setPadding(new Insets(20));
-        conteudoModal.setAlignment(Pos.CENTER_LEFT);
-        conteudoModal.setMaxWidth(largura * 0.5);
-        conteudoModal.setMaxHeight(altura * 0.5);
-        conteudoModal.setStyle("-fx-background-color: #E6E6E6; -fx-background-radius: 20;");
-
-        TextField tfNome = new TextField(p.getNome());
-        TextArea taDescricao = new TextArea(p.getDescricao());
-        DatePicker dpInicio = new DatePicker(p.getDataInicio());
-        DatePicker dpFim = new DatePicker(p.getDataFim());
-
-        Button btnSalvar = new Button("Salvar");
-        Button btnCancelar = new Button("Cancelar");
-
-        HBox botoes = new HBox(20, btnSalvar, btnCancelar);
-        botoes.setAlignment(Pos.CENTER);
-
-        conteudoModal.getChildren().addAll(
-                new Label("Nome do Projeto"), tfNome,
-                new Label("Descrição"), taDescricao,
-                new Label("Prazo previsto para início"), dpInicio,
-                new Label("Prazo previsto para finalização"), dpFim,
-                botoes
-        );
-
-        StackPane fundo = new StackPane(conteudoModal);
-        fundo.setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);");
-        fundo.setVisible(false);
-        fundo.setAlignment(Pos.CENTER);
-
-        // Actions para atualizar o projeto
-        btnSalvar.setOnAction(e -> {
-            p.setNome(tfNome.getText());
-            p.setDescricao(taDescricao.getText());
-            p.setDataInicio(dpInicio.getValue());
-            p.setDataFim(dpFim.getValue());
-            meusProjetosController.editarProjeto(p);
-            fundo.setVisible(false);
+        bloco.setOnMouseClicked(e -> {
+            telaVisualizarProjeto(primaryStage);
         });
 
-        btnCancelar.setOnAction(e -> fundo.setVisible(false));
-        return fundo;
+        HBox botoes = new HBox(10, btnDeixarProjeto);
+        botoes.setAlignment(Pos.TOP_RIGHT);
+        StackPane.setAlignment(botoes, Pos.TOP_RIGHT);
+        StackPane.setMargin(botoes, new Insets(10));
+
+        StackPane stack = new StackPane(bloco, botoes);
+        bloco.getChildren().addAll(nomeProjeto, status, lblConcluidas, lblOutras);
+        return new VBox(stack);
     }
 
     private Button botaoMenu(String texto, boolean roxo, boolean selecionado) {
@@ -313,20 +191,6 @@ public class FXMeusProjetos extends Application {
                 (roxo ? "-fx-background-color: #d681f0; -fx-text-fill: black;" : "-fx-background-color: #cccccc;"));
         return btn;
     }
-
-    private void estilizarBotao(Button botao) {
-        botao.setPrefWidth(200);
-        botao.setPrefHeight(45);
-        botao.setStyle(
-                "-fx-background-color: #6A0DAD;" +
-                        "-fx-text-fill: white;" +
-                        "-fx-font-size: 18px;" +
-                        "-fx-font-family: 'Courier New';" +
-                        "-fx-background-radius: 15px;" +
-                        "-fx-cursor: hand;"
-        );
-    }
-
 
     private StackPane criarModalSair(Stage primaryStage) {
         double largura = Screen.getPrimary().getBounds().getWidth();
@@ -377,7 +241,7 @@ public class FXMeusProjetos extends Application {
         return fundo;
     }
 
-    private void abrirModalSair(Stage primaryStage){
+    private void abrirModalSair(Stage primaryStage) {
         StackPane fundo = criarModalSair(primaryStage);
         root.getChildren().add(fundo);
         fundo.setVisible(true);
@@ -394,9 +258,10 @@ public class FXMeusProjetos extends Application {
     }
 
     private void telaProjetoDono(Stage primaryStage) {
-        start(primaryStage);
+        FXMeusProjetos fxMeusProjetos = new FXMeusProjetos();
+        FXMeusProjetos.setMeusProjetosController(AllControllerRegistry.getInstance().getMeusProjetosController());
+        fxMeusProjetos.start(primaryStage);
     }
-
 
     private void telaConvites(Stage primaryStage) {
         FXTelaConvite convites = new FXTelaConvite();
@@ -422,10 +287,9 @@ public class FXMeusProjetos extends Application {
     }
 
     private void telaProjetoColaborador(Stage primaryStage) {
-        FXProjetosColaborando projetoColaborador = new FXProjetosColaborando();
-        FXProjetosColaborando.setMeusProjetosController(AllControllerRegistry.getInstance().getMeusProjetosController());
-        projetoColaborador.start(primaryStage);
+        start(primaryStage);
     }
+
 
     private void telaVisualizarProjeto(Stage primaryStage) {
         FXVisualizarProjeto visualizarProjeto = new FXVisualizarProjeto();

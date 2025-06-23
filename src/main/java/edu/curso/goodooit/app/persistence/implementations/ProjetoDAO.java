@@ -83,7 +83,7 @@ public class ProjetoDAO implements IProjetoDAO {
         String sql = """
                     SELECT p.*
                       FROM Projeto p
-                      INNER JOIN Usuario_Projeto up 
+                      INNER JOIN Usuario_Projeto up
                         ON p.ID = up.projetoID
                      WHERE up.usuarioID = ?
                 """;
@@ -227,6 +227,7 @@ public class ProjetoDAO implements IProjetoDAO {
             System.out.println("Linhas afetadas: " + linhas);
         }
     }
+
 
 
 }

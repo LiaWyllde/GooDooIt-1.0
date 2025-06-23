@@ -35,7 +35,18 @@ public class MeusProjetosController {
         return null;
     }
 
-    public ObservableList<Projeto> getProjetos() {
+
+    public Integer contarProjetosColaborador() {
+        Usuario autenticado = AutenticacaoController.getAutenticado();
+        try {
+            return projetoDAO.contarProjetosColaboradorId(autenticado.getID());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public ObservableList<Projeto> getProjetosLider() {
         Usuario autenticado = AutenticacaoController.getAutenticado();
         ObservableList<Projeto> projetosObservable = FXCollections.observableArrayList();
         try {
@@ -46,7 +57,28 @@ public class MeusProjetosController {
                     projeto.setTarefas(tarefaDAO.buscarTarefasProjetoId(projeto.getID()));
                     projeto.setUsuarios(equipeDAO.buscarUsuariosPorProjeto(projeto.getID()));
                 } catch (SQLException e) {
-                    throw new RuntimeException(e);
+                    e.printStackTrace();
+                }
+            });
+            projetosObservable.addAll(projetos);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return projetosObservable;
+    }
+
+    public ObservableList<Projeto> getProjetosColaborador() {
+        Usuario autenticado = AutenticacaoController.getAutenticado();
+        ObservableList<Projeto> projetosObservable = FXCollections.observableArrayList();
+        try {
+            List<Projeto> projetos = projetoDAO.buscarProjetoUsuarioColaborador(autenticado.getID());
+            projetos.forEach(projeto -> {
+                try {
+                    projeto.setStatus(statusDAO.buscarStatusId(projeto.getStatusProjetoID()));
+                    projeto.setTarefas(tarefaDAO.buscarTarefasProjetoId(projeto.getID()));
+                    projeto.setUsuarios(equipeDAO.buscarUsuariosPorProjeto(projeto.getID()));
+                } catch (SQLException e) {
+                    e.printStackTrace();
                 }
             });
             projetosObservable.addAll(projetos);
@@ -111,7 +143,8 @@ public class MeusProjetosController {
         System.out.printf("Criando Projeto %s%n Descricao %s%n Data Inicio %s%n Data Final %s%n", nome,descricao,dataInicio.toString(),dataFim.toString());
         Projeto novoProjeto = new Projeto(nome, descricao, dataInicio, dataFim, LocalDate.now(), 1, AutenticacaoController.getAutenticado().getID());
         try {
-            projetoDAO.registrarProjeto(novoProjeto);
+            Integer id = projetoDAO.registrarProjeto(novoProjeto);
+            novoProjeto.setID(id);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -121,6 +154,16 @@ public class MeusProjetosController {
         System.out.printf("Excluindo projeto %s%n Descricao %s%n Data Inicio %s%n Data Final %s%n", p.getNome().trim(), p.getDescricao().trim(), p.getDataInicio().toString(), p.getDataFim().toString());
         try{
             projetoDAO.excluirProjeto(p);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deixarProjeto(Projeto p) {
+        Usuario autenticado = AutenticacaoController.getAutenticado();
+        System.out.printf("Removendo usuario %s do projeto %s%n",p.getNome().trim(), autenticado.getNome().trim());
+        try{
+            equipeDAO.removerUsuarioProjeto(p.getID(), autenticado.getID());
         } catch (SQLException e) {
             e.printStackTrace();
         }

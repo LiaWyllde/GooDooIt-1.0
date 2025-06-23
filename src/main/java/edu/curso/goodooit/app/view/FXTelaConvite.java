@@ -286,7 +286,6 @@ public class FXTelaConvite extends Application {
 
     private void telaProjetoDono(Stage primaryStage) {
         FXMeusProjetos meusProjetos = new FXMeusProjetos();
-        FXMeusProjetos.setConviteController(AllControllerRegistry.getInstance().getConviteController());
         meusProjetos.start(primaryStage);
     }
 
