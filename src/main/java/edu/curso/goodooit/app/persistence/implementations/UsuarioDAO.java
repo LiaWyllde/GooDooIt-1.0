@@ -43,7 +43,7 @@ public class UsuarioDAO implements IUsuarioDAO {
     public Integer registrarUsuario(Usuario usuario) throws SQLException {
         String sql = "INSERT INTO usuario (nome, sobrenome, login, senha, email) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = dbConn.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);) {
+             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);) {
             stmt.setString(1, usuario.getNome());
             stmt.setString(2, usuario.getSobrenome());
             stmt.setString(3, usuario.getLogin());
