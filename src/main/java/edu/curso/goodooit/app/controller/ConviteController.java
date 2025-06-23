@@ -54,7 +54,21 @@ public class ConviteController {
 
     }
 
-    public boolean convidarUsuarioParaProjeto(String usernameDestinatario, Integer IDProjeto) {
+    private boolean usuarioEhColaborador(Usuario usuario, Projeto projeto) {
+
+        try {
+            List<Usuario> usuariosProjeto = equipeDAO.buscarUsuariosPorProjeto(projeto.getID());
+            if (!usuariosProjeto.contains(usuario)) {
+                return false;
+            }
+        } catch (Exception e) {
+            System.out.println("Erro ao buscar usuarios, o SQL quis assim: " + e.getMessage());
+        }
+        return true;
+    }
+
+
+    public Integer convidarUsuarioParaProjeto(String usernameDestinatario, Integer IDProjeto) {
 
         try {
 
@@ -63,21 +77,21 @@ public class ConviteController {
             if (projeto != null) {
                 if (!Objects.equals(projeto.getLiderID(), autenticado.getID())) {
                     System.out.println("O usuario autenticado não é dono do projeto.");
-                    return false;
+                    return 1;
                 }
 
             } else {
-                System.out.println("Nenhum projeto encontrado");
-                return false;
+                System.out.println("Nenhum projeto encontrado.");
+                return 2;
             }
 
             Usuario destinatario = usuarioDAO.buscarUsuarioLogin(usernameDestinatario);
 
             if (destinatario != null) {
 
-                List <Usuario> usuariosProjeto = equipeDAO.buscarUsuariosPorProjeto(destinatario.getID());
+                boolean colaborador = usuarioEhColaborador(destinatario, projeto);
 
-                if (!usuariosProjeto.contains(destinatario)) {
+                if (!colaborador) {
                     Convite convite = new Convite();
                     convite.setDestinatarioID(destinatario.getID());
                     convite.setProjetoID(IDProjeto);
@@ -86,16 +100,17 @@ public class ConviteController {
                     conviteDAO.registrarConvite(convite);
                 }
 
-            } else  {
+            } else {
                 System.out.println("Nenhum usuario encontrado");
+                return 3;
             }
 
         } catch (Exception e) {
-            System.out.println("Erro ao criar convite: " + e.getMessage());
-            return false;
+            System.out.println("Erro ao criar convite porque o SQL quis assim: " + e.getMessage());
+            return 4;
         }
 
-        return true;
+        return 5;
     }
 
     //TODO: Finalizar respostas de convite
