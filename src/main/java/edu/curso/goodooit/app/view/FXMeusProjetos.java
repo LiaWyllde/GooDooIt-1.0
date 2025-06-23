@@ -169,8 +169,10 @@ public class FXMeusProjetos extends Application {
 
         Button editar = new Button("Editar");
         Button excluir = new Button("Excluir");
+        Button visualizar = new Button("Visualizar");
         editar.setStyle("-fx-font-size: 18px; -fx-text-fill: gray; -fx-font-family: monospace;");
         excluir.setStyle("-fx-font-size: 18px; -fx-text-fill: gray; -fx-font-family: monospace;");
+        visualizar.setStyle("-fx-font-size: 18px; -fx-text-fill: gray; -fx-font-family: monospace;");
 
         editar.setOnMouseClicked(e -> {
             StackPane modal = criarModalEditarProjeto(p);
@@ -183,11 +185,11 @@ public class FXMeusProjetos extends Application {
             meusProjetosController.excluirProjeto(p);
         });
 
-        bloco.setOnMouseClicked(e -> {
+        visualizar.setOnMouseClicked(e -> {
             telaVisualizarProjeto(primaryStage);
         });
 
-        HBox botoes = new HBox(10, editar, excluir);
+        HBox botoes = new HBox(10, editar, excluir,visualizar);
         botoes.setAlignment(Pos.TOP_RIGHT);
         StackPane.setAlignment(botoes, Pos.TOP_RIGHT);
         StackPane.setMargin(botoes, new Insets(10));

@@ -161,18 +161,20 @@ public class FXProjetosColaborando extends Application {
         }
 
         Button btnDeixarProjeto = new Button("Abandonar Projeto");
+        Button visualizar = new Button("Visualizar");
         btnDeixarProjeto.setStyle("-fx-font-size: 18px; -fx-text-fill: gray; -fx-font-family: monospace;");
+        visualizar.setStyle("-fx-font-size: 18px; -fx-text-fill: gray; -fx-font-family: monospace;");
 
         btnDeixarProjeto.setOnMouseClicked(e -> {
             //Todo: Se der tempo fazer a confirmação de saida
             meusProjetosController.deixarProjeto(p);
         });
 
-        bloco.setOnMouseClicked(e -> {
+        visualizar.setOnMouseClicked(e -> {
             telaVisualizarProjeto(primaryStage);
         });
 
-        HBox botoes = new HBox(10, btnDeixarProjeto);
+        HBox botoes = new HBox(10, btnDeixarProjeto, visualizar);
         botoes.setAlignment(Pos.TOP_RIGHT);
         StackPane.setAlignment(botoes, Pos.TOP_RIGHT);
         StackPane.setMargin(botoes, new Insets(10));
