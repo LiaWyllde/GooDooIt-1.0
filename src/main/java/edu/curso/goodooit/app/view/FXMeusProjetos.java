@@ -67,7 +67,8 @@ public class FXMeusProjetos extends Application {
         HBox notificacoes = new HBox(20);
         notificacoes.setAlignment(Pos.CENTER);
 
-        Label email = new Label("✉️ 1");
+        ImageView iconeConvite = formatarIcone("/images/envelope.jpg");
+        Label email = new Label("1");
         email.setCursor(Cursor.HAND);
 
         email.setOnMouseClicked(e -> modalConvites.setVisible(true));
@@ -321,6 +322,15 @@ public class FXMeusProjetos extends Application {
         });
 
         return fundo;
+    }
+
+    public ImageView formatarIcone(String path) {
+        ImageView iconeEdit = new ImageView(new Image(getClass().getResourceAsStream(path)));
+        iconeEdit.setFitWidth(18);
+        iconeEdit.setFitHeight(18);
+        StackPane.setAlignment(iconeEdit, Pos.CENTER_RIGHT);
+        StackPane.setMargin(iconeEdit, new Insets(0, 10, 0, 0));
+        return iconeEdit;
     }
 
     private void telaProjetoDono(Stage primaryStage) {
