@@ -463,6 +463,9 @@ public class FXVisualizarProjeto extends Application {
 
     private void telaMembros(Stage primaryStage) {
         FXVisualizarMembrosProjeto membros = new FXVisualizarMembrosProjeto();
+        FXVisualizarMembrosProjeto.setVisualizarProjetoController(AllControllerRegistry.getInstance().getVisualizarProjetoController());
+        FXVisualizarMembrosProjeto.setConviteController(AllControllerRegistry.getInstance().getConviteController());
+        membros.setProjeto(projeto);
         membros.start(primaryStage);
         //ToDo: Arrumar as injeções
     }

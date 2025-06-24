@@ -30,10 +30,8 @@ public class ConviteController {
         this.equipeDAO = equipeDAO;
     }
 
-    private Usuario autenticado = AutenticacaoController.getAutenticado();
-
     public ObservableList<Convite> convitesRecebidos() {
-
+        Usuario autenticado = AutenticacaoController.getAutenticado();
         ObservableList<Convite> convitesObservable = FXCollections.observableArrayList();
         List<Convite> convites = new ArrayList<>();
 
@@ -55,7 +53,7 @@ public class ConviteController {
     }
 
     private boolean usuarioEhColaborador(Usuario usuario, Projeto projeto) {
-
+        Usuario autenticado = AutenticacaoController.getAutenticado();
         try {
             List<Usuario> usuariosProjeto = equipeDAO.buscarUsuariosPorProjeto(projeto.getID());
             if (!usuariosProjeto.contains(usuario)) {
@@ -69,7 +67,7 @@ public class ConviteController {
 
 
     public Integer convidarUsuarioParaProjeto(String usernameDestinatario, Integer IDProjeto) {
-
+        Usuario autenticado = AutenticacaoController.getAutenticado();
         try {
 
             Projeto projeto = projetoDAO.buscarProjetoId(IDProjeto);

@@ -1,8 +1,14 @@
 package edu.curso.goodooit.app.view;
 
+import edu.curso.goodooit.app.controller.AllControllerRegistry;
+import edu.curso.goodooit.app.controller.ConviteController;
+import edu.curso.goodooit.app.controller.VisualizarProjetoController;
+import edu.curso.goodooit.app.model.Projeto;
+import edu.curso.goodooit.app.model.Usuario;
 import javafx.animation.FadeTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -18,18 +24,33 @@ import javafx.util.Duration;
 
 public class FXVisualizarMembrosProjeto extends Application {
 
-    private boolean menuVisivel = false;
+    private StackPane root;
+    private Projeto projeto;
 
-    StackPane root;
+    private static VisualizarProjetoController visualizarProjetoController;
+    private static ConviteController conviteController;
 
-    private boolean usuarioEhDono = true; // ← controle de permissão
+    private boolean isDono;
+
+    public void setProjeto(Projeto projeto) {
+        this.projeto = projeto;
+    }
+
+    public static void setVisualizarProjetoController(VisualizarProjetoController visualizarProjetoController) {
+        FXVisualizarMembrosProjeto.visualizarProjetoController = visualizarProjetoController;
+    }
+
+    public static void setConviteController(ConviteController conviteController) {
+        FXVisualizarMembrosProjeto.conviteController = conviteController;
+    }
 
     @Override
-    public void start(Stage stage) {
+    public void start(Stage primaryStage) {
+        isDono = visualizarProjetoController.VerificarDonoDoProjeto(projeto);
         double larguraTela = Screen.getPrimary().getBounds().getWidth();
         double alturaTela = Screen.getPrimary().getBounds().getHeight();
 
-        VBox conteudo = criarConteudoPrincipal();
+        VBox conteudo = criarConteudoPrincipal(primaryStage);
         ScrollPane scrollPane = new ScrollPane(conteudo);
         scrollPane.setFitToWidth(true);
         scrollPane.setStyle("-fx-background: transparent; -fx-background-color: transparent;");
@@ -38,16 +59,15 @@ public class FXVisualizarMembrosProjeto extends Application {
         VBox layoutPrincipal = new VBox(scrollPane);
         VBox.setVgrow(scrollPane, Priority.ALWAYS);
 
-
         root = new StackPane(layoutPrincipal);
 
         Scene scene = new Scene(root, larguraTela, alturaTela * 0.9);
-        stage.setScene(scene);
-        stage.setTitle("Visualizar Membros do Projeto");
-        stage.show();
+        primaryStage.setScene(scene);
+        primaryStage.setTitle("Visualizar Membros do Projeto");
+        primaryStage.show();
     }
 
-    private VBox criarConteudoPrincipal() {
+    private VBox criarConteudoPrincipal(Stage primaryStage) {
         VBox mainContent = new VBox(20);
         mainContent.setPadding(new Insets(20));
         mainContent.setStyle("-fx-background-color: #b39ddb; -fx-font-family: monospace;");
@@ -55,33 +75,33 @@ public class FXVisualizarMembrosProjeto extends Application {
         HBox header = new HBox(10);
         header.setAlignment(Pos.CENTER_LEFT);
 
-
-        Label title = new Label("Projeto galo eletrônico");
-        title.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: white;");
+        Label lblProjeto = new Label("Projeto: ");
+        Label tituloProjeto = new Label(projeto.getNome());
+        tituloProjeto.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: white;");
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        Label status = new Label("Em andamento");
+        Label status = new Label(projeto.getStatus().getTitulo());
         status.setStyle("-fx-background-color: #dadada; -fx-padding: 5 10 5 10; -fx-background-radius: 8; -fx-font-size: 12px;");
 
-        header.getChildren().addAll(title, spacer, status);
+        header.getChildren().addAll(lblProjeto, tituloProjeto, spacer, status);
 
         VBox painelMembros = new VBox();
         painelMembros.setAlignment(Pos.CENTER);
         painelMembros.setStyle("-fx-background-color: white; -fx-background-radius: 10;");
         painelMembros.setPadding(new Insets(15));
 
-        Label titulo = new Label("Total de membros no projeto");
-        titulo.setStyle("-fx-text-fill: black; -fx-font-size: 13px;");
+        Label totalMembros = new Label("Total de membros no projeto");
+        totalMembros.setStyle("-fx-text-fill: black; -fx-font-size: 13px;");
 
-        Label quantidade = new Label("5");
+        Label quantidade = new Label(visualizarProjetoController.contarMembrosProjeto(projeto).toString());
         quantidade.setStyle("-fx-text-fill: black; -fx-font-size: 26px; -fx-font-weight: bold;");
 
         Label rodape = new Label("Membros");
         rodape.setStyle("-fx-text-fill: black; -fx-font-size: 13px;");
 
-        painelMembros.getChildren().addAll(titulo, quantidade, rodape);
+        painelMembros.getChildren().addAll(totalMembros, quantidade, rodape);
 
         VBox blocoMembros = new VBox(10);
         blocoMembros.setStyle("-fx-background-color: white; -fx-background-radius: 10;");
@@ -91,28 +111,30 @@ public class FXVisualizarMembrosProjeto extends Application {
         subtitulo.setStyle("-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: black;");
         blocoMembros.getChildren().add(subtitulo);
 
-        blocoMembros.getChildren().addAll(
-            criarMembro("Gustavo Henrique da Silva", "GustavoHenrique01"),
-            criarMembro("João Francisco Alves", "JoaoM05"),
-            criarMembro("Julia Victoria da Silva", "Juliavds"),
-            criarMembro("Kauan Oliveira", "Kauan01"),
-            criarMembro("Nicolas Domingos da Silva", "NicolasDomingos89")
-        );
+
+        ObservableList<Usuario> membros = visualizarProjetoController.listarMembrosDoProjeto(projeto);
+        membros.forEach(membro -> {
+            blocoMembros.getChildren().add(criarMembro(membro.getNome(), membro.getLogin()));
+        });
 
 
         // Botão "Convidar novo membro" (somente para o dono)
         Button convidar = new Button("Convidar novo membro");
         convidar.setMaxWidth(Double.MAX_VALUE);
         convidar.setStyle("-fx-background-color: white; -fx-background-radius: 10; -fx-font-weight: bold;");
-        convidar.setOnAction(e -> System.out.println("Convidar novo membro..."));
+        convidar.setOnAction(e -> abrirModalConvite(primaryStage));
 
         Button voltar = new Button("Voltar");
         voltar.setMaxWidth(Double.MAX_VALUE);
         estiloBotaoRoxo(voltar);
 
+        voltar.setOnAction(evento -> {
+            telaVisualizarProjeto(projeto, primaryStage);
+        });
+
         mainContent.getChildren().addAll(header, painelMembros, blocoMembros);
 
-        if (usuarioEhDono) {
+        if (isDono) {
             mainContent.getChildren().add(convidar);
         }
 
@@ -146,7 +168,7 @@ public class FXVisualizarMembrosProjeto extends Application {
         HBox acoes = new HBox(5);
         acoes.setAlignment(Pos.CENTER_RIGHT);
 
-        if (usuarioEhDono) {
+        if (isDono) {
             Button remover = new Button("Remover");
             remover.setStyle("-fx-font-size: 12px; -fx-color:red");
             remover.setOnAction(e -> System.out.println("Remover: " + username));
@@ -176,14 +198,14 @@ public class FXVisualizarMembrosProjeto extends Application {
 
         TextField campoUsuario = new TextField();
 
-        Button btnReatribuir = new Button("Reatribuir");
+        Button btnConvidar = new Button("Convidar");
         Button btnCancelar = new Button("Cancelar");
 
         campoUsuario.setStyle("-fx-background-radius: 20; -fx-border-radius: 20;");
-        btnReatribuir.setStyle("-fx-background-color: #28a745; -fx-text-fill: white; -fx-background-radius: 20;");
+        btnConvidar.setStyle("-fx-background-color: #28a745; -fx-text-fill: white; -fx-background-radius: 20;");
         btnCancelar.setStyle("-fx-background-color: #dc3545; -fx-text-fill: white; -fx-background-radius: 20;");
 
-        HBox botoes = new HBox(15, btnReatribuir, btnCancelar);
+        HBox botoes = new HBox(15, btnConvidar, btnCancelar);
         botoes.setAlignment(Pos.CENTER);
 
         conteudo.getChildren().addAll(titulo, instrucao, campoUsuario, botoes);
@@ -194,36 +216,30 @@ public class FXVisualizarMembrosProjeto extends Application {
         fundo.setAlignment(Pos.CENTER);
 
         btnCancelar.setOnAction(e -> fundo.setVisible(false));
-        btnReatribuir.setOnAction(e -> {
+        btnConvidar.setOnAction(e -> {
+            conviteController.convidarUsuarioParaProjeto(campoUsuario.getText().trim(), projeto.getID());
             fundo.setVisible(false);
         });
 
         return fundo;
     }
 
-
-    private Button botaoMenuLateral(String texto, String cor) {
-        Button btn = new Button(texto);
-        btn.setMaxWidth(Double.MAX_VALUE);
-        btn.setStyle("-fx-background-color: " + cor + "; -fx-font-family: monospace; -fx-font-size: 14px; -fx-background-radius: 10px;");
-        return btn;
+    private void abrirModalConvite(Stage primaryStage) {
+        StackPane fundo = criarModalConvite(primaryStage);
+        root.getChildren().add(fundo);
+        fundo.setVisible(true);
     }
 
+    private void telaVisualizarProjeto(Projeto projeto, Stage primaryStage) {
+        FXVisualizarProjeto visualizarProjeto = new FXVisualizarProjeto();
+        visualizarProjeto.setProjeto(projeto);
+        FXVisualizarProjeto.setVisualizarProjetoController(AllControllerRegistry.getInstance().getVisualizarProjetoController());
+        FXVisualizarProjeto.setMeusProjetosController(AllControllerRegistry.getInstance().getMeusProjetosController());
+        FXVisualizarProjeto.setTarefaController(AllControllerRegistry.getInstance().getTarefaController());
+        visualizarProjeto.start(primaryStage);
+    }
 
     private void estiloBotaoRoxo(Button btn) {
         btn.setStyle("-fx-background-color: #8744c2; -fx-text-fill: white; -fx-background-radius: 10px; -fx-font-family: monospace;");
-    }
-
-    public ImageView formatarIcone(String path) {
-        ImageView iconeEdit = new ImageView(new Image(getClass().getResourceAsStream(path)));
-        iconeEdit.setFitWidth(18);
-        iconeEdit.setFitHeight(18);
-        StackPane.setAlignment(iconeEdit, Pos.CENTER_RIGHT);
-        StackPane.setMargin(iconeEdit, new Insets(0, 10, 0, 0));
-        return iconeEdit;
-    }
-    
-    public static void main(String[] args) {
-        launch(args);
     }
 }
