@@ -297,6 +297,8 @@ public class FXProjetosColaborando extends Application {
         FXVisualizarProjeto visualizarProjeto = new FXVisualizarProjeto();
         visualizarProjeto.setProjeto(p);
         FXVisualizarProjeto.setVisualizarProjetoController(AllControllerRegistry.getInstance().getVisualizarProjetoController());
+        FXVisualizarProjeto.setMeusProjetosController(AllControllerRegistry.getInstance().getMeusProjetosController());
+        FXVisualizarProjeto.setTarefaController(AllControllerRegistry.getInstance().getTarefaController());
         visualizarProjeto.start(primaryStage);
     }
 }

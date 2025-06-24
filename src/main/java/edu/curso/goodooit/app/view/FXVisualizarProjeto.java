@@ -331,6 +331,7 @@ public class FXVisualizarProjeto extends Application {
             FXVisualizarTarefa visualizarTarefa = new FXVisualizarTarefa();
             FXVisualizarTarefa.setVisualizarProjetoController(AllControllerRegistry.getInstance().getVisualizarProjetoController());
             FXVisualizarTarefa.setMeusProjetosController(AllControllerRegistry.getInstance().getMeusProjetosController());
+            FXVisualizarTarefa.setTarefaController(AllControllerRegistry.getInstance().getTarefaController());
             visualizarTarefa.setTarefa(tarefa);
             visualizarTarefa.setProjeto(projeto);
             visualizarTarefa.start(primaryStage);
@@ -408,7 +409,7 @@ public class FXVisualizarProjeto extends Application {
         Button btnCancelar = new Button("Cancelar");
         btnCancelar.setStyle("-fx-background-color: #dc3545; -fx-text-fill: white; -fx-background-radius: 18;");
 
-        HBox botoes = new HBox(15, btnCancelar, btnSalvar);
+        HBox botoes = new HBox(15, btnSalvar, btnCancelar);
         botoes.setAlignment(Pos.CENTER);
 
         conteudo.getChildren().addAll(
@@ -450,10 +451,6 @@ public class FXVisualizarProjeto extends Application {
     }
 
     private void abrirModalProjeto(Projeto p, StackPane modal) {
-        TextField tfNome = new TextField(p.getNome());
-        TextArea taDescricao = new TextArea(p.getDescricao());
-        DatePicker dpInicio = new DatePicker(p.getDataInicio());
-        DatePicker dpFim = new DatePicker(p.getDataFim());
         modal.setVisible(true);
     }
 
@@ -475,5 +472,4 @@ public class FXVisualizarProjeto extends Application {
         FXMeusProjetos.setMeusProjetosController(AllControllerRegistry.getInstance().getMeusProjetosController());
         meusProjetos.start(primaryStage);
     }
-
 }

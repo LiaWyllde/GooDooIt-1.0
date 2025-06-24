@@ -52,7 +52,7 @@ public class TarefaController {
         return tarefasObservable;
     }
 
-    public void editarTarefa(Tarefa tarefaEditada) throws SQLException {
+    public void editarTarefa(Tarefa tarefaEditada) {
         try {
             if (tarefaEditada != null){
                 tarefaDAO.atualizarTarefa(tarefaEditada);
@@ -64,7 +64,7 @@ public class TarefaController {
         }
     }
 
-    public void excluirTarefa(Integer idTarefa) throws SQLException {
+    public void excluirTarefa(Integer idTarefa) {
 
         try {
             Tarefa tarefa = tarefaDAO.buscarTarefaId(idTarefa);
@@ -91,5 +91,32 @@ public class TarefaController {
         } catch (Exception e) {
             System.out.println("Erro ao adicionar nova tarefa, SQL quis assim." + e.getMessage());
         }
+    }
+
+    public Integer buscarIdResponsavel (String loginResponsavel){
+        Integer responsavelID = null;
+        try{
+            if(loginResponsavel.isBlank()) {
+                return null;
+
+            } else{
+                responsavelID = usuarioDAO.buscarUsuarioLogin(loginResponsavel).getID();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return responsavelID;
+    }
+
+    public String buscarResposavel(Integer responsavelID) {
+        try{
+            if(responsavelID != null){
+                return usuarioDAO.buscarUsuarioID(responsavelID).getLogin();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return "";
     }
 }
