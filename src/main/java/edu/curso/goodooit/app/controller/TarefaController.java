@@ -15,19 +15,18 @@ import java.util.Objects;
 
 public class TarefaController {
 
-    private final AutenticacaoController autenticacaoController;
     private final TarefaDAO tarefaDAO;
     private final StatusDAO statusDAO;
+    private final UsuarioDAO usuarioDAO;
 
-    public TarefaController(AutenticacaoController autenticacaoController, TarefaDAO tarefaDAO, StatusDAO statusDAO) {
-        this.autenticacaoController = autenticacaoController;
+    public TarefaController( TarefaDAO tarefaDAO, StatusDAO statusDAO, UsuarioDAO usuarioDAO) {
         this.tarefaDAO = tarefaDAO;
         this.statusDAO = statusDAO;
+        this.usuarioDAO = usuarioDAO;
     }
 
-    Usuario autenticado = AutenticacaoController.getAutenticado();
-
     public boolean VerificarCriadorDaTarefa(Usuario usuario) {
+        Usuario autenticado = AutenticacaoController.getAutenticado();
         if (!Objects.equals(usuario.getID(), autenticado.getID())) {
             System.out.println("O usuario autenticado não é criador da tarefa.");
             return false;
@@ -76,10 +75,18 @@ public class TarefaController {
 
     }
 
-    public void adicionarTarefa (Integer ID, String nome, String descricao, LocalDate dataInicio, LocalDate dataFim, LocalDate dataCriacao, int prioridade, Integer statusTarefaID, Integer criadorID, Integer responsavelID, Integer projetoID)  {
-        Tarefa tarefa = new Tarefa(ID, nome, descricao, dataInicio, dataFim, dataCriacao, prioridade, criadorID, responsavelID, statusTarefaID, projetoID);
-        System.out.printf("Tarefa %s de id %d adicionada com sucesso!", tarefa.getNome(), tarefa.getID());
+    public void adicionarTarefa (String nome, String descricao, LocalDate dataInicio, LocalDate dataFim, int prioridade, String responsavel, Integer projetoID)  {
+        Usuario autenticado = AutenticacaoController.getAutenticado();
+        Integer responsavelID;
         try {
+            if(responsavel.isBlank()) {
+                responsavelID = null;
+
+            } else{
+                responsavelID = usuarioDAO.buscarUsuarioLogin(responsavel).getID();
+            }
+            Tarefa tarefa = new Tarefa(nome, descricao, dataInicio, dataFim, LocalDate.now(), prioridade, 1, autenticado.getID(), responsavelID, projetoID);
+            System.out.printf("Tarefa %s de id %d adicionada com sucesso!", tarefa.getNome(), tarefa.getID());
             tarefaDAO.registrarTarefa(tarefa);
         } catch (Exception e) {
             System.out.println("Erro ao adicionar nova tarefa, SQL quis assim." + e.getMessage());

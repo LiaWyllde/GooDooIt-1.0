@@ -59,6 +59,27 @@ public class EquipeDAO implements IEquipeDAO {
     }
 
     @Override
+    public Integer contarMembrosProjeto(Integer idProjeto) throws SQLException {
+        String sql = """
+                    SELECT COUNT(up.UsuarioID)
+                    FROM Usuario_Projeto up
+                    INNER JOIN Projeto p
+                    ON up.ProjetoID = p.ID
+                    WHERE p.ID = ?
+                """;
+        try (Connection conn = dbConn.getConnection();
+        PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, idProjeto);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+        return 0;
+    }
+
+    @Override
     public List<Usuario> buscarUsuariosPorProjeto(Integer idProjeto) throws SQLException {
         String sql =
                 """
@@ -113,5 +134,7 @@ public class EquipeDAO implements IEquipeDAO {
         }
         return usuarios;
     }
+
+
 }
 

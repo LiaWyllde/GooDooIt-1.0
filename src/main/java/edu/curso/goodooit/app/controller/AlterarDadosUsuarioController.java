@@ -2,6 +2,7 @@ package edu.curso.goodooit.app.controller;
 
 import edu.curso.goodooit.app.model.Usuario;
 import edu.curso.goodooit.app.persistence.implementations.UsuarioDAO;
+import edu.curso.goodooit.app.persistence.interfaces.IUsuarioDAO;
 
 
 public class AlterarDadosUsuarioController {

@@ -12,4 +12,5 @@ public interface IEquipeDAO {
     public List<Usuario> removerUsuarioProjeto(Integer idProjeto, Integer idUsuario) throws SQLException;
     public List<Usuario> adicionarMembroProjeto(Integer idProjeto, Integer idUsuario) throws SQLException;
     public List<Equipe> buscarEquipesPorUsuario(Integer idUsuario) throws SQLException;
+    public Integer contarMembrosProjeto(Integer idProjeto)throws SQLException;
 }

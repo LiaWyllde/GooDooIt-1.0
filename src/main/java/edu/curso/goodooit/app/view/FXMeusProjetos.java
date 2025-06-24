@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class FXMeusProjetos extends Application {
-    //ToDo: Visualizar projeto pelo bloco de projeto
 
     private VBox areaPrincipal;
     private StackPane modalProjeto;
@@ -178,7 +177,7 @@ public class FXMeusProjetos extends Application {
         });
 
         excluir.setOnMouseClicked(e -> {
-            //Todo: Se der tempo fazer a confirmação de delete
+            //Todo: Fazer a confirmação de delete
             meusProjetosController.excluirProjeto(p);
         });
 
@@ -393,6 +392,10 @@ public class FXMeusProjetos extends Application {
         return iconeEdit;
     }
 
+    /*
+        Todos os metodos que estao aqui embaixo sao usados somente para redirecionar entre telas e
+        sao usados na composicao da barra lateral
+     */
     private void telaProjetoDono(Stage primaryStage) {
         start(primaryStage);
     }
@@ -431,6 +434,8 @@ public class FXMeusProjetos extends Application {
         FXVisualizarProjeto visualizarProjeto = new FXVisualizarProjeto();
         visualizarProjeto.setProjeto(p);
         FXVisualizarProjeto.setVisualizarProjetoController(AllControllerRegistry.getInstance().getVisualizarProjetoController());
+        FXVisualizarProjeto.setMeusProjetosController(AllControllerRegistry.getInstance().getMeusProjetosController());
+        FXVisualizarProjeto.setTarefaController(AllControllerRegistry.getInstance().getTarefaController());
         visualizarProjeto.start(primaryStage);
     }
 }

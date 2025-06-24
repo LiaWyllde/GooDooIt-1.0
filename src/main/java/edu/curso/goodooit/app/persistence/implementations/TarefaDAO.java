@@ -25,9 +25,9 @@ public class TarefaDAO implements ITarefaDAO {
                 rs.getDate("data_fim").toLocalDate(),
                 rs.getDate("dataCriacao").toLocalDate(),
                 rs.getInt("prioridade"),
+                rs.getInt("StatusID"),
                 rs.getInt("CriadorID"),
                 rs.getObject("ResponsavelID") != null ? rs.getInt("ResponsavelID") : null,
-                rs.getInt("StatusID"),
                 rs.getInt("ProjetoID")
         );
     }

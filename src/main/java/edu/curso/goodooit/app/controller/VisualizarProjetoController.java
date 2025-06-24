@@ -36,16 +36,20 @@ public class VisualizarProjetoController {
         List<Tarefa> tarefas;
 
         try {
-
             tarefas = tarefaDAO.buscarTarefasProjetoId(projeto.getID());
+            tarefas.forEach(tarefa -> {
+                try {
+                    tarefa.setStatus(statusDAO.buscarStatusId(tarefa.getStatusTarefaID()));
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            });
             observableTarefas.addAll(tarefas);
 
         } catch (Exception ex) {
             System.out.println("Impossivel buscar tarefas por projeto, SQL quis assim");
         }
-
         return observableTarefas;
-
     }
 
     public ObservableList<Status> getAllStatus(){
@@ -132,6 +136,15 @@ public class VisualizarProjetoController {
                 "\n 3 - acho que deus nos abandonou");
 
         return contarTarefa;
+    }
+
+    public Integer contarMembrosProjeto(Projeto projeto) {
+        try{
+            return equipeDAO.contarMembrosProjeto(projeto.getID());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     // TODO: Alteração de dados do projeto

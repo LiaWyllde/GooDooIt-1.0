@@ -167,6 +167,7 @@ public class FXProjetosColaborando extends Application {
         btnDeixarProjeto.setOnMouseClicked(e -> {
             //Todo: Se der tempo fazer a confirmação de saida
             meusProjetosController.deixarProjeto(p);
+            telaProjetoColaborador(primaryStage);
         });
 
         visualizar.setOnMouseClicked(e -> {

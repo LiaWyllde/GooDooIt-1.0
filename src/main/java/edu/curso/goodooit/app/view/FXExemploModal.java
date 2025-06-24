@@ -278,7 +278,7 @@ public class FXExemploModal extends Application {
         conteudo.setMaxWidth(largura * 0.35);
         conteudo.setMaxHeight(altura * 0.4);
         conteudo.setStyle("-fx-background-color: #E6E6E6; -fx-background-radius: 20;");
-        Label titulo = new Label("📋 Nova Tarefa");
+        Label titulo = new Label("Nova Tarefa");
         titulo.setStyle("-fx-font-size: 24px; -fx-text-fill: #6A0DAD; -fx-font-weight: bold;");
 
         TextField tfTitulo = new TextField();

@@ -36,13 +36,12 @@ public class AllControllerRegistry {
         this.statusDAO = new StatusDAO(dbConn);
         this.tarefaDAO = new TarefaDAO(dbConn);
         this.projetoDAO = new ProjetoDAO(dbConn);
-        AutenticacaoController autenticacaoController = new AutenticacaoController();
         this.meusProjetosController = new MeusProjetosController(usuarioDAO, projetoDAO, statusDAO, tarefaDAO, equipeDAO);
         this.loginController = new LoginController(usuarioDAO);
         this.alterarSenhaController = new AlterarSenhaController(usuarioDAO);
         this.alterarDadosUsuarioController = new AlterarDadosUsuarioController(usuarioDAO);
         this.conviteController = new ConviteController(conviteDAO, usuarioDAO, projetoDAO, equipeDAO);
-        this.tarefaController = new TarefaController(autenticacaoController, tarefaDAO, statusDAO);
+        this.tarefaController = new TarefaController(tarefaDAO, statusDAO, usuarioDAO);
         this.visualizarProjetoController = new VisualizarProjetoController(tarefaDAO, statusDAO, equipeDAO);
         this.cadastroController = new CadastroController(usuarioDAO);
     }
