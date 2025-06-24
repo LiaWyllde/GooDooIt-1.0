@@ -9,9 +9,9 @@ Ao identificar a complexidade do projeto inicialmente proposto optamos por entre
 
 Para melhor visualização da documentação da ideia, o repositório com o projeto DDD em desenvolvimento e também a estrutura de documentação
 
-[link](https://github.com/NicolasDomingos09/GooDooIt)
+[Repositório](https://github.com/NicolasDomingos09/GooDooIt)
 
-[link](https://docs.google.com/document/d/1TUzYJOo91RflN2BsCYlSXED2olbs6yZ2ENmHy4JRdas/edit?usp=sharing)
+[Documentação](https://docs.google.com/document/d/1TUzYJOo91RflN2BsCYlSXED2olbs6yZ2ENmHy4JRdas/edit?usp=sharing)
 
 
 
