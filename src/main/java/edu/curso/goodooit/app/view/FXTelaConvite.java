@@ -1,8 +1,10 @@
 package edu.curso.goodooit.app.view;
 
 import edu.curso.goodooit.app.controller.AllControllerRegistry;
-import edu.curso.goodooit.app.model.Projeto;
+import edu.curso.goodooit.app.controller.AutenticacaoController;
+import edu.curso.goodooit.app.model.Convite;
 import javafx.application.Application;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -11,7 +13,6 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
@@ -25,10 +26,11 @@ public class FXTelaConvite extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        double larguraTela = 1600;
-        double alturaTela = 1600;
+        double larguraTela = Screen.getPrimary().getBounds().getWidth();
+        double alturaTela = Screen.getPrimary().getBounds().getHeight();
 
-        VBox sidebar = criarSideBar(primaryStage, "Julia");
+        String nomeUsuario = AutenticacaoController.getAutenticado().getNome();
+        VBox sidebar = criarSideBar(primaryStage, nomeUsuario);
 
         Label titulo = new Label("Convites");
         titulo.setStyle("-fx-font-size: 22px; -fx-font-family: monospace;");
@@ -37,11 +39,16 @@ public class FXTelaConvite extends Application {
         convitesContainer.setPadding(new Insets(10));
         convitesContainer.setAlignment(Pos.TOP_CENTER);
 
-        // Simulando convites
-        for (int i = 0; i < 10; i++) {
-            convitesContainer.getChildren().add(criarCartaoConvite(
-                    "17/06/2025", "Gustavo Henrique", "GustavoHenrique01", "Furão Biônico"
-            ));
+        ObservableList<Convite> convites = AllControllerRegistry.getInstance().getConviteController().convitesRecebidos();
+
+        if (convites == null || convites.isEmpty()) {
+            Label vazio = new Label("Você não possui convites no momento.");
+            vazio.setStyle("-fx-font-size: 16px; -fx-font-family: monospace;");
+            convitesContainer.getChildren().add(vazio);
+        } else {
+            for (Convite convite : convites) {
+                convitesContainer.getChildren().add(criarCartaoConvite(convite, convitesContainer));
+            }
         }
 
         ScrollPane scroll = new ScrollPane(convitesContainer);
@@ -68,6 +75,52 @@ public class FXTelaConvite extends Application {
         primaryStage.setTitle("Convites - GooDoolt");
         primaryStage.show();
     }
+
+    private VBox criarCartaoConvite(Convite convite, VBox container) {
+        VBox cartao = new VBox(10);
+        cartao.setPadding(new Insets(15));
+        cartao.setStyle("-fx-background-color: white; -fx-background-radius: 15px;");
+        cartao.setMaxWidth(600);
+
+        var controller = AllControllerRegistry.getInstance().getConviteController();
+        var remetente = controller.buscarRemetente(convite);
+        var projeto = controller.buscarProjeto(convite);
+
+        String nomeRemetente = (remetente != null) ? remetente.getNome() + " " + remetente.getSobrenome() : "Remetente desconhecido";
+        String username = (remetente != null) ? remetente.getLogin() : "login inválido";
+        String nomeProjeto = (projeto != null) ? projeto.getNome() : "projeto inválido";
+
+        Label lblTexto = new Label(nomeRemetente + "\n" + username + "\nconvidou você para participar do projeto \"" + nomeProjeto + "\"");
+        lblTexto.setStyle("-fx-font-family: monospace; -fx-font-size: 16px;");
+
+        Button btnAceitar = new Button("Aceitar");
+        Button btnRecusar = new Button("Recusar");
+
+        btnAceitar.setStyle("-fx-background-color: #8fd18f; -fx-border-color: black; -fx-border-radius: 8; -fx-background-radius: 8;" +
+                "-fx-font-family: monospace; -fx-padding: 5 15;");
+        btnRecusar.setStyle("-fx-background-color: #f28f8f; -fx-border-color: black; -fx-border-radius: 8; -fx-background-radius: 8;" +
+                "-fx-font-family: monospace; -fx-padding: 5 15;");
+
+        btnAceitar.setOnAction(e -> {
+            controller.aceitarConvite(convite.getProjetoID(), convite.getRemetenteID(), convite.getDestinatarioID());
+            container.getChildren().remove(cartao);
+        });
+
+        btnRecusar.setOnAction(e -> {
+            controller.recusarConvite(convite.getProjetoID(), convite.getRemetenteID(), convite.getDestinatarioID());
+            container.getChildren().remove(cartao);
+        });
+
+        HBox botoes = new HBox(10, btnAceitar, btnRecusar);
+        botoes.setAlignment(Pos.CENTER_RIGHT);
+
+        cartao.getChildren().addAll(lblTexto, botoes);
+        return cartao;
+    }
+
+
+
+    // Sidebar e Navegação
 
     private VBox criarSideBar(Stage primaryStage, String nomeCompleto) {
         VBox sidebar = new VBox(15);
@@ -118,45 +171,11 @@ public class FXTelaConvite extends Application {
         return sidebar;
     }
 
-
-    private VBox criarCartaoConvite(String data, String nome, String username, String projeto) {
-        VBox cartao = new VBox(10);
-        cartao.setPadding(new Insets(15));
-        cartao.setStyle("-fx-background-color: white; -fx-background-radius: 15px;");
-        cartao.setMaxWidth(600);
-
-        Label lblData = new Label(data);
-        lblData.setStyle("-fx-font-family: monospace; -fx-font-size: 14px;");
-
-        Label lblTexto = new Label(nome + "\n" + username + "\nconvidou você para participar do projeto \"" + projeto + "\"");
-        lblTexto.setStyle("-fx-font-family: monospace; -fx-font-size: 16px;");
-
-        Button btnAceitar = new Button("Aceitar");
-        Button btnRecusar = new Button("Recusar");
-
-        btnAceitar.setStyle("-fx-background-color: #8fd18f; -fx-border-color: black; -fx-border-radius: 8; -fx-background-radius: 8;" +
-                "-fx-font-family: monospace; -fx-padding: 5 15;");
-        btnRecusar.setStyle("-fx-background-color: #f28f8f; -fx-border-color: black; -fx-border-radius: 8; -fx-background-radius: 8;" +
-                "-fx-font-family: monospace; -fx-padding: 5 15;");
-
-        HBox botoes = new HBox(10, btnAceitar, btnRecusar);
-        botoes.setAlignment(Pos.CENTER_RIGHT);
-
-        cartao.getChildren().addAll(lblData, lblTexto, botoes);
-        return cartao;
-    }
-
-
-    public static void main(String[] args) {
-        launch(args);
-    }
-
     private void telaProjetoDono(Stage primaryStage) {
         FXMeusProjetos fxMeusProjetos = new FXMeusProjetos();
         FXMeusProjetos.setMeusProjetosController(AllControllerRegistry.getInstance().getMeusProjetosController());
         fxMeusProjetos.start(primaryStage);
     }
-
 
     private void telaConvites(Stage primaryStage) {
         start(primaryStage);
@@ -177,7 +196,6 @@ public class FXTelaConvite extends Application {
 
     private void telaTarefas(Stage primaryStage) {
         FXMinhasTarefas minhasTarefas = new FXMinhasTarefas();
-        //ToDo: Essa tela precisa ser feita ainda. Nem o front tá pronto
         minhasTarefas.start(primaryStage);
     }
 
@@ -186,7 +204,6 @@ public class FXTelaConvite extends Application {
         FXProjetosColaborando.setMeusProjetosController(AllControllerRegistry.getInstance().getMeusProjetosController());
         projetoColaborador.start(primaryStage);
     }
-
 
     private StackPane criarModalSair(Stage primaryStage) {
         double largura = Screen.getPrimary().getBounds().getWidth();
@@ -199,8 +216,7 @@ public class FXTelaConvite extends Application {
         conteudo.setMaxHeight(altura * 0.4);
         conteudo.setStyle("-fx-background-color: #E6E6E6; -fx-background-radius: 20;");
 
-        Image avatarImage = new Image(getClass().getResourceAsStream("/images/Goo.png"), 100, 100, true, true);
-        ImageView ghost = new ImageView(new Image(getClass().getResourceAsStream("/images/Goo.png"), 100, 100, true, true)); // você deve ter esta imagem no recurso
+        ImageView ghost = new ImageView(new Image(getClass().getResourceAsStream("/images/Goo.png"), 100, 100, true, true));
         ghost.setFitHeight(80);
         ghost.setFitWidth(80);
 
@@ -244,12 +260,12 @@ public class FXTelaConvite extends Application {
     }
 
     private ImageView formatarIcone(String path) {
-        ImageView iconeEdit = new ImageView(new Image(getClass().getResourceAsStream(path)));
-        iconeEdit.setFitWidth(18);
-        iconeEdit.setFitHeight(18);
-        StackPane.setAlignment(iconeEdit, Pos.CENTER_RIGHT);
-        StackPane.setMargin(iconeEdit, new Insets(0, 10, 0, 0));
-        return iconeEdit;
+        ImageView icone = new ImageView(new Image(getClass().getResourceAsStream(path)));
+        icone.setFitWidth(18);
+        icone.setFitHeight(18);
+        StackPane.setAlignment(icone, Pos.CENTER_RIGHT);
+        StackPane.setMargin(icone, new Insets(0, 10, 0, 0));
+        return icone;
     }
 
     private Button botaoMenu(String texto, boolean roxo, boolean selecionado) {
@@ -262,17 +278,7 @@ public class FXTelaConvite extends Application {
         return btn;
     }
 
-    private void estilizarBotao(Button botao) {
-        botao.setPrefWidth(200);
-        botao.setPrefHeight(45);
-        botao.setStyle(
-                "-fx-background-color: #6A0DAD;" +
-                        "-fx-text-fill: white;" +
-                        "-fx-font-size: 18px;" +
-                        "-fx-font-family: 'Courier New';" +
-                        "-fx-background-radius: 15px;" +
-                        "-fx-cursor: hand;"
-        );
+    public static void main(String[] args) {
+        launch(args);
     }
-
 }
