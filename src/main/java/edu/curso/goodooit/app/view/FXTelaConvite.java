@@ -152,13 +152,14 @@ public class FXTelaConvite extends Application {
     }
 
     private void telaProjetoDono(Stage primaryStage) {
-        start(primaryStage);
+        FXMeusProjetos fxMeusProjetos = new FXMeusProjetos();
+        FXMeusProjetos.setMeusProjetosController(AllControllerRegistry.getInstance().getMeusProjetosController());
+        fxMeusProjetos.start(primaryStage);
     }
 
 
     private void telaConvites(Stage primaryStage) {
-        FXTelaConvite convites = new FXTelaConvite();
-        convites.start(primaryStage);
+        start(primaryStage);
     }
 
     private void telaSair(Stage primaryStage) {
@@ -186,15 +187,6 @@ public class FXTelaConvite extends Application {
         projetoColaborador.start(primaryStage);
     }
 
-    private void telaVisualizarProjeto(Stage primaryStage, Projeto p) {
-        FXVisualizarProjeto visualizarProjeto = new FXVisualizarProjeto();
-        visualizarProjeto.setProjeto(p);
-        FXVisualizarProjeto.setVisualizarProjetoController(AllControllerRegistry.getInstance().getVisualizarProjetoController());
-        FXVisualizarProjeto.setMeusProjetosController(AllControllerRegistry.getInstance().getMeusProjetosController());
-        FXVisualizarProjeto.setTarefaController(AllControllerRegistry.getInstance().getTarefaController());
-        visualizarProjeto.start(primaryStage);
-    }
-
 
     private StackPane criarModalSair(Stage primaryStage) {
         double largura = Screen.getPrimary().getBounds().getWidth();
@@ -208,7 +200,6 @@ public class FXTelaConvite extends Application {
         conteudo.setStyle("-fx-background-color: #E6E6E6; -fx-background-radius: 20;");
 
         Image avatarImage = new Image(getClass().getResourceAsStream("/images/Goo.png"), 100, 100, true, true);
-        ImageView avatarView = new ImageView(avatarImage);
         ImageView ghost = new ImageView(new Image(getClass().getResourceAsStream("/images/Goo.png"), 100, 100, true, true)); // você deve ter esta imagem no recurso
         ghost.setFitHeight(80);
         ghost.setFitWidth(80);
