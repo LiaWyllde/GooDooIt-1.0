@@ -21,8 +21,6 @@ public class ConviteController {
     private final ProjetoDAO projetoDAO;
     private final EquipeDAO equipeDAO;
 
-    private final Usuario autenticado = AutenticacaoController.getAutenticado();
-
     public ConviteController(ConviteDAO conviteDAO, UsuarioDAO usuarioDAO, ProjetoDAO projetoDAO, EquipeDAO equipeDAO) {
         this.conviteDAO = conviteDAO;
         this.usuarioDAO = usuarioDAO;
