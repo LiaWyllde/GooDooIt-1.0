@@ -19,9 +19,8 @@ import javafx.util.Duration;
 public class FXVisualizarMembrosProjeto extends Application {
 
     private boolean menuVisivel = false;
-    private Button botaoMenu;
-    private Rectangle fundoEscurecido;
-    private VBox menuLateralRef;
+
+    StackPane root;
 
     private boolean usuarioEhDono = true; // ← controle de permissão
 
@@ -30,29 +29,17 @@ public class FXVisualizarMembrosProjeto extends Application {
         double larguraTela = Screen.getPrimary().getBounds().getWidth();
         double alturaTela = Screen.getPrimary().getBounds().getHeight();
 
-        StackPane root = new StackPane();
-
         VBox conteudo = criarConteudoPrincipal();
         ScrollPane scrollPane = new ScrollPane(conteudo);
         scrollPane.setFitToWidth(true);
         scrollPane.setStyle("-fx-background: transparent; -fx-background-color: transparent;");
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
-        menuLateralRef = criarMenuLateral();
-        menuLateralRef.setPrefWidth(250);
-        menuLateralRef.setTranslateX(-260);
-        StackPane.setAlignment(menuLateralRef, Pos.TOP_LEFT);
-
-        fundoEscurecido = new Rectangle(larguraTela, alturaTela);
-        fundoEscurecido.setFill(new Color(0, 0, 0, 0.5));
-        fundoEscurecido.setVisible(false);
-        fundoEscurecido.setOnMouseClicked(e -> alternarMenu(menuLateralRef));
-        StackPane.setAlignment(fundoEscurecido, Pos.CENTER);
-
         VBox layoutPrincipal = new VBox(scrollPane);
         VBox.setVgrow(scrollPane, Priority.ALWAYS);
 
-        root.getChildren().addAll(layoutPrincipal, fundoEscurecido, menuLateralRef);
+
+        root = new StackPane(layoutPrincipal);
 
         Scene scene = new Scene(root, larguraTela, alturaTela * 0.9);
         stage.setScene(scene);
@@ -68,9 +55,6 @@ public class FXVisualizarMembrosProjeto extends Application {
         HBox header = new HBox(10);
         header.setAlignment(Pos.CENTER_LEFT);
 
-        botaoMenu = new Button("≡");
-        botaoMenu.setStyle("-fx-font-size: 18px; -fx-background-color: transparent;");
-        botaoMenu.setOnAction(e -> alternarMenu(menuLateralRef));
 
         Label title = new Label("Projeto galo eletrônico");
         title.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: white;");
@@ -81,7 +65,7 @@ public class FXVisualizarMembrosProjeto extends Application {
         Label status = new Label("Em andamento");
         status.setStyle("-fx-background-color: #dadada; -fx-padding: 5 10 5 10; -fx-background-radius: 8; -fx-font-size: 12px;");
 
-        header.getChildren().addAll(botaoMenu, title, spacer, status);
+        header.getChildren().addAll(title, spacer, status);
 
         VBox painelMembros = new VBox();
         painelMembros.setAlignment(Pos.CENTER);
@@ -114,7 +98,6 @@ public class FXVisualizarMembrosProjeto extends Application {
             criarMembro("Kauan Oliveira", "Kauan01"),
             criarMembro("Nicolas Domingos da Silva", "NicolasDomingos89")
         );
-
 
 
         // Botão "Convidar novo membro" (somente para o dono)
@@ -174,32 +157,50 @@ public class FXVisualizarMembrosProjeto extends Application {
         return membroBox;
     }
 
-    private VBox criarMenuLateral() {
-        VBox menu = new VBox(10);
-        menu.setPadding(new Insets(15));
-        menu.setStyle("-fx-background-color: white; -fx-border-color: lightgray; -fx-min-width: 250px; -fx-max-width: 250px;");
-        menu.setAlignment(Pos.TOP_CENTER);
+    public StackPane criarModalConvite(Stage primaryStage) {
+        double largura = Screen.getPrimary().getBounds().getWidth();
+        double altura = Screen.getPrimary().getBounds().getHeight();
 
-        ImageView avatar = new ImageView(new Image("/images/Goo.png"));
-        avatar.setFitHeight(80);
-        avatar.setFitWidth(80);
+        VBox conteudo = new VBox(15);
+        conteudo.setPadding(new Insets(30));
+        conteudo.setAlignment(Pos.CENTER);
+        conteudo.setMaxWidth(largura * 0.35);
+        conteudo.setMaxHeight(altura * 0.4);
+        conteudo.setStyle("-fx-background-color: #E6E6E6; -fx-background-radius: 20;");
 
-        Label nome = new Label("Julia Fernandes");
-        nome.setStyle("-fx-font-family: monospace; -fx-font-size: 16px;");
+        Label titulo = new Label("Convidar novo membro");
+        titulo.setStyle("-fx-font-size: 22px; -fx-text-fill: #6A0DAD; -fx-font-weight: bold;");
 
-        Button fecharMenu = new Button("Fechar menu");
-        fecharMenu.setMaxWidth(Double.MAX_VALUE);
-        fecharMenu.setStyle("-fx-background-color: #ffaaaa; -fx-font-family: monospace;");
-        fecharMenu.setOnAction(e -> alternarMenu(menu));
+        Label instrucao = new Label("Digite usuário do novo responsável pela tarefa:");
+        instrucao.setStyle("-fx-font-size: 14px;");
 
-        menu.getChildren().addAll(avatar, nome,
-                botaoMenuLateral("Projetos", "#d763f7"),
-                botaoMenuLateral("Tarefas", "#c7c7c7"),
-                botaoMenuLateral("Sair", "#d763f7"),
-                fecharMenu
-        );
-        return menu;
+        TextField campoUsuario = new TextField();
+
+        Button btnReatribuir = new Button("Reatribuir");
+        Button btnCancelar = new Button("Cancelar");
+
+        campoUsuario.setStyle("-fx-background-radius: 20; -fx-border-radius: 20;");
+        btnReatribuir.setStyle("-fx-background-color: #28a745; -fx-text-fill: white; -fx-background-radius: 20;");
+        btnCancelar.setStyle("-fx-background-color: #dc3545; -fx-text-fill: white; -fx-background-radius: 20;");
+
+        HBox botoes = new HBox(15, btnReatribuir, btnCancelar);
+        botoes.setAlignment(Pos.CENTER);
+
+        conteudo.getChildren().addAll(titulo, instrucao, campoUsuario, botoes);
+
+        StackPane fundo = new StackPane(conteudo);
+        fundo.setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);");
+        fundo.setVisible(false);
+        fundo.setAlignment(Pos.CENTER);
+
+        btnCancelar.setOnAction(e -> fundo.setVisible(false));
+        btnReatribuir.setOnAction(e -> {
+            fundo.setVisible(false);
+        });
+
+        return fundo;
     }
+
 
     private Button botaoMenuLateral(String texto, String cor) {
         Button btn = new Button(texto);
@@ -208,28 +209,6 @@ public class FXVisualizarMembrosProjeto extends Application {
         return btn;
     }
 
-    private void alternarMenu(VBox menuLateral) {
-        TranslateTransition slide = new TranslateTransition(Duration.millis(300), menuLateral);
-        FadeTransition fade = new FadeTransition(Duration.millis(300), fundoEscurecido);
-
-        if (!menuVisivel) {
-            slide.setToX(0);
-            fade.setFromValue(0);
-            fade.setToValue(1);
-            fundoEscurecido.setVisible(true);
-            botaoMenu.setText("X");
-        } else {
-            slide.setToX(-260);
-            fade.setFromValue(1);
-            fade.setToValue(0);
-            fade.setOnFinished(e -> fundoEscurecido.setVisible(false));
-            botaoMenu.setText("≡");
-        }
-
-        slide.play();
-        fade.play();
-        menuVisivel = !menuVisivel;
-    }
 
     private void estiloBotaoRoxo(Button btn) {
         btn.setStyle("-fx-background-color: #8744c2; -fx-text-fill: white; -fx-background-radius: 10px; -fx-font-family: monospace;");

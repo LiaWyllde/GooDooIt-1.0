@@ -196,10 +196,6 @@ public class FXMeusProjetos extends Application {
     }
 
     private void abrirModalProjeto(Projeto p, StackPane modal) {
-        TextField tfNome = new TextField(p.getNome());
-        TextArea taDescricao = new TextArea(p.getDescricao());
-        DatePicker dpInicio = new DatePicker(p.getDataInicio());
-        DatePicker dpFim = new DatePicker(p.getDataFim());
         modal.setVisible(true);
     }
 
@@ -339,7 +335,6 @@ public class FXMeusProjetos extends Application {
         conteudo.setStyle("-fx-background-color: #E6E6E6; -fx-background-radius: 20;");
 
         Image avatarImage = new Image(getClass().getResourceAsStream("/images/Goo.png"), 100, 100, true, true);
-        ImageView avatarView = new ImageView(avatarImage);
         ImageView ghost = new ImageView(new Image(getClass().getResourceAsStream("/images/Goo.png"), 100, 100, true, true)); // você deve ter esta imagem no recurso
         ghost.setFitHeight(80);
         ghost.setFitWidth(80);
