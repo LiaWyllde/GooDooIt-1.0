@@ -7,7 +7,7 @@ import javafx.application.Application;
 
 public class Main {
     public static void main(String[] args) {
-        String password = "";
+        String password = "Shingeki12*";
         //Digite a senha escolhida durante a configuração para conectar na DB
         DataBaseConnection dbConn = new DataBaseConnection("GooDooIt01", "sa", password, "localhost", 1433);
         UsuarioDAO uDAO = new UsuarioDAO(dbConn);
