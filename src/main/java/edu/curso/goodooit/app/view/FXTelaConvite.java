@@ -198,6 +198,8 @@ public class FXTelaConvite extends Application {
         FXEditarPerfil editarPerfil = new FXEditarPerfil();
         FXEditarPerfil.setAlterarDadosUsuarioController(AllControllerRegistry.getInstance().getAlterarDadosUsuarioController());
         FXEditarPerfil.setAlterarSenhaController(AllControllerRegistry.getInstance().getAlterarSenhaController());
+        FXEditarPerfil.setConviteController(AllControllerRegistry.getInstance().getConviteController());
+        FXEditarPerfil.setCadastroController(AllControllerRegistry.getInstance().getCadastroController());
         editarPerfil.start(primaryStage);
     }
 

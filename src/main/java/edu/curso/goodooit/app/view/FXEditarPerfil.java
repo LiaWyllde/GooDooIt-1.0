@@ -1,9 +1,6 @@
 package edu.curso.goodooit.app.view;
 
-import edu.curso.goodooit.app.controller.AlterarDadosUsuarioController;
-import edu.curso.goodooit.app.controller.AlterarSenhaController;
-import edu.curso.goodooit.app.controller.AutenticacaoController;
-import edu.curso.goodooit.app.controller.AllControllerRegistry;
+import edu.curso.goodooit.app.controller.*;
 import edu.curso.goodooit.app.model.Usuario;
 import javafx.animation.PauseTransition;
 import javafx.application.Application;
@@ -33,6 +30,16 @@ public class FXEditarPerfil extends Application {
 
     private static AlterarDadosUsuarioController alterarDadosUsuarioController;
     private static AlterarSenhaController alterarSenhaController;
+    private static ConviteController conviteController;
+    private static CadastroController cadastroController;
+
+    public static void setCadastroController(CadastroController cadastroController) {
+        FXEditarPerfil.cadastroController = cadastroController;
+    }
+
+    public static void setConviteController(ConviteController conviteController) {
+        FXEditarPerfil.conviteController = conviteController;
+    }
 
     public static void setAlterarDadosUsuarioController(AlterarDadosUsuarioController controller) {
         alterarDadosUsuarioController = controller;
@@ -75,7 +82,7 @@ public class FXEditarPerfil extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        mostrarTelaEditarPerfil();
+        mostrarTelaEditarPerfil(primaryStage);
     }
 
     private VBox criarSideBar(Stage primaryStage, String nomeCompleto) {
@@ -95,7 +102,7 @@ public class FXEditarPerfil extends Application {
         notificacoes.setAlignment(Pos.CENTER);
 
         ImageView iconeConvite = formatarIcone("/images/envelope.jpg");
-        Label email = new Label("1");
+        Label email = new Label(conviteController.contarNovosConvites().toString());
         email.setCursor(Cursor.HAND);
         email.setOnMouseClicked(e -> telaConvites(primaryStage));
         iconeConvite.setOnMouseClicked(e -> telaConvites(primaryStage));
@@ -126,7 +133,7 @@ public class FXEditarPerfil extends Application {
         return sidebar;
     }
 
-    private void mostrarTelaEditarPerfil() {
+    private void mostrarTelaEditarPerfil(Stage primaryStage) {
         areaPrincipal.getChildren().clear();
 
         Label titulo = new Label("Editar perfil");
@@ -191,10 +198,25 @@ public class FXEditarPerfil extends Application {
             }
         });
 
+        Button excluirConta = new Button("Excluir conta");
+
+        excluirConta.setPrefHeight(40);
+        excluirConta.setPrefWidth(180);
+        excluirConta.setStyle("-fx-background-color: #8000C9; -fx-text-fill: white; -fx-font-size: 15px; -fx-font-family: monospace; -fx-background-radius: 12px;");
+        excluirConta.setCursor(Cursor.HAND);
+
+        excluirConta.setOnAction(e -> {
+           if(cadastroController.excluirConta()){
+               FXContaExcluida conta = new FXContaExcluida();
+               conta.start(primaryStage);
+           }
+
+        });
+
         Region espacoEntre = new Region();
         HBox.setHgrow(espacoEntre, Priority.ALWAYS);
 
-        botoes.getChildren().addAll(salvarBtn, espacoEntre);
+        botoes.getChildren().addAll(salvarBtn, espacoEntre, excluirConta);
         areaPrincipal.getChildren().addAll(titulo, form, botoes, mensagem);
     }
 

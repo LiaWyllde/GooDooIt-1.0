@@ -51,16 +51,18 @@ public class CadastroController {
 
     //Cntrole de visibilidade de mensagem de "cadastro concluído" e "campos obrigatórios"
 
-    public void excluirConta(){
+    public boolean excluirConta(){
         Usuario autenticado = AutenticacaoController.getAutenticado();
         if (autenticado != null) {
             try {
                 usuarioDAO.excluirUsuario(autenticado);
                 AutenticacaoController.setAutenticado(null);
                 System.out.println("Conta excluída com sucesso.");
+                return true;
             } catch (Exception e) {
                 System.out.println("Erro ao excluir conta: " + e.getMessage());
             }
         }
+        return false;
     }
 }
