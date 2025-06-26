@@ -13,11 +13,12 @@ public class AlterarDadosUsuarioController {
         this.usuarioDAO = usuarioDAO;
     }
 
-    private Usuario autenticado = AutenticacaoController.getAutenticado();
-
     public boolean alterarDadosUsuario(String nome, String sobrenome, String email) {
 
-        if (nome == null || sobrenome == null || email == null) {
+        Usuario autenticado = AutenticacaoController.getAutenticado();
+
+        if (nome.isBlank() || sobrenome.isBlank() || email.isBlank()) {
+            System.out.println("Tá dando vazio aqui, aaaaaaaaaaa");
             return false;
         } else {
 
