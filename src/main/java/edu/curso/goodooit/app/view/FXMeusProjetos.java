@@ -2,6 +2,7 @@ package edu.curso.goodooit.app.view;
 
 import edu.curso.goodooit.app.controller.AllControllerRegistry;
 import edu.curso.goodooit.app.controller.AutenticacaoController;
+import edu.curso.goodooit.app.controller.ConviteController;
 import edu.curso.goodooit.app.controller.MeusProjetosController;
 import edu.curso.goodooit.app.model.Projeto;
 import edu.curso.goodooit.app.model.Usuario;
@@ -31,6 +32,11 @@ public class FXMeusProjetos extends Application {
 
 
     private static MeusProjetosController meusProjetosController;
+    private static ConviteController conviteController;
+
+    public static void setConviteController(ConviteController conviteController) {
+        FXMeusProjetos.conviteController = conviteController;
+    }
 
     public static void setMeusProjetosController(MeusProjetosController mpc) {
         meusProjetosController = mpc;
@@ -114,7 +120,7 @@ public class FXMeusProjetos extends Application {
         notificacoes.setAlignment(Pos.CENTER);
 
         ImageView iconeConvite = formatarIcone("/images/envelope.jpg");
-        Label email = new Label("1");
+        Label email = new Label(conviteController.contarNovosConvites().toString());
         email.setCursor(Cursor.HAND);
 
         email.setOnMouseClicked(e -> telaConvites(primaryStage));
@@ -398,6 +404,7 @@ public class FXMeusProjetos extends Application {
 
     private void telaConvites(Stage primaryStage) {
         FXTelaConvite convites = new FXTelaConvite();
+        FXTelaConvite.setConviteController(AllControllerRegistry.getInstance().getConviteController());
         convites.start(primaryStage);
     }
 
@@ -417,12 +424,14 @@ public class FXMeusProjetos extends Application {
     private void telaTarefas(Stage primaryStage) {
         FXMinhasTarefas minhasTarefas = new FXMinhasTarefas();
         FXMinhasTarefas.setTarefaController(AllControllerRegistry.getInstance().getTarefaController());
+        FXMinhasTarefas.setConviteController(AllControllerRegistry.getInstance().getConviteController());
         minhasTarefas.start(primaryStage);
     }
 
     private void telaProjetoColaborador(Stage primaryStage) {
         FXProjetosColaborando projetoColaborador = new FXProjetosColaborando();
         FXProjetosColaborando.setMeusProjetosController(AllControllerRegistry.getInstance().getMeusProjetosController());
+        FXProjetosColaborando.setConviteController(AllControllerRegistry.getInstance().getConviteController());
         projetoColaborador.start(primaryStage);
     }
 

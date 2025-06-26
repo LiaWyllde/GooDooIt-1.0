@@ -2,6 +2,7 @@ package edu.curso.goodooit.app.view;
 
 import edu.curso.goodooit.app.controller.AllControllerRegistry;
 import edu.curso.goodooit.app.controller.AutenticacaoController;
+import edu.curso.goodooit.app.controller.ConviteController;
 import edu.curso.goodooit.app.model.Convite;
 import javafx.application.Application;
 import javafx.collections.ObservableList;
@@ -24,6 +25,12 @@ public class FXTelaConvite extends Application {
 
     private StackPane root;
 
+    private static ConviteController conviteController;
+
+    public static void setConviteController(ConviteController conviteController) {
+        FXTelaConvite.conviteController = conviteController;
+    }
+
     @Override
     public void start(Stage primaryStage) {
         double larguraTela = Screen.getPrimary().getBounds().getWidth();
@@ -39,7 +46,7 @@ public class FXTelaConvite extends Application {
         convitesContainer.setPadding(new Insets(10));
         convitesContainer.setAlignment(Pos.TOP_CENTER);
 
-        ObservableList<Convite> convites = AllControllerRegistry.getInstance().getConviteController().convitesRecebidos();
+        ObservableList<Convite> convites = conviteController.convitesRecebidos();
 
         if (convites == null || convites.isEmpty()) {
             Label vazio = new Label("Você não possui convites no momento.");
@@ -119,7 +126,6 @@ public class FXTelaConvite extends Application {
     }
 
 
-
     // Sidebar e Navegação
 
     private VBox criarSideBar(Stage primaryStage, String nomeCompleto) {
@@ -139,7 +145,7 @@ public class FXTelaConvite extends Application {
         notificacoes.setAlignment(Pos.CENTER);
 
         ImageView iconeConvite = formatarIcone("/images/envelope.jpg");
-        Label email = new Label("1");
+        Label email = new Label(conviteController.contarNovosConvites().toString());
         email.setCursor(Cursor.HAND);
 
         email.setOnMouseClicked(e -> telaConvites(primaryStage));
@@ -174,6 +180,7 @@ public class FXTelaConvite extends Application {
     private void telaProjetoDono(Stage primaryStage) {
         FXMeusProjetos fxMeusProjetos = new FXMeusProjetos();
         FXMeusProjetos.setMeusProjetosController(AllControllerRegistry.getInstance().getMeusProjetosController());
+        FXMeusProjetos.setConviteController(AllControllerRegistry.getInstance().getConviteController());
         fxMeusProjetos.start(primaryStage);
     }
 
@@ -196,12 +203,15 @@ public class FXTelaConvite extends Application {
 
     private void telaTarefas(Stage primaryStage) {
         FXMinhasTarefas minhasTarefas = new FXMinhasTarefas();
+        FXMinhasTarefas.setConviteController(AllControllerRegistry.getInstance().getConviteController());
+        FXMinhasTarefas.setTarefaController(AllControllerRegistry.getInstance().getTarefaController());
         minhasTarefas.start(primaryStage);
     }
 
     private void telaProjetoColaborador(Stage primaryStage) {
         FXProjetosColaborando projetoColaborador = new FXProjetosColaborando();
         FXProjetosColaborando.setMeusProjetosController(AllControllerRegistry.getInstance().getMeusProjetosController());
+        FXProjetosColaborando.setConviteController(AllControllerRegistry.getInstance().getConviteController());
         projetoColaborador.start(primaryStage);
     }
 
@@ -276,9 +286,5 @@ public class FXTelaConvite extends Application {
                 (selecionado ? "-fx-border-color: black; -fx-border-width: 2;" : "") +
                 (roxo ? "-fx-background-color: #d681f0; -fx-text-fill: black;" : "-fx-background-color: #cccccc;"));
         return btn;
-    }
-
-    public static void main(String[] args) {
-        launch(args);
     }
 }

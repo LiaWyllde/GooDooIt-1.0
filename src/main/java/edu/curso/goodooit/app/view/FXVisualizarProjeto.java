@@ -465,6 +465,7 @@ public class FXVisualizarProjeto extends Application {
     private void telaProjetoColaborador(Stage primaryStage) {
         FXProjetosColaborando projetoColaborador = new FXProjetosColaborando();
         FXProjetosColaborando.setMeusProjetosController(AllControllerRegistry.getInstance().getMeusProjetosController());
+        FXProjetosColaborando.setConviteController(AllControllerRegistry.getInstance().getConviteController());
         projetoColaborador.start(primaryStage);
     }
 
@@ -479,6 +480,7 @@ public class FXVisualizarProjeto extends Application {
     private void telaProjetoDono(Stage primaryStage) {
         FXMeusProjetos meusProjetos = new FXMeusProjetos();
         FXMeusProjetos.setMeusProjetosController(AllControllerRegistry.getInstance().getMeusProjetosController());
+        FXMeusProjetos.setConviteController(AllControllerRegistry.getInstance().getConviteController());
         meusProjetos.start(primaryStage);
     }
 }

@@ -120,6 +120,7 @@ public class FxTelaLogin extends Application {
     private void proximaTela(Stage primaryStage) {
         FXMeusProjetos projetos = new FXMeusProjetos();
         FXMeusProjetos.setMeusProjetosController(AllControllerRegistry.getInstance().getMeusProjetosController());
+        FXMeusProjetos.setConviteController(AllControllerRegistry.getInstance().getConviteController());
         projetos.start(primaryStage);
     }
 }

@@ -10,6 +10,7 @@ import edu.curso.goodooit.app.persistence.implementations.UsuarioDAO;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -112,6 +113,16 @@ public class ConviteController {
             equipeDAO.adicionarMembroProjeto(idProjeto, idDestinatario);
         } catch (Exception e) {
             System.out.println("Erro ao aceitar convite: " + e.getMessage());
+        }
+    }
+
+    public Integer contarNovosConvites(){
+        Usuario autenticado = AutenticacaoController.getAutenticado();
+        try{
+            List<Convite> convites = conviteDAO.buscarConviteIdDestinatario(autenticado.getID());
+            return convites.size();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 }

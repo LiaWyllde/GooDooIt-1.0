@@ -2,6 +2,7 @@ package edu.curso.goodooit.app.view;
 
 import edu.curso.goodooit.app.controller.AllControllerRegistry;
 import edu.curso.goodooit.app.controller.AutenticacaoController;
+import edu.curso.goodooit.app.controller.ConviteController;
 import edu.curso.goodooit.app.controller.MeusProjetosController;
 import edu.curso.goodooit.app.model.Projeto;
 import edu.curso.goodooit.app.model.Usuario;
@@ -32,6 +33,11 @@ public class FXProjetosColaborando extends Application {
     private StackPane root;
 
     private static MeusProjetosController meusProjetosController;
+    private static ConviteController conviteController;
+
+    public static void setConviteController(ConviteController conviteController) {
+        FXProjetosColaborando.conviteController = conviteController;
+    }
 
     public static void setMeusProjetosController(MeusProjetosController mpc) {
         meusProjetosController = mpc;
@@ -110,7 +116,7 @@ public class FXProjetosColaborando extends Application {
         notificacoes.setAlignment(Pos.CENTER);
 
         ImageView iconeConvite = formatarIcone("/images/envelope.jpg");
-        Label email = new Label("1");
+        Label email = new Label(conviteController.contarNovosConvites().toString());
         email.setCursor(Cursor.HAND);
 
         email.setOnMouseClicked(e -> telaConvites(primaryStage));
@@ -286,6 +292,7 @@ public class FXProjetosColaborando extends Application {
     private void telaTarefas(Stage primaryStage) {
         FXMinhasTarefas minhasTarefas = new FXMinhasTarefas();
         FXMinhasTarefas.setTarefaController(AllControllerRegistry.getInstance().getTarefaController());
+        FXMinhasTarefas.setConviteController(AllControllerRegistry.getInstance().getConviteController());
         minhasTarefas.start(primaryStage);
     }
 
