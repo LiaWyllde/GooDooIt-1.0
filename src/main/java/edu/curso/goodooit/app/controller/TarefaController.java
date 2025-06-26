@@ -18,11 +18,13 @@ public class TarefaController {
     private final TarefaDAO tarefaDAO;
     private final StatusDAO statusDAO;
     private final UsuarioDAO usuarioDAO;
+    private final ProjetoDAO projetoDAO;
 
-    public TarefaController( TarefaDAO tarefaDAO, StatusDAO statusDAO, UsuarioDAO usuarioDAO) {
+    public TarefaController(TarefaDAO tarefaDAO, StatusDAO statusDAO, UsuarioDAO usuarioDAO, ProjetoDAO projetoDAO) {
         this.tarefaDAO = tarefaDAO;
         this.statusDAO = statusDAO;
         this.usuarioDAO = usuarioDAO;
+        this.projetoDAO = projetoDAO;
     }
 
     public boolean VerificarCriadorDaTarefa(Usuario usuario) {
@@ -34,10 +36,23 @@ public class TarefaController {
         return true;
     }
 
-    public ObservableList<Tarefa> getTarefas(Integer IDProjeto) {
+    public Projeto getProjeto(Integer idTarefa) {
+        Projeto projeto = null;
+        try {
+            Tarefa tarefa = tarefaDAO.buscarTarefaId(idTarefa);
+            if (tarefa != null) {
+                projeto = projetoDAO.buscarProjetoId(tarefa.getProjetoID());
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar o projeto da tarefa: " + e.getMessage());
+        }
+        return projeto;
+    }
+
+    public ObservableList<Tarefa> getTarefas(Integer idUsuario) {
         ObservableList<Tarefa> tarefasObservable = FXCollections.observableArrayList();
         try {
-            List<Tarefa> tarefas = tarefaDAO.buscarTarefasProjetoId(IDProjeto);
+            List<Tarefa> tarefas = tarefaDAO.buscarTarefaIdResponsavel(idUsuario);
             tarefas.forEach(tarefa -> {
                 try {
                     tarefa.setStatus(statusDAO.buscarStatusId(tarefa.getStatusTarefaID()));
@@ -111,12 +126,12 @@ public class TarefaController {
     public String buscarResposavel(Integer responsavelID) {
         try{
             if(responsavelID != null){
-                return usuarioDAO.buscarUsuarioID(responsavelID).getLogin();
+                return usuarioDAO.buscarUsuarioID(responsavelID).getNome();
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return "";
+        return null;
     }
 }

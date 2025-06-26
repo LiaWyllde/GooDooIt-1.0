@@ -285,6 +285,7 @@ public class FXProjetosColaborando extends Application {
 
     private void telaTarefas(Stage primaryStage) {
         FXMinhasTarefas minhasTarefas = new FXMinhasTarefas();
+        FXMinhasTarefas.setTarefaController(AllControllerRegistry.getInstance().getTarefaController());
         minhasTarefas.start(primaryStage);
     }
 

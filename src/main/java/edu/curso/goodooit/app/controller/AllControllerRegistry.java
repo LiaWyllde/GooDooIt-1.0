@@ -41,7 +41,7 @@ public class AllControllerRegistry {
         this.alterarSenhaController = new AlterarSenhaController(usuarioDAO);
         this.alterarDadosUsuarioController = new AlterarDadosUsuarioController(usuarioDAO);
         this.conviteController = new ConviteController(conviteDAO, usuarioDAO, projetoDAO, equipeDAO);
-        this.tarefaController = new TarefaController(tarefaDAO, statusDAO, usuarioDAO);
+        this.tarefaController = new TarefaController(tarefaDAO, statusDAO, usuarioDAO, projetoDAO);
         this.visualizarProjetoController = new VisualizarProjetoController(tarefaDAO, statusDAO, equipeDAO);
         this.cadastroController = new CadastroController(usuarioDAO);
     }

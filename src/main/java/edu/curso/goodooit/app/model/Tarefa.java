@@ -130,6 +130,17 @@ public class Tarefa {
         return prioridade;
     }
 
+    public String getPrioridadeString() {
+        return switch (prioridade) {
+            case 1 -> "Muito baixa";
+            case 2 -> "Baixa";
+            case 3 -> "Média";
+            case 4 -> "Alta";
+            case 5 -> "Muito alta";
+            default -> "Indefinida";
+        };
+    }
+
     public void setPrioridade(int prioridade) {
         this.prioridade = prioridade;
     }

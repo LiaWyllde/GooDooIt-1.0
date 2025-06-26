@@ -317,10 +317,13 @@ public class FXVisualizarProjeto extends Application {
 
         Label nomeTarefa = new Label(tarefa.getNome());
         Label status = new Label("Status: " + tarefa.getStatus().toString());
-        Label prioridade = new Label("Prioridade: " + tarefa.getPrioridade());
+        Label prioridade = new Label("Prioridade: " + tarefa.getPrioridadeString());
+        Label responsavel = new Label(tarefaController.buscarResposavel(tarefa.getResponsavelID()) == null
+                                        ? "Responsável: Sem responsável atribuído"
+                                            : "Responsável: " +tarefaController.buscarResposavel(tarefa.getResponsavelID()));
         Label prazo = new Label("Prazo de Conclusão " + tarefa.getDataFim().toString());
 
-        for (Label lbl : new Label[]{nomeTarefa, status, prioridade, prazo}) {
+        for (Label lbl : new Label[]{nomeTarefa, status, prioridade, responsavel, prazo}) {
             lbl.setStyle("-fx-font-family: monospace; -fx-font-size: 18px; -fx-text-fill: black;");
         }
 
@@ -328,13 +331,7 @@ public class FXVisualizarProjeto extends Application {
         visualizar.setStyle("-fx-font-size: 18px; -fx-text-fill: gray; -fx-font-family: monospace;");
 
         visualizar.setOnMouseClicked(e -> {
-            FXVisualizarTarefa visualizarTarefa = new FXVisualizarTarefa();
-            FXVisualizarTarefa.setVisualizarProjetoController(AllControllerRegistry.getInstance().getVisualizarProjetoController());
-            FXVisualizarTarefa.setMeusProjetosController(AllControllerRegistry.getInstance().getMeusProjetosController());
-            FXVisualizarTarefa.setTarefaController(AllControllerRegistry.getInstance().getTarefaController());
-            visualizarTarefa.setTarefa(tarefa);
-            visualizarTarefa.setProjeto(projeto);
-            visualizarTarefa.start(primaryStage);
+            telaVisualizarTarefa(tarefa, primaryStage);
         });
 
         HBox botoes = new HBox(10, visualizar);
@@ -343,8 +340,18 @@ public class FXVisualizarProjeto extends Application {
         StackPane.setMargin(botoes, new Insets(10));
 
         StackPane stack = new StackPane(bloco, botoes);
-        bloco.getChildren().addAll(nomeTarefa, status, prioridade, prazo);
+        bloco.getChildren().addAll(nomeTarefa, status, prioridade, responsavel, prazo);
         return new VBox(stack);
+    }
+
+    private void telaVisualizarTarefa(Tarefa tarefa, Stage primaryStage) {
+        FXVisualizarTarefa visualizarTarefa = new FXVisualizarTarefa();
+        FXVisualizarTarefa.setVisualizarProjetoController(AllControllerRegistry.getInstance().getVisualizarProjetoController());
+        FXVisualizarTarefa.setMeusProjetosController(AllControllerRegistry.getInstance().getMeusProjetosController());
+        FXVisualizarTarefa.setTarefaController(AllControllerRegistry.getInstance().getTarefaController());
+        visualizarTarefa.setTarefa(tarefa);
+        visualizarTarefa.setProjeto(projeto);
+        visualizarTarefa.start(primaryStage);
     }
 
     public StackPane criarModalNovaTarefa(Stage primaryStage) {
@@ -467,7 +474,6 @@ public class FXVisualizarProjeto extends Application {
         FXVisualizarMembrosProjeto.setConviteController(AllControllerRegistry.getInstance().getConviteController());
         membros.setProjeto(projeto);
         membros.start(primaryStage);
-        //ToDo: Arrumar as injeções
     }
 
     private void telaProjetoDono(Stage primaryStage) {

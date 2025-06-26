@@ -143,7 +143,7 @@ public class FXVisualizarTarefa extends Application {
 
         Button btnEditar = new Button("Editar tarefa");
         Button btnExcluir = new Button("Excluir tarefa");
-        Button btnVoltar = new Button("Voltar");
+        Button btnVoltar = new Button("Voltar ao projeto");
         estilizarBotaoRoxo(btnVoltar);
         estilizarBotaoRoxo(btnEditar);
         estilizarBotaoRoxo(btnExcluir);
@@ -317,39 +317,22 @@ public class FXVisualizarTarefa extends Application {
 
         Label nomeTarefa = new Label(tarefa.getNome());
         Label status = new Label("Status: " + tarefa.getStatus().toString());
-        Label prioridade = new Label("Prioridade: " + tarefa.getPrioridade());
+        Label prioridade = new Label("Prioridade: " + tarefa.getPrioridadeString());
+        Label responsavel = new Label(tarefaController.buscarResposavel(tarefa.getResponsavelID()) == null
+                                        ? "Responsável: Sem responsável atribuído"
+                                            : "Responsável: " + tarefaController.buscarResposavel(tarefa.getResponsavelID()));
         Label prazo = new Label("Prazo de Conclusão " + tarefa.getDataFim().toString());
 
-        for (Label lbl : new Label[]{nomeTarefa, status, prioridade, prazo}) {
+        for (Label lbl : new Label[]{nomeTarefa, status, prioridade, responsavel, prazo}) {
             lbl.setStyle("-fx-font-family: monospace; -fx-font-size: 18px; -fx-text-fill: black;");
         }
 
         StackPane stack = new StackPane(bloco);
-        bloco.getChildren().addAll(nomeTarefa, status, prioridade, prazo);
+        bloco.getChildren().addAll(nomeTarefa, status, prioridade, responsavel, prazo);
         return new VBox(stack);
     }
 
-    private void abrirModalProjeto(Projeto p, StackPane modal) {
-        TextField tfNome = new TextField(p.getNome());
-        TextArea taDescricao = new TextArea(p.getDescricao());
-        DatePicker dpInicio = new DatePicker(p.getDataInicio());
-        DatePicker dpFim = new DatePicker(p.getDataFim());
-        modal.setVisible(true);
-    }
-
     //Métodos para redirecionamento de telas
-    private void telaProjetoColaborador(Stage primaryStage) {
-        FXProjetosColaborando projetoColaborador = new FXProjetosColaborando();
-        FXProjetosColaborando.setMeusProjetosController(AllControllerRegistry.getInstance().getMeusProjetosController());
-        projetoColaborador.start(primaryStage);
-    }
-
-    private void telaProjetoDono(Stage primaryStage) {
-        FXMeusProjetos meusProjetos = new FXMeusProjetos();
-        FXMeusProjetos.setMeusProjetosController(AllControllerRegistry.getInstance().getMeusProjetosController());
-        meusProjetos.start(primaryStage);
-    }
-
     private void telaVisualizarProjeto(Projeto projeto, Stage primaryStage) {
         FXVisualizarProjeto visualizarProjeto = new FXVisualizarProjeto();
         visualizarProjeto.setProjeto(projeto);
