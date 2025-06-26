@@ -13,9 +13,10 @@ public class AlterarSenhaController {
         this.usuarioDAO = usuarioDAO;
     }
 
-    private Usuario usuario = AutenticacaoController.getAutenticado();
 
     public boolean validarSenha(String senhaAntiga, String novaSenha, String confirmaSenha) {
+
+        Usuario usuario = AutenticacaoController.getAutenticado();
 
         if (usuario.getSenha().equals(senhaAntiga)) {
 

@@ -5,6 +5,7 @@ import edu.curso.goodooit.app.controller.AlterarSenhaController;
 import edu.curso.goodooit.app.controller.AutenticacaoController;
 import edu.curso.goodooit.app.controller.AllControllerRegistry;
 import edu.curso.goodooit.app.model.Usuario;
+import javafx.animation.PauseTransition;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -14,8 +15,10 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -139,7 +142,7 @@ public class FXEditarPerfil extends Application {
         TextField campoEmail = new TextField(usuario.getEmail());
 
         PasswordField campoSenha = new PasswordField();
-        campoSenha.setText("************");
+        campoSenha.setText(usuario.getSenha());
         campoSenha.setDisable(true);
 
         Label mensagem = new Label();
@@ -219,6 +222,11 @@ public class FXEditarPerfil extends Application {
         PasswordField campoConfirmar = new PasswordField();
         campoConfirmar.setPromptText("Confirmar nova senha");
 
+        Text alteradaSenha = new Text("Senha alterada com sucesso!");
+        alteradaSenha.setVisible(false);
+
+
+
         for (TextField campo : new TextField[]{campoAtual, campoNova, campoConfirmar}) {
             campo.setMaxWidth(400);
             campo.setStyle("-fx-background-radius: 30; -fx-border-radius: 16;");
@@ -237,7 +245,7 @@ public class FXEditarPerfil extends Application {
         btnEsqueci.setStyle("-fx-background-color: #6A0DAD; -fx-text-fill: white; -fx-background-radius: 18;");
         btnEsqueci.setMaxWidth(220);
 
-        conteudo.getChildren().addAll(titulo, campoAtual, campoNova, campoConfirmar, botoes, btnEsqueci);
+        conteudo.getChildren().addAll(titulo, campoAtual, campoNova, campoConfirmar, alteradaSenha, botoes, btnEsqueci);
 
         // Overlay escurecido
         StackPane fundo = new StackPane(conteudo);
@@ -246,9 +254,14 @@ public class FXEditarPerfil extends Application {
         fundo.setAlignment(Pos.CENTER);
 
         btnSalvar.setOnAction(e -> {
-            //Salver alteracao
-            fundo.setVisible(false);
+            boolean msg = alterarSenhaController.validarSenha(campoAtual.getText(), campoNova.getText(), campoConfirmar.getText());
+            alteradaSenha.setVisible(msg);
+
+            PauseTransition pausa = new PauseTransition(Duration.seconds(1.5));
+            pausa.setOnFinished(event -> fundo.setVisible(false));
+            pausa.play();
         });
+
 
         btnCancelar.setOnAction(e -> fundo.setVisible(false));
         btnEsqueci.setOnAction(e -> {
