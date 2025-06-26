@@ -13,8 +13,13 @@ public class AlterarSenhaController {
         this.usuarioDAO = usuarioDAO;
     }
 
+    /*
+        1 - Senha antiga está incorreta
+        2 - Senhas não coincidem
+        3 - Alterado com sucesso
+     */
 
-    public boolean validarSenha(String senhaAntiga, String novaSenha, String confirmaSenha) {
+    public Integer validarSenha(String senhaAntiga, String novaSenha, String confirmaSenha) {
 
         Usuario usuario = AutenticacaoController.getAutenticado();
 
@@ -25,12 +30,13 @@ public class AlterarSenhaController {
 
                 try {
                     usuarioDAO.atualizarUsuario(usuario);
+                    return 3;
                 }catch (Exception e){
                     System.out.println("Erro ao atualizar senha: " + e.getMessage());
                 }
 
             } else {
-                return false;
+                return 2;
             }
 
             /*
@@ -39,7 +45,7 @@ public class AlterarSenhaController {
              */
 
         }
-        return true;
+        return 1;
     }
 
 }

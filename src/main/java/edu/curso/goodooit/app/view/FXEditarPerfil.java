@@ -222,9 +222,8 @@ public class FXEditarPerfil extends Application {
         PasswordField campoConfirmar = new PasswordField();
         campoConfirmar.setPromptText("Confirmar nova senha");
 
-        Text alteradaSenha = new Text("Senha alterada com sucesso!");
+        Text alteradaSenha = new Text("");
         alteradaSenha.setVisible(false);
-
 
 
         for (TextField campo : new TextField[]{campoAtual, campoNova, campoConfirmar}) {
@@ -254,8 +253,21 @@ public class FXEditarPerfil extends Application {
         fundo.setAlignment(Pos.CENTER);
 
         btnSalvar.setOnAction(e -> {
-            boolean msg = alterarSenhaController.validarSenha(campoAtual.getText(), campoNova.getText(), campoConfirmar.getText());
-            alteradaSenha.setVisible(msg);
+            Integer msg = alterarSenhaController.validarSenha(campoAtual.getText(), campoNova.getText(), campoConfirmar.getText());
+
+            switch (msg) {
+                case 1:
+                    alteradaSenha.setText("Senha atual incorreta!");
+                    break;
+                case 2:
+                    alteradaSenha.setText("Senhas não condizem");
+                    break;
+                case 3:
+                    alteradaSenha.setText("Senha alterada com sucesso!");
+                    break;
+            }
+
+            alteradaSenha.setVisible(true);
 
             PauseTransition pausa = new PauseTransition(Duration.seconds(1.5));
             pausa.setOnFinished(event -> fundo.setVisible(false));
@@ -265,7 +277,7 @@ public class FXEditarPerfil extends Application {
 
         btnCancelar.setOnAction(e -> fundo.setVisible(false));
         btnEsqueci.setOnAction(e -> {
-            System.out.println("Fluxo de recuperação de senha iniciado.");
+            abrirTelaEsqueciSenha();
             fundo.setVisible(false);
         });
 
@@ -274,7 +286,65 @@ public class FXEditarPerfil extends Application {
     }
 
     private void abrirTelaAlterarSenha() {
-        StackPane pane =  criarModalAlterarSenha();
+        StackPane pane = criarModalAlterarSenha();
+        root.getChildren().add(pane);
+        pane.setVisible(true);
+        pane.toFront();
+    }
+
+    public StackPane criarModalEsqueciSenha() {
+        double largura = Screen.getPrimary().getBounds().getWidth();
+        double altura = Screen.getPrimary().getBounds().getHeight();
+
+        VBox conteudo = new VBox(15);
+        conteudo.setPadding(new Insets(30));
+        conteudo.setAlignment(Pos.CENTER);
+        conteudo.setMaxWidth(largura * 0.4);
+        conteudo.setMaxHeight(altura * 0.45);
+        conteudo.setStyle("-fx-background-color: #E6E6E6; -fx-background-radius: 20;");
+
+        StackPane fundo = new StackPane(conteudo);
+        fundo.setStyle("-fx-background-color: rgba(0, 0, 0, 0.4);");
+        fundo.setVisible(false);
+        fundo.setAlignment(Pos.CENTER);
+
+        Label titulo = new Label("Esqueci minha senha");
+        titulo.setStyle("-fx-font-size: 22px; -fx-font-family: monospace; -fx-text-fill: black;");
+
+        // Imagem do fantasminha
+        Image avatarImage = new Image(getClass().getResourceAsStream("/images/Goo.png"), 100, 100, true, true);
+        ImageView avatarView = new ImageView(avatarImage);
+        ImageView ghost = new ImageView(new Image(getClass().getResourceAsStream("/images/Goo.png"), 100, 100, true, true)); // você deve ter esta imagem no recurso
+        ghost.setFitHeight(80);
+        ghost.setFitWidth(80);
+
+        Label cuidado = new Label("Mais cuidado na próxima");
+        cuidado.setStyle("-fx-font-size: 16px; -fx-font-family: monospace; -fx-text-fill: black;");
+
+        Label instrucao = new Label("Envie um email para:");
+        instrucao.setStyle("-fx-font-size: 14px; -fx-font-family: monospace; -fx-text-fill: black;");
+
+        Label email = new Label("businesgoodooit@gmail.com");
+        email.setStyle("-fx-font-size: 14px; -fx-font-family: monospace; -fx-text-fill: black;");
+
+
+        Button btnVoltar = new Button("Voltar");
+        btnVoltar.setStyle("-fx-background-color: #8000C9; -fx-text-fill: white; -fx-font-family: monospace; -fx-background-radius: 12px;");
+        btnVoltar.setPrefWidth(150);
+        btnVoltar.setOnAction(e -> {
+            fundo.setVisible(false);
+        });
+
+        VBox.setMargin(btnVoltar, new Insets(10, 0, 0, 0));
+
+        conteudo.getChildren().addAll(titulo, ghost, cuidado, instrucao, email, btnVoltar);
+
+
+        return fundo;
+    }
+
+    private void abrirTelaEsqueciSenha() {
+        StackPane pane = criarModalEsqueciSenha();
         root.getChildren().add(pane);
         pane.setVisible(true);
         pane.toFront();
@@ -293,24 +363,24 @@ public class FXEditarPerfil extends Application {
 
 
         StackPane campoComIcone = new StackPane(campo);
-            Button iconeEdit = new Button("");
+        Button iconeEdit = new Button("");
 
-            if (labelTexto.equalsIgnoreCase("Username") || labelTexto.equalsIgnoreCase("Senha")) {
-                if(labelTexto.equalsIgnoreCase("Username")) {
-                    iconeEdit = new Button("Bloqueado");
-                } else if (labelTexto.equalsIgnoreCase("Senha")) {
-                    iconeEdit = new Button("Editar senha");
-                    iconeEdit.setOnAction(e -> {
-                        abrirTelaAlterarSenha();
-                    });
-                }
-
-                iconeEdit.setStyle("-fx-font-family: monospace;");
-                StackPane.setAlignment(iconeEdit, Pos.CENTER_RIGHT);
-                StackPane.setMargin(iconeEdit, new Insets(0, 10, 0, 0));
-                campo.setEditable(false);
-                campoComIcone.getChildren().add(iconeEdit);
+        if (labelTexto.equalsIgnoreCase("Username") || labelTexto.equalsIgnoreCase("Senha")) {
+            if (labelTexto.equalsIgnoreCase("Username")) {
+                iconeEdit = new Button("Bloqueado");
+            } else if (labelTexto.equalsIgnoreCase("Senha")) {
+                iconeEdit = new Button("Editar senha");
+                iconeEdit.setOnAction(e -> {
+                    abrirTelaAlterarSenha();
+                });
             }
+
+            iconeEdit.setStyle("-fx-font-family: monospace;");
+            StackPane.setAlignment(iconeEdit, Pos.CENTER_RIGHT);
+            StackPane.setMargin(iconeEdit, new Insets(0, 10, 0, 0));
+            campo.setEditable(false);
+            campoComIcone.getChildren().add(iconeEdit);
+        }
 
         return new VBox(5, label, campoComIcone);
     }
