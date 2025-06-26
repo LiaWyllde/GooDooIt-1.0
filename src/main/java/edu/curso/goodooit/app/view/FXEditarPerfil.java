@@ -3,10 +3,12 @@ package edu.curso.goodooit.app.view;
 import edu.curso.goodooit.app.controller.AlterarDadosUsuarioController;
 import edu.curso.goodooit.app.controller.AlterarSenhaController;
 import edu.curso.goodooit.app.controller.AutenticacaoController;
+import edu.curso.goodooit.app.controller.AllControllerRegistry;
 import edu.curso.goodooit.app.model.Usuario;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -15,11 +17,16 @@ import javafx.scene.layout.*;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public class FXEditarPerfil extends Application {
 
     private VBox areaPrincipal;
     private StackPane modalSenhaGlobal;
     private StackPane modalEsqueciSenha;
+    private StackPane root;
 
     private static AlterarDadosUsuarioController alterarDadosUsuarioController;
     private static AlterarSenhaController alterarSenhaController;
@@ -39,27 +46,8 @@ public class FXEditarPerfil extends Application {
 
         primaryStage.setTitle("Editar Perfil - GooDoolt");
 
-        VBox sidebar = new VBox(15);
-        sidebar.setPadding(new Insets(20));
-        sidebar.setStyle("-fx-background-color: #eeeeee;");
-        sidebar.setPrefWidth(220);
-        sidebar.setAlignment(Pos.TOP_CENTER);
-
-        Image avatarImage = new Image(getClass().getResourceAsStream("/images/Goo.png"), 100, 100, true, true);
-        ImageView avatarView = new ImageView(avatarImage);
-
         Usuario usuario = AutenticacaoController.getAutenticado();
-        Label nome = new Label(usuario.getNome() + " " + usuario.getSobrenome());
-        nome.setStyle("-fx-font-size: 18px; -fx-font-family: monospace;");
-
-        sidebar.getChildren().addAll(avatarView, nome,
-                botaoMenu("Meus projetos", true),
-                botaoMenu("Colaborando", false),
-                botaoMenu("Equipes", true),
-                botaoMenu("Tarefas", false),
-                botaoMenu("Editar perfil", true, true),
-                botaoMenu("Sair", false)
-        );
+        VBox sidebar = criarSideBar(primaryStage, usuario.getNome() + " " + usuario.getSobrenome());
 
         StackPane painelCinza = new StackPane();
         painelCinza.setStyle("-fx-background-color: #dddddd; -fx-background-radius: 20px;");
@@ -78,37 +66,67 @@ public class FXEditarPerfil extends Application {
         conteudoPrincipal.getChildren().addAll(sidebar, painelCinza);
         HBox.setHgrow(painelCinza, Priority.ALWAYS);
 
-        StackPane rootStack = new StackPane(conteudoPrincipal);
+        root = new StackPane(conteudoPrincipal);
         modalSenhaGlobal = modalAlterarSenha(() -> System.out.println("Senha alterada com sucesso."));
         modalEsqueciSenha = criarModalEsqueciSenha(() -> modalSenhaGlobal.setVisible(true));
 
-        rootStack.getChildren().addAll(modalSenhaGlobal, modalEsqueciSenha);
+        root.getChildren().addAll(modalSenhaGlobal, modalEsqueciSenha);
         modalSenhaGlobal.setVisible(false);
         modalEsqueciSenha.setVisible(false);
 
-        Scene scene = new Scene(rootStack, larguraTela, alturaTela * 0.9);
+        Scene scene = new Scene(root, larguraTela, alturaTela * 0.9);
         primaryStage.setScene(scene);
         primaryStage.show();
 
         mostrarTelaEditarPerfil();
     }
 
-    private Button botaoMenu(String texto, boolean roxo) {
-        return botaoMenu(texto, roxo, false);
-    }
+    private VBox criarSideBar(Stage primaryStage, String nomeCompleto) {
+        VBox sidebar = new VBox(15);
+        sidebar.setPadding(new Insets(20));
+        sidebar.setStyle("-fx-background-color: #eeeeee;");
+        sidebar.setPrefWidth(220);
+        sidebar.setAlignment(Pos.TOP_CENTER);
 
-    private Button botaoMenu(String texto, boolean roxo, boolean ativaEditarPerfil) {
-        Button btn = new Button(texto);
-        btn.setMaxWidth(Double.MAX_VALUE);
-        btn.setPrefHeight(40);
-        btn.setStyle("-fx-font-family: monospace; -fx-font-size: 14px; -fx-background-radius: 15;" +
-                (roxo ? "-fx-background-color: #d681f0; -fx-text-fill: black;" : "-fx-background-color: #cccccc;"));
+        Image avatarImage = new Image(getClass().getResourceAsStream("/images/LogoComTexto.png"), 100, 100, true, true);
+        ImageView avatarView = new ImageView(avatarImage);
 
-        if (ativaEditarPerfil) {
-            btn.setOnAction(e -> mostrarTelaEditarPerfil());
-        }
+        Label nome = new Label(nomeCompleto);
+        nome.setStyle("-fx-font-size: 18px; -fx-font-family: monospace;");
 
-        return btn;
+        HBox notificacoes = new HBox(20);
+        notificacoes.setAlignment(Pos.CENTER);
+
+        ImageView iconeConvite = formatarIcone("/images/envelope.jpg");
+        Label email = new Label("1");
+        email.setCursor(Cursor.HAND);
+        email.setOnMouseClicked(e -> telaConvites(primaryStage));
+        iconeConvite.setOnMouseClicked(e -> telaConvites(primaryStage));
+
+        email.setStyle("-fx-font-size: 16px;");
+        notificacoes.getChildren().addAll(iconeConvite, email);
+
+        sidebar.getChildren().addAll(avatarView, nome, notificacoes);
+
+        Map<String, Runnable> botoes = new LinkedHashMap<>();
+        botoes.put("Meus Projetos", () -> telaProjetoDono(primaryStage));
+        botoes.put("Colaborando", () -> telaProjetoColaborador(primaryStage));
+        botoes.put("Tarefas", () -> telaTarefas(primaryStage));
+        botoes.put("Editar Perfil", () -> telaEditarPerfil(primaryStage));
+        botoes.put("Sair", () -> abrirModalSair(primaryStage));
+
+        AtomicBoolean roxoFlag = new AtomicBoolean(true);
+
+        botoes.forEach((label, action) -> {
+            boolean roxo = roxoFlag.get();
+            Button btn = botaoMenu(label, roxo, label.equals("Editar Perfil"));
+            btn.setCursor(Cursor.HAND);
+            btn.setOnAction(e -> action.run());
+            sidebar.getChildren().add(btn);
+            roxoFlag.set(!roxo);
+        });
+
+        return sidebar;
     }
 
     private void mostrarTelaEditarPerfil() {
@@ -138,10 +156,10 @@ public class FXEditarPerfil extends Application {
         form.setStyle("-fx-font-family: monospace;");
 
         form.getChildren().addAll(
-                criarCampoComIcone("Username", campoUsername, "⛔"),
-                criarCampoComIcone("Nome", campoNome, "✏️"),
-                criarCampoComIcone("Sobrenome", campoSobrenome, "✏️"),
-                criarCampoComIcone("Email", campoEmail, "✏️"),
+                criarCampoComIcone("Username", campoUsername, "🔒"),
+                criarCampoComIcone("Nome", campoNome, ""),
+                criarCampoComIcone("Sobrenome", campoSobrenome, ""),
+                criarCampoComIcone("Email", campoEmail, ""),
                 criarCampoComIcone("Senha", campoSenha, "✏️")
         );
 
@@ -155,6 +173,7 @@ public class FXEditarPerfil extends Application {
         salvarBtn.setPrefHeight(40);
         salvarBtn.setPrefWidth(180);
         salvarBtn.setStyle("-fx-background-color: #8000C9; -fx-text-fill: white; -fx-font-size: 15px; -fx-font-family: monospace; -fx-background-radius: 12px;");
+        salvarBtn.setCursor(Cursor.HAND);
 
         cancelarBtn.setPrefHeight(40);
         cancelarBtn.setPrefWidth(180);
@@ -166,12 +185,12 @@ public class FXEditarPerfil extends Application {
             String email = campoEmail.getText().trim();
 
             if (nome.isEmpty() || sobrenome.isEmpty() || email.isEmpty()) {
-                mensagem.setText("⚠️ Os campos não podem estar vazios.");
+                mensagem.setText("Os campos não podem estar vazios.");
                 mensagem.setStyle("-fx-text-fill: red; -fx-font-weight: bold;");
             } else {
                 boolean sucesso = alterarDadosUsuarioController.alterarDadosUsuario(nome, sobrenome, email);
                 if (sucesso) {
-                    mensagem.setText("✅ Dados atualizados com sucesso!");
+                    mensagem.setText("Dados atualizados com sucesso!");
                     mensagem.setStyle("-fx-text-fill: green; -fx-font-weight: bold;");
                 } else {
                     mensagem.setText("❌ Erro ao atualizar dados.");
@@ -192,7 +211,6 @@ public class FXEditarPerfil extends Application {
     private VBox criarCampoComIcone(String labelTexto, TextField campo, String iconeTexto) {
         Label label = new Label(labelTexto);
         label.setStyle("-fx-font-size: 14px; -fx-font-family: monospace; -fx-text-fill: black;");
-
         campo.setPrefHeight(35);
         campo.setStyle("-fx-background-radius: 10; -fx-font-size: 14px;");
 
@@ -201,42 +219,116 @@ public class FXEditarPerfil extends Application {
             campo.setStyle("-fx-background-radius: 10; -fx-font-size: 14px; -fx-opacity: 1.0; -fx-background-color: white; -fx-text-fill: black;");
         }
 
-        StackPane campoComIcone;
-
-        if (iconeTexto.equals("✏️")) {
+        StackPane campoComIcone = new StackPane(campo);
+        if (iconeTexto.equals("Icon")) {
             Button iconeEdit = new Button("Editar");
             iconeEdit.setStyle("-fx-font-family: monospace;");
             StackPane.setAlignment(iconeEdit, Pos.CENTER_RIGHT);
             StackPane.setMargin(iconeEdit, new Insets(0, 10, 0, 0));
-
-            if (labelTexto.equalsIgnoreCase("Senha")) {
-                campo.setEditable(false);
-                iconeEdit.setOnMouseClicked(e -> modalSenhaGlobal.setVisible(true));
-            }
-
-            campoComIcone = new StackPane(campo, iconeEdit);
-        } else {
-            Button iconeEdit = new Button("Bloqueado");
-            iconeEdit.setStyle("-fx-font-family: monospace;");
-            StackPane.setAlignment(iconeEdit, Pos.CENTER_RIGHT);
-            StackPane.setMargin(iconeEdit, new Insets(0, 10, 0, 0));
-            campoComIcone = new StackPane(campo, iconeEdit);
+            campo.setEditable(false);
+            iconeEdit.setOnMouseClicked(e -> modalSenhaGlobal.setVisible(true));
+            campoComIcone.getChildren().add(iconeEdit);
         }
 
         return new VBox(5, label, campoComIcone);
     }
 
-    public StackPane modalAlterarSenha(Runnable acaoSalvarSenha) {
-        // código do modal senha (mantido como está)
-        return new StackPane(); // substitua conforme necessário
+    private Button botaoMenu(String texto, boolean roxo, boolean selecionado) {
+        Button btn = new Button(texto);
+        btn.setMaxWidth(Double.MAX_VALUE);
+        btn.setPrefHeight(40);
+        btn.setStyle("-fx-font-family: monospace; -fx-font-size: 14px; -fx-background-radius: 15;" +
+                (selecionado ? "-fx-border-color: black; -fx-border-width: 2;" : "") +
+                (roxo ? "-fx-background-color: #d681f0; -fx-text-fill: black;" : "-fx-background-color: #cccccc;"));
+        return btn;
     }
 
-    public StackPane criarModalEsqueciSenha(Runnable acaoVoltar) {
-        // código do modal esqueci senha (mantido como está)
-        return new StackPane(); // substitua conforme necessário
+    private void telaProjetoDono(Stage stage) {
+        FXMeusProjetos tela = new FXMeusProjetos();
+        FXMeusProjetos.setMeusProjetosController(AllControllerRegistry.getInstance().getMeusProjetosController());
+        tela.start(stage);
     }
 
-    public ImageView formatarIcone(String path) {
+    private void telaConvites(Stage stage) {
+        FXTelaConvite convites = new FXTelaConvite();
+        convites.start(stage);
+    }
+
+    private void telaEditarPerfil(Stage stage) {
+        start(stage);
+    }
+
+    private void telaTarefas(Stage stage) {
+        FXMinhasTarefas tarefas = new FXMinhasTarefas();
+        tarefas.start(stage);
+    }
+
+    private void telaProjetoColaborador(Stage stage) {
+        FXProjetosColaborando projetos = new FXProjetosColaborando();
+        FXProjetosColaborando.setMeusProjetosController(AllControllerRegistry.getInstance().getMeusProjetosController());
+        projetos.start(stage);
+    }
+
+    private void telaSair(Stage stage) {
+        FxTelaLogin login = new FxTelaLogin();
+        FxTelaLogin.setLoginController(AllControllerRegistry.getInstance().getLoginController());
+        login.start(stage);
+    }
+
+    private void abrirModalSair(Stage stage) {
+        StackPane fundo = criarModalSair(stage);
+        root.getChildren().add(fundo);
+        fundo.setVisible(true);
+        fundo.toFront();
+    }
+
+    private StackPane criarModalSair(Stage primaryStage) {
+        VBox conteudo = new VBox(15);
+        conteudo.setPadding(new Insets(30));
+        conteudo.setAlignment(Pos.CENTER);
+        conteudo.setStyle("-fx-background-color: #E6E6E6; -fx-background-radius: 20;");
+        conteudo.setMaxWidth(400);
+        conteudo.setMaxHeight(300);
+
+        ImageView ghost = new ImageView(new Image(getClass().getResourceAsStream("/images/Goo.png"), 100, 100, true, true));
+        Label titulo = new Label("GooDoolt");
+        titulo.setStyle("-fx-font-size: 28px; -fx-text-fill: #6A0DAD; -fx-font-weight: bold;");
+
+        Label pergunta = new Label("Deseja realmente sair da sua conta?");
+        pergunta.setStyle("-fx-font-size: 16px; -fx-text-fill: #333;");
+
+        Button btnSair = new Button("Sair");
+        Button btnCancelar = new Button("Cancelar");
+
+        btnSair.setStyle("-fx-background-color: #6A0DAD; -fx-text-fill: white; -fx-font-weight: bold;");
+        btnCancelar.setStyle("-fx-background-color: #6A0DAD; -fx-text-fill: white;");
+
+        btnSair.setOnAction(e -> {
+            telaSair(primaryStage);
+        });
+
+        btnCancelar.setOnAction(e -> root.getChildren().remove(root.getChildren().size() - 1));
+
+        HBox botoes = new HBox(15, btnSair, btnCancelar);
+        botoes.setAlignment(Pos.CENTER);
+
+        conteudo.getChildren().addAll(ghost, titulo, pergunta, botoes);
+
+        StackPane fundo = new StackPane(conteudo);
+        fundo.setStyle("-fx-background-color: rgba(0, 0, 0, 0.4);");
+        fundo.setAlignment(Pos.CENTER);
+        return fundo;
+    }
+
+    private StackPane modalAlterarSenha(Runnable acaoSalvarSenha) {
+        return new StackPane();
+    }
+
+    private StackPane criarModalEsqueciSenha(Runnable acaoVoltar) {
+        return new StackPane();
+    }
+
+    private ImageView formatarIcone(String path) {
         ImageView iconeEdit = new ImageView(new Image(getClass().getResourceAsStream(path)));
         iconeEdit.setFitWidth(18);
         iconeEdit.setFitHeight(18);
