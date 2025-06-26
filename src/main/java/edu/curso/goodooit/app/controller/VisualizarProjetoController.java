@@ -147,6 +147,19 @@ public class VisualizarProjetoController {
         return null;
     }
 
+    public void removerMembroDoProjeto(Usuario usuario, Projeto projeto) {
+        Usuario autenticado = AutenticacaoController.getAutenticado();
+        if (Objects.equals(projeto.getLiderID(), autenticado.getID())) {
+            try {
+                equipeDAO.removerUsuarioProjeto(projeto.getID(), usuario.getID());
+            } catch (SQLException e) {
+                System.out.println("Erro ao remover membro do projeto: " + e.getMessage());
+            }
+        } else {
+            System.out.println("Usuário não é o líder do projeto.");
+        }
+    }
+
     // TODO: Alteração de dados do projeto
     // TODO: Uusário sair do projeto
     //Reutilizar os botões da tela de meus projetos

@@ -179,7 +179,16 @@ VALUES (10002, 2025100, 10001),
        (10000, 2025108, 10009),
        (10006, 2025109, 10000);
 
+SELECT * FROM  tarefa WHERE projetoID = 2025111;
 
+SELECT u.*
+                        FROM usuario u
+                        INNER JOIN usuario_projeto up ON up.usuarioID = u.id
+                        WHERE up.projetoID = 2025111
+
+INSERT INTO Usuario_Projeto VALUES (10000, 2025111);
+
+                  
 SELECT *
 FROM Status
 
@@ -200,5 +209,8 @@ FROM Tarefa
 
 SELECT *
 FROM Convite
+
+INSERT INTO Usuario_Projeto (UsuarioID, ProjetoID)
+VALUES (10001, 2025100)
 
 

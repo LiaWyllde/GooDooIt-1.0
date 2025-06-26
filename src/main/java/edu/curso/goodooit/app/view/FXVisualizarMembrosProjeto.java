@@ -114,7 +114,7 @@ public class FXVisualizarMembrosProjeto extends Application {
 
         ObservableList<Usuario> membros = visualizarProjetoController.listarMembrosDoProjeto(projeto);
         membros.forEach(membro -> {
-            blocoMembros.getChildren().add(criarMembro(membro.getNome(), membro.getLogin()));
+            blocoMembros.getChildren().add(criarMembro(membro, primaryStage));
         });
 
 
@@ -143,7 +143,7 @@ public class FXVisualizarMembrosProjeto extends Application {
         return mainContent;
     }
 
-    private HBox criarMembro(String nome, String username) {
+    private HBox criarMembro(Usuario membro, Stage primaryStage) {
         HBox membroBox = new HBox(10);
         membroBox.setStyle("-fx-background-color: #e0e0e0; -fx-background-radius: 10;");
         membroBox.setPadding(new Insets(10));
@@ -154,10 +154,10 @@ public class FXVisualizarMembrosProjeto extends Application {
         avatar.setFitWidth(40);
 
         VBox infos = new VBox(5);
-        Label nomeLabel = new Label(nome);
+        Label nomeLabel = new Label(membro.getNome());
         nomeLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: black;");
 
-        Label userLabel = new Label("Username: " + username);
+        Label userLabel = new Label("Username: " + membro.getLogin());
         userLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: black;");
 
         infos.getChildren().addAll(nomeLabel, userLabel);
@@ -171,7 +171,10 @@ public class FXVisualizarMembrosProjeto extends Application {
         if (isDono) {
             Button remover = new Button("Remover");
             remover.setStyle("-fx-font-size: 12px; -fx-color:red");
-            remover.setOnAction(e -> System.out.println("Remover: " + username));
+            remover.setOnAction(e -> {
+                visualizarProjetoController.removerMembroDoProjeto(membro, projeto);
+                start(primaryStage);
+            });
             acoes.getChildren().add(remover);
         }
 
