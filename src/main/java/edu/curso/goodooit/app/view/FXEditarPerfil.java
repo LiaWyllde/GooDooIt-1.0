@@ -67,12 +67,6 @@ public class FXEditarPerfil extends Application {
         HBox.setHgrow(painelCinza, Priority.ALWAYS);
 
         root = new StackPane(conteudoPrincipal);
-        modalSenhaGlobal = modalAlterarSenha(() -> System.out.println("Senha alterada com sucesso."));
-        modalEsqueciSenha = criarModalEsqueciSenha(() -> modalSenhaGlobal.setVisible(true));
-
-        root.getChildren().addAll(modalSenhaGlobal, modalEsqueciSenha);
-        modalSenhaGlobal.setVisible(false);
-        modalEsqueciSenha.setVisible(false);
 
         Scene scene = new Scene(root, larguraTela, alturaTela * 0.9);
         primaryStage.setScene(scene);
@@ -145,7 +139,7 @@ public class FXEditarPerfil extends Application {
         TextField campoEmail = new TextField(usuario.getEmail());
 
         PasswordField campoSenha = new PasswordField();
-        campoSenha.setText("********");
+        campoSenha.setText("************");
         campoSenha.setDisable(true);
 
         Label mensagem = new Label();
@@ -156,11 +150,11 @@ public class FXEditarPerfil extends Application {
         form.setStyle("-fx-font-family: monospace;");
 
         form.getChildren().addAll(
-                criarCampoComIcone("Username", campoUsername, "🔒"),
+                criarCampoComIcone("Username", campoUsername, ""),
                 criarCampoComIcone("Nome", campoNome, ""),
                 criarCampoComIcone("Sobrenome", campoSobrenome, ""),
                 criarCampoComIcone("Email", campoEmail, ""),
-                criarCampoComIcone("Senha", campoSenha, "✏️")
+                criarCampoComIcone("Senha", campoSenha, "")
         );
 
         HBox botoes = new HBox(10);
@@ -168,16 +162,11 @@ public class FXEditarPerfil extends Application {
         botoes.setAlignment(Pos.CENTER);
 
         Button salvarBtn = new Button("Salvar");
-        Button cancelarBtn = new Button("Cancelar");
 
         salvarBtn.setPrefHeight(40);
         salvarBtn.setPrefWidth(180);
         salvarBtn.setStyle("-fx-background-color: #8000C9; -fx-text-fill: white; -fx-font-size: 15px; -fx-font-family: monospace; -fx-background-radius: 12px;");
         salvarBtn.setCursor(Cursor.HAND);
-
-        cancelarBtn.setPrefHeight(40);
-        cancelarBtn.setPrefWidth(180);
-        cancelarBtn.setStyle("-fx-background-color: #999999; -fx-text-fill: white; -fx-font-size: 15px; -fx-font-family: monospace; -fx-background-radius: 12px;");
 
         salvarBtn.setOnAction(e -> {
             String nome = campoNome.getText().trim();
@@ -193,19 +182,89 @@ public class FXEditarPerfil extends Application {
                     mensagem.setText("Dados atualizados com sucesso!");
                     mensagem.setStyle("-fx-text-fill: green; -fx-font-weight: bold;");
                 } else {
-                    mensagem.setText("❌ Erro ao atualizar dados.");
+                    mensagem.setText("Erro ao atualizar dados.");
                     mensagem.setStyle("-fx-text-fill: red; -fx-font-weight: bold;");
                 }
             }
         });
 
-        cancelarBtn.setOnAction(e -> mostrarTelaEditarPerfil());
-
         Region espacoEntre = new Region();
         HBox.setHgrow(espacoEntre, Priority.ALWAYS);
 
-        botoes.getChildren().addAll(salvarBtn, espacoEntre, cancelarBtn);
+        botoes.getChildren().addAll(salvarBtn, espacoEntre);
         areaPrincipal.getChildren().addAll(titulo, form, botoes, mensagem);
+    }
+
+    public StackPane criarModalAlterarSenha() {
+        double largura = Screen.getPrimary().getBounds().getWidth();
+        double altura = Screen.getPrimary().getBounds().getHeight();
+
+        // Conteúdo interno do modal
+        VBox conteudo = new VBox(15);
+        conteudo.setPadding(new Insets(30));
+        conteudo.setAlignment(Pos.CENTER);
+        conteudo.setMaxWidth(largura * 0.4);
+        conteudo.setMaxHeight(altura * 0.45);
+        conteudo.setStyle("-fx-background-color: #E6E6E6; -fx-background-radius: 20;");
+
+        Label titulo = new Label("Alterar Senha");
+        titulo.setStyle("-fx-font-size: 24px; -fx-text-fill: #6A0DAD; -fx-font-weight: bold;");
+
+        PasswordField campoAtual = new PasswordField();
+        campoAtual.setPromptText("Senha atual");
+
+        PasswordField campoNova = new PasswordField();
+        campoNova.setPromptText("Nova senha");
+
+        PasswordField campoConfirmar = new PasswordField();
+        campoConfirmar.setPromptText("Confirmar nova senha");
+
+        for (TextField campo : new TextField[]{campoAtual, campoNova, campoConfirmar}) {
+            campo.setMaxWidth(400);
+            campo.setStyle("-fx-background-radius: 30; -fx-border-radius: 16;");
+        }
+
+        Button btnSalvar = new Button("Salvar");
+        btnSalvar.setStyle("-fx-background-color: #28a745; -fx-text-fill: white; -fx-background-radius: 18;");
+
+        Button btnCancelar = new Button("Cancelar");
+        btnCancelar.setStyle("-fx-background-color: #dc3545; -fx-text-fill: white; -fx-background-radius: 18;");
+
+        HBox botoes = new HBox(15, btnCancelar, btnSalvar);
+        botoes.setAlignment(Pos.CENTER);
+
+        Button btnEsqueci = new Button("Esqueci minha senha");
+        btnEsqueci.setStyle("-fx-background-color: #6A0DAD; -fx-text-fill: white; -fx-background-radius: 18;");
+        btnEsqueci.setMaxWidth(220);
+
+        conteudo.getChildren().addAll(titulo, campoAtual, campoNova, campoConfirmar, botoes, btnEsqueci);
+
+        // Overlay escurecido
+        StackPane fundo = new StackPane(conteudo);
+        fundo.setStyle("-fx-background-color: rgba(0, 0, 0, 0.4);");
+        fundo.setVisible(false);
+        fundo.setAlignment(Pos.CENTER);
+
+        btnSalvar.setOnAction(e -> {
+            //Salver alteracao
+            fundo.setVisible(false);
+        });
+
+        btnCancelar.setOnAction(e -> fundo.setVisible(false));
+        btnEsqueci.setOnAction(e -> {
+            System.out.println("Fluxo de recuperação de senha iniciado.");
+            fundo.setVisible(false);
+        });
+
+        return fundo;
+
+    }
+
+    private void abrirTelaAlterarSenha() {
+        StackPane pane =  criarModalAlterarSenha();
+        root.getChildren().add(pane);
+        pane.setVisible(true);
+        pane.toFront();
     }
 
     private VBox criarCampoComIcone(String labelTexto, TextField campo, String iconeTexto) {
@@ -219,16 +278,26 @@ public class FXEditarPerfil extends Application {
             campo.setStyle("-fx-background-radius: 10; -fx-font-size: 14px; -fx-opacity: 1.0; -fx-background-color: white; -fx-text-fill: black;");
         }
 
+
         StackPane campoComIcone = new StackPane(campo);
-        if (iconeTexto.equals("Icon")) {
-            Button iconeEdit = new Button("Editar");
-            iconeEdit.setStyle("-fx-font-family: monospace;");
-            StackPane.setAlignment(iconeEdit, Pos.CENTER_RIGHT);
-            StackPane.setMargin(iconeEdit, new Insets(0, 10, 0, 0));
-            campo.setEditable(false);
-            iconeEdit.setOnMouseClicked(e -> modalSenhaGlobal.setVisible(true));
-            campoComIcone.getChildren().add(iconeEdit);
-        }
+            Button iconeEdit = new Button("");
+
+            if (labelTexto.equalsIgnoreCase("Username") || labelTexto.equalsIgnoreCase("Senha")) {
+                if(labelTexto.equalsIgnoreCase("Username")) {
+                    iconeEdit = new Button("Bloqueado");
+                } else if (labelTexto.equalsIgnoreCase("Senha")) {
+                    iconeEdit = new Button("Editar senha");
+                    iconeEdit.setOnAction(e -> {
+                        abrirTelaAlterarSenha();
+                    });
+                }
+
+                iconeEdit.setStyle("-fx-font-family: monospace;");
+                StackPane.setAlignment(iconeEdit, Pos.CENTER_RIGHT);
+                StackPane.setMargin(iconeEdit, new Insets(0, 10, 0, 0));
+                campo.setEditable(false);
+                campoComIcone.getChildren().add(iconeEdit);
+            }
 
         return new VBox(5, label, campoComIcone);
     }
@@ -318,14 +387,6 @@ public class FXEditarPerfil extends Application {
         fundo.setStyle("-fx-background-color: rgba(0, 0, 0, 0.4);");
         fundo.setAlignment(Pos.CENTER);
         return fundo;
-    }
-
-    private StackPane modalAlterarSenha(Runnable acaoSalvarSenha) {
-        return new StackPane();
-    }
-
-    private StackPane criarModalEsqueciSenha(Runnable acaoVoltar) {
-        return new StackPane();
     }
 
     private ImageView formatarIcone(String path) {

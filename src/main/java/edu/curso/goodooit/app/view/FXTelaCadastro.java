@@ -1,5 +1,6 @@
 package edu.curso.goodooit.app.view;
 
+import edu.curso.goodooit.app.controller.AllControllerRegistry;
 import edu.curso.goodooit.app.controller.CadastroController;
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -53,7 +54,7 @@ public class FXTelaCadastro extends Application {
 
         // Botões
         Button btnCadastrar = new Button("Inscrever-se");
-        Button btnSair = new Button("Sair");
+        Button btnSair = new Button("Voltar");
         estilizarBotao(btnCadastrar);
         estilizarBotao(btnSair);
 
@@ -71,7 +72,8 @@ public class FXTelaCadastro extends Application {
             exibirMensagem(resultado);
         });
 
-        btnSair.setOnAction(e -> stage.close());
+
+        btnSair.setOnAction(e -> chamarTelaLogin(stage));
 
         HBox botoes = new HBox(20, btnCadastrar, btnSair);
         botoes.setAlignment(Pos.CENTER);
@@ -98,6 +100,12 @@ public class FXTelaCadastro extends Application {
         stage.setTitle("Cadastro - GooDoolt");
         stage.setScene(scene);
         stage.show();
+    }
+
+    private void chamarTelaLogin(Stage stage) {
+        FxTelaLogin login = new FxTelaLogin();
+        FxTelaLogin.setLoginController(AllControllerRegistry.getInstance().getLoginController());
+        login.start(stage);
     }
 
     private TextField criarCampoTexto(String prompt) {
